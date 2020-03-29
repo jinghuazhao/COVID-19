@@ -1,11 +1,18 @@
 # 29-3-2020 JHZ
 
+# setup
 source("test.ini")
-filtered <- scan("filtered.list","")
-# h5mm()
+src <- c("Cryobiopsy","Donor","IPF","Myositis")
+for (s in src)
+{
+  lst <- scan(paste0(s,".list"),"")
+  h5mm(lst)
+}
+
+# analysis
 library(dplyr)
 library(Seurat)
-id <- filtered[1]
+id <- lst[1]
 tx.data <- Read10X(id)
 tx <- new("seurat", raw.data = tx.data)
 tx <- CreateSeuratObject(counts = tx.data, project = "Donor", min.cells = 3, min.features = 200)
