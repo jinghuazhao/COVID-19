@@ -1,15 +1,24 @@
-# 28-3-2020 JHZ
+# 29-3-2020 JHZ
 
 library(rhdf5)
+library(data.table)
+library(Matrix)
 m <- function(rt,type="_filtered",suffix="_gene_bc_matrices_h5.h5")
 {
   f <- paste0(rt,type,suffix)
   h5ls(f)
   h5readAttributes(f,"GRCh38")
   d <- h5read(f,name="GRCh38", read.attributes = TRUE)
+  start <- h5read(f, "/GRCh38/indptr")
+  dt <- data.table(
+     row = h5read(f, "/GRCh38/indices", start = 1, count = tail(start, 1)) + 1,
+     column = rep(seq_len(length(start) - 1), diff(start)),
+     count = h5read(f, "/GRCh38/data", start = 1, count = tail(start, 1))
+  )
   h5closeAll()
-  d
+  list(d=d,dt=dt)
 }
+
 
 rt <-c(
 "GSM3489182_Donor_01",
@@ -49,19 +58,15 @@ rt <-c(
 
 donorID <- grep ("Donor",rt)
 filtered <- rt[donorID][2*(1:8)]
-
-m_barcodes <- m_data <- m_gene_names <- m_genes <- m_indices <- m_indptr <- list()
+library(DropletUtils)
 for(i in 1:8)
 {
- d[i] <- m(filtered[i])
- attach(d[i])
- m_barcodes[[i]] <- barcodes
- m_data[[i]] <- data
- m_gene_names[[i]] <- gene_names
- m_genes[[i]] <- gene_names
- m_indices[[i]] <- indices
- m_indptr[[i]] <- indptr
- detach(d[i])
- lapply(d[i],length)
+  h5m <- m(filtered[i])
+  d <- h5m$d
+  dt <- as.matrix(h5m$dt)
+  dat <- sparseMatrix(i=dt[,1],j=dt[,2],x=dt[,3],dims=d$shape)
+  with(d, write10xCounts(filtered[i], dat, barcodes = barcodes, gene.id = genes,
+                         gene.symbol = gene_names, gene.type = "Gene Expression", overwrite = TRUE)
+  )
 }
-lapply(m_data,length)
+# https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/advanced/h5_matrices
