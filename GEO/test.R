@@ -6,12 +6,11 @@ filtered <- scan("filtered.list","")
 
 library(Seurat)
 tx.data <- Read10X(filtered[1])
-tx.seurat <- new("seurat", raw.data = tx.data)
+tx <- new("seurat", raw.data = tx.data)
 
-tx <- CreateSeuratObject(counts = tx.seurat, project = "Donor", min.cells = 3, min.features = 200)
+tx <- CreateSeuratObject(counts = tx.data, project = "Donor", min.cells = 3, min.features = 200)
 tx[["percent.mt"]] <- PercentageFeatureSet(tx, pattern = "^MT-")
 VlnPlot(tx, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
-
 plot1 <- FeatureScatter(pbmc, feature1 = "nCount_RNA", feature2 = "percent.mt")
 plot2 <- FeatureScatter(pbmc, feature1 = "nCount_RNA", feature2 = "nFeature_RNA")
 plot1 + plot2
