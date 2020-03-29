@@ -5,9 +5,10 @@ source("test.ini")
 library(dplyr)
 library(Seurat)
 
-for (src in c("Cryobiopsy","Donor","IPF","Myositis"))
+labels <- c("Cryobiopsy","Donor","IPF","Myositis")
+for (src in labels)
 {
   lst <- scan(paste0(src,".list"),"")
   h5mm(lst)
-  for(i in 1:length(lst)) investigate(lst[i])
+  for(i in 1:length(lst)) investigate(src,lst[i])
 }
