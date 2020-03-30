@@ -7,4 +7,5 @@
 ## GSE122960
 
 * https://www.biorxiv.org/content/10.1101/2020.01.26.919985v1.full
+* https://onlinelibrary.wiley.com/doi/full/10.1002/path.1570
 * https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE122960
