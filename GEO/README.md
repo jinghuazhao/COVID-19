@@ -10,4 +10,4 @@ Hamming I, Timens W, Bulthuis ML, Lely AT, Navis G, van Goor H. Tissue distribut
 
 Reyfman PA, et al. Single-Cell Transcriptomic Analysis of Human Lung Provides Insights into the Pathobiology of Pulmonary Fibrosis. *Am J Respir Crit Care Med*. 2019;199(12):1517–1536. doi:10.1164/rccm.201712-2410OC, https://www.atsjournals.org/doi/10.1164/rccm.201712-2410OC, https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE122960.
 
-Zhao Y, et al. Single-cell RNA expression profiling of ACE2, the putative receptor of Wuhan 2019-nCov. *bioRvix* doi: https://doi.org/10.1101/2020.01.26.91998, https://www.biorxiv.org/content/10.1101/2020.01.26.919985v1.full.
+Zhao Y, et al. Single-cell RNA expression profiling of ACE2, the putative receptor of Wuhan 2019-nCov. *bioRvix*, doi: https://doi.org/10.1101/2020.01.26.91998, https://www.biorxiv.org/content/10.1101/2020.01.26.919985v1.full.
