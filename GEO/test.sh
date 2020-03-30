@@ -1,7 +1,10 @@
-# 29-3-2020 JHZ
+# 30-3-2020 JHZ
 
 ls GSM*h5 | \
 awk '/Donor/ && /filtered/{gsub(/_filtered_gene_bc_matrices_h5.h5/,"",$1);print}' > Donor.list
+
+ls GSM*h5 | \
+awk '/HP/ && /filtered/{gsub(/_filtered_gene_bc_matrices_h5.h5/,"",$1);print}' > HP.list
 
 ls GSM*h5 | \
 awk '/IPF/ && /filtered/{gsub(/_filtered_gene_bc_matrices_h5.h5/,"",$1);print}' > IPF.list

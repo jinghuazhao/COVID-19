@@ -1,11 +1,11 @@
-# 29-3-2020 JHZ
+# 30-3-2020 JHZ
 
 source("test.ini")
 
 library(dplyr)
 library(Seurat)
 
-labels <- c("Cryobiopsy","Donor","IPF","Myositis")
+labels <- c("Cryobiopsy","Donor","HP","IPF","Myositis")
 for (src in labels)
 {
   lst <- scan(paste0(src,".list"),"")
