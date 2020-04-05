@@ -2,6 +2,7 @@
 
 library(GEOquery)
 library(Biobase)
+library(limma)
 
 # GDS
 gds <- getGEO('GDS2771')
@@ -17,6 +18,7 @@ es <- exprs(subset)
 lm(y ~ es["1861_at",]+es["207187_at",]+es["203808_at",]+es["206254_at",], data=subset)
 gpl <- getGEO(filename="GPL96.annot.gz")
 MA <- GDS2MA(gds,GPL=gpl)
+lmFit(MA$M)
 
 # GSM
 gsm <- getGEO('GSM4115',GSEMatrix=TRUE)
