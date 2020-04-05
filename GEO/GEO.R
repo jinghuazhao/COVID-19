@@ -45,3 +45,7 @@ rownames(pdata) <- names(gsmlist)
 pheno <- as(pdata,"AnnotatedDataFrame")
 eset <- new('ExpressionSet',exprs=d,phenoData=pheno)
 pData(phenoData(eset))
+
+# scRNA
+gse <- getGEO("GSM3489195", GSEMatrix=FALSE)
+gse
