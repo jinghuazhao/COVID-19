@@ -1,6 +1,7 @@
 # 5-4-2020 JHZ
 
 library(GEOquery)
+library(Biobase)
 
 # GDS
 gds <- getGEO('GDS2771')
@@ -28,17 +29,17 @@ gse <- getGEO('GSE4115',GSEMatrix=FALSE)
 gsmplatforms <- lapply(GSMList(gse),function(x) {Meta(x)$platform_id})
 gsmlist = Filter(function(gsm) {Meta(gsm)$platform_id=='GPL96'},GSMList(gse))
 probesets <- Table(GPLList(gse)[[1]])$ID
-data.matrix <- do.call('cbind',lapply(gsmlist,function(x)
-                                      {tab <- Table(x)
-                                       mymatch <- match(probesets,tab$ID_REF)
-                                       return(tab$VALUE[mymatch])
-                                     }))
-data.matrix <- apply(data.matrix,2,function(x) {as.numeric(as.character(x))})
-data.matrix <- log2(data.matrix)
-require(Biobase)
-rownames(data.matrix) <- probesets
-colnames(data.matrix) <- names(gsmlist)
+d <- do.call('cbind',lapply(gsmlist,function(x) {
+              t <- Table(x)
+              m <- match(probesets,t$ID_REF)
+              return(t$VALUE[m])
+     }))
+d <- apply(d,2,function(x) {as.numeric(as.character(x))})
+d <- log2(d)
+rownames(d) <- probesets
+colnames(d) <- names(gsmlist)
 pdata <- data.frame(samples=names(gsmlist))
 rownames(pdata) <- names(gsmlist)
 pheno <- as(pdata,"AnnotatedDataFrame")
-eset <- new('ExpressionSet',exprs=data.matrix,phenoData=pheno)
+eset <- new('ExpressionSet',exprs=d,phenoData=pheno)
+pData(phenoData(eset))
