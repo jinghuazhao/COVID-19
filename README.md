@@ -5,3 +5,4 @@
 * [Reported hospital deaths among positives](https://pfryz.shinyapps.io/covid-19-deaths/).
 * [COVID-19 tracker](https://shiny.rstudio.com/gallery/covid19-tracker.html).
 * [nCov2019](https://github.com/GuangchuangYu/nCov2019).
+* [CSSEGISandData](https://github.com/CSSEGISandData).
