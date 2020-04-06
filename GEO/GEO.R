@@ -49,3 +49,11 @@ pData(phenoData(eset))
 # scRNA
 gse <- getGEO("GSM3489195", GSEMatrix=FALSE)
 gse
+
+# SRA
+
+library(SRAdb)
+library(DBI)
+srafile = getSRAdbFile()
+con = dbConnect(RSQLite::SQLite(), srafile)
+listSRAfile('SRP026197', con)
