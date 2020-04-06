@@ -1,4 +1,4 @@
-# 5-4-2020 JHZ
+# 6-4-2020 JHZ
 
 library(GEOquery)
 library(Biobase)
@@ -57,3 +57,4 @@ library(DBI)
 srafile = getSRAdbFile()
 con = dbConnect(RSQLite::SQLite(), srafile)
 listSRAfile('SRP026197', con)
+getSRAfile('SRP026197',con,fileType='sra')
