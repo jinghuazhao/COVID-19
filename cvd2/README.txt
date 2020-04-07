@@ -24,7 +24,8 @@ ACE2.metal	METAL command file
 
 Sentinel sellection and annotation
 -------------------------------------------
-ACE2.merge	sentinels
+ACE2.sentinels	sentinels
+ACE2.merge	sentinels with meta-data
 ACE2.proxy.ld	sentinels +/- 500kb proxies
 ACE2.proxy.hg19_multianno.csv	ANNOVAR annotation
 ACE2.proxy.pph.*	PolyPhen-2 annotation
