@@ -8,7 +8,7 @@ export p=ACE2
   mergeBed -i ${p}_nold.p -d 1000000 -c 13 -o min | \
   awk -v OFS="\t" -v prot=${p} '
   {
-    if(NR==1) print "Chrom", "Start", "End", "P", "prot"
+    if(NR==1) print "Chrom", "Start", "End", "log10P", "prot"
     print $0, prot
   }'
 ) > ${p}.merged
@@ -19,7 +19,7 @@ export p=ACE2
   cut -f1-6,8-10 | \
   awk -v OFS="\t" '
   {
-    if(NR==1) print "Chrom", "Start", "End", "P", "prot", "MarkerName", "CHR", "POS", "SNP", "P_check"
+    if(NR==1) print "Chrom", "Start", "End", "log10P", "prot", "MarkerName", "CHR", "POS", "SNP", "log10P_check"
     $5=$5 OFS $6 ":" $7
     gsub(/chr/,"",$6)
     print

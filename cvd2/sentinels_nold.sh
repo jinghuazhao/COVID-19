@@ -1,4 +1,4 @@
-# 6-4-2020 JHZ
+# 7-4-2020 JHZ
 
 export tag=_nold
 
@@ -10,7 +10,7 @@ function pgz()
   (
     zcat {}-1.tbl.gz | head -1
     zcat {}-1.tbl.gz | \
-    awk "NR>1 && \$12 <=-5" | \
+    awk "NR>1 && \$12 <=-7.3" | \
     sort -k1,1n -k2,2n
   ) | gzip -f > {}.p.gz'
 }

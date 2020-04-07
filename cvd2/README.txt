@@ -22,4 +22,12 @@ ACE2-1.tbl.info	METAL info
 ACE2-1.tbl.log	METAL log
 ACE2.metal	METAL command file
 
-st.sh	driver for format.sh, metal.sh, select.sh
+Sentinel sellection and annotation
+-------------------------------------------
+ACE2.merge	sentinels
+ACE2.proxy.ld	sentinels +/- 500kb proxies
+ACE2.proxy.hg19_multianno.csv	ANNOVAR annotation
+ACE2.proxy.pph.*	PolyPhen-2 annotation
+ACE2.proxy.dbNSFP	VEP annotation
+
+st.sh	driver for format.sh, metal.sh, select.sh, sentinels_nold.sh, merge.sh, annotation.sh
