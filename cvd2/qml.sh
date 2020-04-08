@@ -44,6 +44,7 @@ R --no-save -q <<END
      SNP <- MarkerName
      CHR <- as.numeric(Chromosome)
      BP <- Position
+     P <- 10^log.P.
   })
   tbl <- subset(tbl,!is.na(CHR)&!is.na(BP)&!is.na(P))
   qq <- paste0(protein,"_qq.png");
