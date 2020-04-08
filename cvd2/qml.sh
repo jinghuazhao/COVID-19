@@ -53,7 +53,7 @@ R --no-save -q <<END
   manhattan <- paste0(protein,"_manhattan.png");
   png(manhattan,width=12,height=10,units="in",pointsize=4,res=300)
   manhattan(tbl,main=protein,genomewideline=-log10(8.210181e-12),suggestiveline=FALSE,ylim=c(0,25));
-dev.off();
+  dev.off();
 
 # Q9BYF1 -- ACE2
 END
@@ -62,8 +62,8 @@ cut -f5 st.bed | sed '1d' | \
 parallel -j4 -C' ' '
   (
      echo -e "MarkerName\tP-value\tWeight"
-     grep -w {} st.bed > st.{}
-     read chrom start end gene prot < st.{}
+     grep -w {} st.bed | sed 's/chr//g' > st.{}
+     read chrom start end prot gene snpid < st.{}
      rm st.{}
      gunzip -c ACE2-1.tbl.gz | \
      awk -vOFS="\t" -vchr=$chrom -vstart=$start -vend=$end \
@@ -73,11 +73,10 @@ parallel -j4 -C' ' '
      awk -vOFS="\t" "{print \$2, \$3, \$4}"
   )  > {}.lz'
 
-for g in $(cut -f5 st.bed | sed '1d')
-do
+cut -f5 st.bed | sed '1d' | \
   parallel -j1 -C' ' '
-     grep -w {} st.bed > st.tmp
-     read chrom start end gene prot < st.tmp
+     grep -w {} st.bed | sed 's/chr//g' > st.tmp
+     read chrom start end prot gene snpid < st.tmp
      rm -f ld_cache.db
      locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal {}.lz \
                --plotonly --chr $chrom --start $start --end $end --no-date --rundir .
@@ -87,4 +86,3 @@ do
      mv {}-000002.png {}.lz-2.png
      cd -
   '
-done
