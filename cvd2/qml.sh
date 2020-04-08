@@ -144,7 +144,7 @@ function fp()
     save(tbl,all,rsid,file="ACE2.rda",version=2)
     METAL_forestplot(tbl,all,rsid,"ACE2.fp.pdf",width=8.75,height=5)
   END
-  ) > 2 > &1 | tee > ACE2.fp.log
+  ) > 2 >&1 | tee ACE2.fp.log
   (
     echo  prot MarkerName Q df p I2 lower.I2 upper.I2
     grep I2 ACE2.fp.log | \
