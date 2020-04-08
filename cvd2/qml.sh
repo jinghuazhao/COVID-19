@@ -81,10 +81,10 @@ cut -f5 st.bed | sed '1d' | \
      rm -f ld_cache.db
      locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal {}.lz \
                --plotonly --chr $chrom --start $start --end $end --no-date --rundir .
-     mv chr${chrom}_${start}-${end}.pdf {}.lz.pdf
-     pdftopng -r 300 {}.lz.pdf {}
-     mv {}-000001.png {}.lz-1.png
-     mv {}-000002.png {}.lz-2.png
+     mv chr${chrom}_${start}-${end}.pdf ACE2.{}.lz.pdf
+     pdftopng -r 300 ACE2.{}.lz.pdf {}
+     mv {}-000001.png ACE2.{}.lz-1.png
+     mv {}-000002.png ACE2.{}.lz-2.png
      cd -
   '
 
@@ -92,8 +92,7 @@ function fp()
 {
   (
     cat ${INF}/work/METAL.hdr
-    awk 'NR>1 {print $9}' ACE2.merge | \
-    parallel -j4 -C' ' 'zgrep -w {} ACE2-1.tbl.gz'
+    awk 'NR>1 {print $9}' ACE2.merge | parallel -j4 -C' ' 'zgrep -w {} ACE2-1.tbl.gz'
   ) > ACE2.tbl
   cut -f3 ACE2.tbl | \
   awk 'NR>1' | \
@@ -103,8 +102,8 @@ function fp()
   (
     cat ${INF}/work/sumstats.hdr
     awk 'NR>1' ACE2.tbl | \
-    cut -f1,3,13 | \
-    awk '{split($1,a,":");print a[1],$2,$3}' | \
+    cut -f3,13 | \
+    awk '{print "ACE2",$2,$3}' | \
     parallel -j4 -C' ' '
       export direction=$(zgrep -w {2} {1}-1.tbl.gz | cut -f13)
       let j=1
@@ -144,7 +143,7 @@ function fp()
     save(tbl,all,rsid,file="ACE2.rda",version=2)
     METAL_forestplot(tbl,all,rsid,"ACE2.fp.pdf",width=8.75,height=5)
   END
-  ) > 2 >&1 | tee ACE2.fp.log
+  ) 2>&1 | tee ACE2.fp.log
   (
     echo prot MarkerName Q df p I2 lower.I2 upper.I2
     grep I2 ACE2.fp.log | \

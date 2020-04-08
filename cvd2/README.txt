@@ -13,14 +13,18 @@ tryggve/	Summary statistics from TRYGGVE
 ACE2_cis_region_data.tsv	cis-region data
 
 Files regenerated at CSD3
------------------------------------
+---------------------------------------------------
 sumstats/	Summary statistics in METAL format
+INTERVAL_qq.png	QQ plot for INTERVAL
+INTERVAL_manhattan.png	Manhattan plot for INTERVAL
 ACE2_0.001.txt	p<0.001 by posistion
 ACE2.001	p<0.001 by p value
 ACE2-1.tbl.gz	METAL output
 ACE2-1.tbl.info	METAL info
 ACE2-1.tbl.log	METAL log
 ACE2.metal	METAL command file
+ACE2_qq.png
+ACE2_manhattan.png
 
 Sentinel sellection and annotation
 ---------------------------------------------------
@@ -34,6 +38,10 @@ ACE2.GWAS.rda	PhenoScanner annotation by ps.R
 ACE2.GWAS
 ACE2.eQTL.rda
 ACE2.eQTL
+HNF1A.lz.pdf	LocusZoom plots (also .png)
+PPFIA2.lz.pdf
+SERPINA1.lz.pdf
+SLCO1B1.lz.pdf
 
 st.sh	driver for format.sh, metal.sh, select.sh,
 	sentinels_nold.sh, merge.sh, annotation.sh,
