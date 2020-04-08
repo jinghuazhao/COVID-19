@@ -92,15 +92,9 @@ function fp()
 {
   (
     cat ${INF}/work/METAL.hdr
-  # 1. PLINK --clumping. The default.
-  # 3. GCTA --cojo.  Change Chr, Pos to CHR, BP as in 1.
-  # 2. R/gap/sentinels output. use  SNPID or $4 below
-  # awk 'NR>1 {print $1,$4}' work/INF1_nold.sentinels | \
-  # parallel -j4 -C' ' 'zgrep -w -H {2} METAL/{1}-1.tbl.gz'
-    awk 'NR>1 {print $5,$6}' ACE2.merge | \
-    parallel -j4 -C' ' 'zgrep -w -H {2} {1}-1.tbl.gz'
-  ) | \
-  sed 's/-1.tbl.gz//g' > ACE2.tbl
+    awk 'NR>1 {print $9}' ACE2.merge | \
+    parallel -j4 -C' ' 'zgrep -w {} ACE2-1.tbl.gz'
+  ) > ACE2.tbl
   cut -f3 ACE2.tbl | \
   awk 'NR>1' | \
   sort -k1,1 | \
