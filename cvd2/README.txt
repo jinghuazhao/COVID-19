@@ -28,6 +28,7 @@ ACE2_manhattan.png
 
 Sentinel sellection and annotation
 ---------------------------------------------------
+ACE2.fp.pdf	Forest plot
 ACE2.sentinels	sentinels
 ACE2.merge	sentinels with meta-data
 ACE2.proxy.ld	sentinels +/- 500kb proxies
@@ -42,6 +43,8 @@ HNF1A.lz.pdf	LocusZoom plots (also .png)
 PPFIA2.lz.pdf
 SERPINA1.lz.pdf
 SLCO1B1.lz.pdf
+EXOC3L4.lz.pdf
+SALL1.lz.pdf
 
 st.sh	driver for format.sh, metal.sh, select.sh,
 	sentinels_nold.sh, merge.sh, annotation.sh,

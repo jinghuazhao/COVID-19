@@ -105,15 +105,22 @@ function fp()
     parallel -j4 -C' ' '
       export direction={2}
       let j=1
-      for i in $(grep "Input File" ACE2-1.tbl.info | cut -d" " -f7)
+      for i in $(grep "Input File" ACE2-1.tbl.info | cut -d" " -f7 | sed "s|sumstats/||g;s/.ACE2.gz//g")
       do
          export n=$(awk -vj=$j "BEGIN{split(ENVIRON[\"direction\"],a,\"\");print a[j]}")
-         if [ "$n" != "?" ]; then zgrep -H -w {1} $i; fi
+         if [ "$n" != "?" ]; then
+            zgrep -H -w {1} sumstats/${i}.ACE2.gz | \
+            awk -vf=$i -vOFS="\t" "
+            {
+              if(f!=\"INTERVAL\") \$2=\"\";
+              print;
+            }"
+         fi
          let j=$j+1
       done
   '
-  ) | \
-  sed 's|sumstats||g;s/.gz//g' > ACE2.all
+  ) | awk -vOFS='\t' '{$1=$1};1' | \
+  sed 's|sumstats/||g;s/.ACE2.gz//g;s/_llod//g' > ACE2.all
   if [ -f ACE2.fp.log ]; then rm ACE2.fp.log; fi
   (
   R -q --no-save <<\ \ END
@@ -122,19 +129,15 @@ function fp()
     tbl <- within(t, {prot <- "ACE2"})
     a <- read.table("ACE2.all",as.is=TRUE, header=TRUE)
     all <- within(a, {
-      dir.study.prot <- sapply(strsplit(SNPID,":"),"[",1)
+      study <- sapply(strsplit(SNPID,":"),"[",1)
+      prot <- "ACE2"
       p1 <- sapply(strsplit(SNPID,":"),"[",2)
       p2 <- sapply(strsplit(SNPID,":"),"[",3)
       MarkerName <- paste(p1,p2,sep=":")
-      study <- sapply(strsplit(dir.study.prot,"/"),"[",2)
-      study.prot <- sapply(strsplit(dir.study.prot,"/"),"[",3)
-      substudy <- sapply(strsplit(study.prot,"[.]"),"[",1)
-      pos <- unlist(lapply(gregexpr("[.]",study.prot),"[",1))
-      prot <- substring(study.prot,pos+1)
     })
-    droplist <- c("SNPID","dir.study.prot","p1","p2","pos","study.prot","substudy")
+    droplist <- c("SNPID","p1","p2")
     all <- all[setdiff(names(all),droplist)]
-    rsid <- read.table("ACE2.rsid",as.is=TRUE,col.names=c("SNPID","rsid"))
+    rsid <- read.table("ACE2.rsid",as.is=TRUE,col.names=c("MarkerName","rsid"))
     save(tbl,all,rsid,file="ACE2.rda",version=2)
     METAL_forestplot(tbl,all,rsid,"ACE2.fp.pdf",width=8.75,height=5)
   END

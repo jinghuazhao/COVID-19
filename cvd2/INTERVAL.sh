@@ -49,7 +49,7 @@ cut -f5 st.bed | sed '1d' | \
      locuszoom --source 1000G_Nov2014 --build hg19 --pop EUR --metal INTERVAL.{}.lz \
                --plotonly --chr $chrom --start $start --end $end --no-date --rundir .
      mv chr${chrom}_${start}-${end}.pdf INTERVAL.{}.lz.pdf
-     pdftopng -r 300 INTERVAL.{}.lz.pdf {}
+     pdftopng -r 300 INTERVAL.{}.lz.pdf INTERVAL.{}
      mv INTERVAL.{}-000001.png INTERVAL.{}.lz-1.png
      mv INTERVAL.{}-000002.png INTERVAL.{}.lz-2.png
      cd -
