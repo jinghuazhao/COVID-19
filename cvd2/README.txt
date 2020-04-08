@@ -17,6 +17,7 @@ Files regenerated at CSD3
 sumstats/	Summary statistics in METAL format
 INTERVAL_qq.png	QQ plot for INTERVAL
 INTERVAL_manhattan.png	Manhattan plot for INTERVAL
+INTERVAL.*.lz.pdf	LocusZoom plot +/- 1MB
 ACE2_0.001.txt	p<0.001 by posistion
 ACE2.001	p<0.001 by p value
 ACE2-1.tbl.gz	METAL output
@@ -29,6 +30,7 @@ ACE2_manhattan.png
 Sentinel sellection and annotation
 ---------------------------------------------------
 ACE2.fp.pdf	Forest plot
+ACE2.rda	R datasets for Forest plot
 ACE2.sentinels	sentinels
 ACE2.merge	sentinels with meta-data
 ACE2.proxy.ld	sentinels +/- 500kb proxies
