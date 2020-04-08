@@ -30,5 +30,9 @@ ACE2.proxy.ld	sentinels +/- 500kb proxies
 ACE2.proxy.hg19_multianno.csv	ANNOVAR annotation
 ACE2.proxy.pph.*	PolyPhen-2 annotation
 ACE2.proxy.dbNSFP	VEP annotation
+ACE2.GWAS.rda	PhenoScanner annotation by ps.R
+ACE2.GWAS
+ACE2.eQTL.rda
+ACE2.eQTL
 
 st.sh	driver for format.sh, metal.sh, select.sh, sentinels_nold.sh, merge.sh, annotation.sh

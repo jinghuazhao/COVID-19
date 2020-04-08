@@ -1,4 +1,4 @@
-# 7-4-2020 JHZ
+# 8-4-2020 JHZ
 
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 export ANNOVAR=${HPC_WORK}/annovar

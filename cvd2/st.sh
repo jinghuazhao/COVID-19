@@ -9,3 +9,9 @@ select.sh ACE2
 sentinels_nold.sh
 merge.sh
 annotation.sh
+for catalogue in GWAS eQTL
+do
+   export catalogue=${catalogue}
+   R --no-save -q < ps.R
+done
+R --no-save -q < qml.R
