@@ -128,7 +128,7 @@ function fp()
     })
     a <- read.table("ACE2.all",as.is=TRUE, header=TRUE)
     all <- within(a, {
-      dir.study.prot <- sapply(strsplit(SNPID,":"),"[",1)
+      dir.study.prot <- sapply(strsplit(MarkerName,":"),"[",1)
       p1 <- sapply(strsplit(SNPID,":"),"[",2)
       p2 <- sapply(strsplit(SNPID,":"),"[",3)
       MarkerName <- paste(p1,p2,sep=":")
@@ -146,7 +146,7 @@ function fp()
   END
   ) > 2 >&1 | tee ACE2.fp.log
   (
-    echo  prot MarkerName Q df p I2 lower.I2 upper.I2
+    echo prot MarkerName Q df p I2 lower.I2 upper.I2
     grep I2 ACE2.fp.log | \
     awk '{gsub(/prot|=|MarkerName|Q|df|p|lower.I2|upper.I2|I2/,"");print}' | \
     sed '1d'
