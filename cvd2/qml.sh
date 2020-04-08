@@ -86,3 +86,74 @@ cut -f5 st.bed | sed '1d' | \
      mv {}-000002.png {}.lz-2.png
      cd -
   '
+
+function fp()
+{
+  (
+    cat ${INF}/work/METAL.hdr
+  # 1. PLINK --clumping. The default.
+  # 3. GCTA --cojo.  Change Chr, Pos to CHR, BP as in 1.
+  # 2. R/gap/sentinels output. use  SNPID or $4 below
+  # awk 'NR>1 {print $1,$4}' work/INF1_nold.sentinels | \
+  # parallel -j4 -C' ' 'zgrep -w -H {2} METAL/{1}-1.tbl.gz'
+    awk 'NR>1 {print $5,$6}' ACE2.merge | \
+    parallel -j4 -C' ' 'zgrep -w -H {2} {1}-1.tbl.gz'
+  ) | \
+  sed 's/-1.tbl.gz//g' > ACE2.tbl
+  cut -f3 ACE2.tbl | \
+  awk 'NR>1' | \
+  sort -k1,1 | \
+  uniq | \
+  join -a2 -e "NA" ${INF}/work/INTERVAL.rsid - -o2.1,1.2> ACE2.rsid
+  (
+    cat ${INF}/work/sumstats.hdr
+    awk 'NR>1' ACE2.tbl | \
+    cut -f1,3,13 | \
+    awk '{split($1,a,":");print a[1],$2,$3}' | \
+    parallel -j4 -C' ' '
+      export direction=$(zgrep -w {2} {1}-1.tbl.gz | cut -f13)
+      let j=1
+      for i in $(grep "Input File" {1}-1.tbl.info | cut -d" " -f7)
+      do
+         export n=$(awk -vj=$j "BEGIN{split(ENVIRON[\"direction\"],a,\"\");print a[j]}")
+         if [ "$n" != "?" ]; then zgrep -H -w {2} $i; fi
+         let j=$j+1
+      done
+  '
+  ) | \
+  sed 's|sumstats||g;s/.gz//g' > ACE2.all
+  if [ -f ACE2.fp.log ]; then rm ACE2.fp.log; fi
+  (
+  R -q --no-save <<\ \ END
+    require(gap)
+    t <- read.delim("ACE2.tbl",as.is=TRUE)
+    tbl <- within(t, {
+      prot <- sapply(strsplit(Chromosome,":"),"[",1)
+      Chromosome <- sapply(strsplit(Chromosome,":"),"[",2)
+    })
+    a <- read.table("ACE2.all",as.is=TRUE, header=TRUE)
+    all <- within(a, {
+      dir.study.prot <- sapply(strsplit(SNPID,":"),"[",1)
+      p1 <- sapply(strsplit(SNPID,":"),"[",2)
+      p2 <- sapply(strsplit(SNPID,":"),"[",3)
+      MarkerName <- paste(p1,p2,sep=":")
+      study <- sapply(strsplit(dir.study.prot,"/"),"[",2)
+      study.prot <- sapply(strsplit(dir.study.prot,"/"),"[",3)
+      substudy <- sapply(strsplit(study.prot,"[.]"),"[",1)
+      pos <- unlist(lapply(gregexpr("[.]",study.prot),"[",1))
+      prot <- substring(study.prot,pos+1)
+    })
+    droplist <- c("SNPID","dir.study.prot","p1","p2","pos","study.prot","substudy")
+    all <- all[setdiff(names(all),droplist)]
+    rsid <- read.table("ACE2.rsid",as.is=TRUE,col.names=c("MarkerName","rsid"))
+    save(tbl,all,rsid,file="ACE2.rda",version=2)
+    METAL_forestplot(tbl,all,rsid,"ACE2.fp.pdf",width=8.75,height=5)
+  END
+  ) > 2 > &1 | tee > ACE2.fp.log
+  (
+    echo  prot MarkerName Q df p I2 lower.I2 upper.I2
+    grep I2 ACE2.fp.log | \
+    awk '{gsub(/prot|=|MarkerName|Q|df|p|lower.I2|upper.I2|I2/,"");print}' | \
+    sed '1d'
+  ) | sed 's/  //1;s/   / /g' > ACE2.Q
+}

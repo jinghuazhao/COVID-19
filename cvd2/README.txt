@@ -23,7 +23,7 @@ ACE2-1.tbl.log	METAL log
 ACE2.metal	METAL command file
 
 Sentinel sellection and annotation
--------------------------------------------
+---------------------------------------------------
 ACE2.sentinels	sentinels
 ACE2.merge	sentinels with meta-data
 ACE2.proxy.ld	sentinels +/- 500kb proxies
@@ -35,4 +35,6 @@ ACE2.GWAS
 ACE2.eQTL.rda
 ACE2.eQTL
 
-st.sh	driver for format.sh, metal.sh, select.sh, sentinels_nold.sh, merge.sh, annotation.sh
+st.sh	driver for format.sh, metal.sh, select.sh,
+	sentinels_nold.sh, merge.sh, annotation.sh,
+	qml.sh, INTERVAL.sh
