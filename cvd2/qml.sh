@@ -101,16 +101,14 @@ function fp()
   join -a2 -e "NA" ${INF}/work/INTERVAL.rsid - -o2.1,1.2> ACE2.rsid
   (
     cat ${INF}/work/sumstats.hdr
-    awk 'NR>1' ACE2.tbl | \
-    cut -f3,13 | \
-    awk '{print "ACE2",$2,$3}' | \
+    awk 'NR>1{print $3,$13}' ACE2.tbl | \
     parallel -j4 -C' ' '
-      export direction=$(zgrep -w {2} {1}-1.tbl.gz | cut -f13)
+      export direction={2}
       let j=1
-      for i in $(grep "Input File" {1}-1.tbl.info | cut -d" " -f7)
+      for i in $(grep "Input File" ACE2-1.tbl.info | cut -d" " -f7)
       do
          export n=$(awk -vj=$j "BEGIN{split(ENVIRON[\"direction\"],a,\"\");print a[j]}")
-         if [ "$n" != "?" ]; then zgrep -H -w {2} $i; fi
+         if [ "$n" != "?" ]; then zgrep -H -w {1} $i; fi
          let j=$j+1
       done
   '
@@ -121,13 +119,10 @@ function fp()
   R -q --no-save <<\ \ END
     require(gap)
     t <- read.delim("ACE2.tbl",as.is=TRUE)
-    tbl <- within(t, {
-      prot <- sapply(strsplit(Chromosome,":"),"[",1)
-      Chromosome <- sapply(strsplit(Chromosome,":"),"[",2)
-    })
+    tbl <- within(t, {prot <- "ACE2"})
     a <- read.table("ACE2.all",as.is=TRUE, header=TRUE)
     all <- within(a, {
-      dir.study.prot <- sapply(strsplit(MarkerName,":"),"[",1)
+      dir.study.prot <- sapply(strsplit(SNPID,":"),"[",1)
       p1 <- sapply(strsplit(SNPID,":"),"[",2)
       p2 <- sapply(strsplit(SNPID,":"),"[",3)
       MarkerName <- paste(p1,p2,sep=":")
@@ -139,7 +134,7 @@ function fp()
     })
     droplist <- c("SNPID","dir.study.prot","p1","p2","pos","study.prot","substudy")
     all <- all[setdiff(names(all),droplist)]
-    rsid <- read.table("ACE2.rsid",as.is=TRUE,col.names=c("MarkerName","rsid"))
+    rsid <- read.table("ACE2.rsid",as.is=TRUE,col.names=c("SNPID","rsid"))
     save(tbl,all,rsid,file="ACE2.rda",version=2)
     METAL_forestplot(tbl,all,rsid,"ACE2.fp.pdf",width=8.75,height=5)
   END
