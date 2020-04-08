@@ -1,7 +1,7 @@
 ACE2.list	Files containing ACE2 @ TRYGGVE by all users
 
 Files on TRYGGVE
-------------------------------------
+---------------------------------------------------
 tryggve/	Summary statistics from TRYGGVE
 2019-04-25_meta_ACE2_0.001.txt	p<0.001 by position
 2019-04-25_meta_ACE2.001	p<0.001 by p value
