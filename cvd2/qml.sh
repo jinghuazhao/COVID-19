@@ -34,6 +34,30 @@ cut -f7 ACE2.proxy.hg19_multianno.gene | tr ';' '\n' | grep -w -f - $INF/csd3/gl
   cut -f1-5,9
 ) > st.bed
 
+R --no-save -q <<END
+  protein <- "ACE2";
+  print(protein);
+  gz <- gzfile(paste0(protein,"-1.tbl.gz"));
+  require(qqman);
+  tbl <- read.delim(gz,as.is=TRUE);
+  tbl <- within(tbl,{
+     SNP <- MarkerName
+     CHR <- as.numeric(Chromosome)
+     BP <- Position
+  })
+  tbl <- subset(tbl,!is.na(CHR)&!is.na(BP)&!is.na(P))
+  qq <- paste0(protein,"_qq.png");
+  png(qq,width=12,height=10,units="in",pointsize=4,res=300)
+  qq(with(tbl,P))
+  dev.off()
+  manhattan <- paste0(protein,"_manhattan.png");
+  png(manhattan,width=12,height=10,units="in",pointsize=4,res=300)
+  manhattan(tbl,main=protein,genomewideline=-log10(8.210181e-12),suggestiveline=FALSE,ylim=c(0,25));
+dev.off();
+
+# Q9BYF1 -- ACE2
+END
+
 cut -f5 st.bed | sed '1d' | \
 parallel -j4 -C' ' '
   (
