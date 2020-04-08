@@ -29,6 +29,7 @@ ACE2_manhattan.png
 
 Sentinel sellection and annotation
 ---------------------------------------------------
+st.bed	meta-data
 ACE2.fp.pdf	Forest plot
 ACE2.rda	R datasets for Forest plot
 ACE2.sentinels	sentinels
