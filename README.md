@@ -6,3 +6,4 @@
 * [COVID-19 tracker](https://shiny.rstudio.com/gallery/covid19-tracker.html).
 * [nCov2019](https://github.com/GuangchuangYu/nCov2019).
 * [CSSEGISandData](https://github.com/CSSEGISandData).
+* [GISAID](https://www.gisaid.org/).
