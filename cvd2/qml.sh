@@ -1,4 +1,4 @@
-# 8-4-2020 JHZ
+# 9-4-2020 JHZ
 
 export INF=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/INF
 export TMPDIR=/rds/user/jhz22/hpc-work/work
@@ -72,7 +72,7 @@ parallel -j4 -C' ' '
      sort -k1,1 | \
      join -12 -21 ${INF}/work/snp_pos - | \
      awk -vOFS="\t" "{print \$2, \$3, \$4}"
-  )  > {}.lz'
+  ) | grep -v -w NA > {}.lz'
 
 cut -f5 st.bed | sed '1d' | \
   parallel -j1 -C' ' '

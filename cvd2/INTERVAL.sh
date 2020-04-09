@@ -1,4 +1,4 @@
-# 8-4-2020 JHZ
+# 9-4-2020 JHZ
 
 # R.3.5.3
 
@@ -39,7 +39,7 @@ parallel -j4 -C' ' '
      sort -k1,1 | \
      join -12 -21 /data/jinhua/INF/work/snp_pos - | \
      awk -vOFS="\t" "{print \$2, \$3, \$4}"
-  )  > INTERVAL.{}.lz'
+  ) | grep -v -w NA > INTERVAL.{}.lz'
 
 cut -f5 st.bed | sed '1d' | \
   parallel -j1 -C' ' '
