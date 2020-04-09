@@ -7,3 +7,4 @@
 * [nCov2019](https://github.com/GuangchuangYu/nCov2019).
 * [CSSEGISandData](https://github.com/CSSEGISandData).
 * [GISAID](https://www.gisaid.org/).
+* [Fundings](https://otr.medschl.cam.ac.uk/academics-clinicians/funding/covid-funding-calls).
