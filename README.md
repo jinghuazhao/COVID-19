@@ -7,4 +7,4 @@
 * [nCov2019](https://github.com/GuangchuangYu/nCov2019).
 * [CSSEGISandData](https://github.com/CSSEGISandData).
 * [GISAID](https://www.gisaid.org/) (login: [https://gisaid.org](https://gisaid.org)).
-* [CFA](https://otr.medschl.cam.ac.uk/academics-clinicians/funding/covid-funding-calls).
+* [CFA](https://otr.medschl.cam.ac.uk/academics-clinicians/funding/covid-funding-calls), [UKRI](https://www.ukri.org/) ([funding](https://www.ukri.org/funding/funding-opportunities/ukri-open-call-for-research-and-innovation-ideas-to-address-covid-19/)).
