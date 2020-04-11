@@ -6,17 +6,18 @@
   * Spira A, et al. Airway epithelial gene expression in the diagnostic evaluation of smokers with suspect lung cancer. *Nat Med* 2007 Mar;13(3):361-6. PMID: 17334370
   * Gustafson AM, et al. Airway PI3K pathway activation is an early and reversible event in lung cancer development. *Sci Transl Med* 2010 Apr 7;2(26):26ra25. PMID: 20375364
 * GSE122960
-  * Hamming I, et al. Tissue distribution of ACE2 protein, the functional receptor for SARS coronavirus. A first step in understanding SARS pathogenesis. *J Pathol*. 2004;203(2):631–637. doi:10.1002/path.1570, https://pubmed.ncbi.nlm.nih.gov/15141377/.
   * Reyfman PA, et al. Single-cell transcriptomic analysis of human lung provides insights into the pathobiology of pulmonary fibrosis. *Am J Respir Crit Care Med*. 2019;199(12):1517–1536. doi:10.1164/rccm.201712-2410OC, https://www.atsjournals.org/doi/10.1164/rccm.201712-2410OC, https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE122960.
   * Zhao Y, et al. Single-cell RNA expression profiling of ACE2, the putative receptor of Wuhan 2019-nCov. *bioRvix*, https://www.biorxiv.org/content/10.1101/2020.01.26.919985v1.full.
 * GSE106118
   * Cui Y, et al. Single-cell transcriptome analysis maps the developmental track of the human heart. *Cell Rep*. 2019;26(7):1934–1950.e5. doi:10.1016/j.celrep.2019.01.079
   * Zou X, et al. Single-cell RNA-seq data analysis on the receptor ACE2 expression reveals the potential risk of different human organs vulnerable to 2019-nCoV infection. *Front Med*. 2020;10.1007/s11684-020-0754-0. doi:10.1007/s11684-020-0754-0
-  * ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE106nnn/GSE106118/suppl/GSE106118_RAW.tar
-  * ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE106nnn/GSE106118/suppl/GSE106118_UMI_count_merge.txt.gz
-  * ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE106nnn/GSE106118/suppl/GSE106118_barcode_information.txt.gz
 
 ## Seurat
 * https://satijalab.org/seurat/v3.1/pbmc3k_tutorial.html
 * https://s3-us-west-2.amazonaws.com/10x.files/samples/cell/pbmc3k/pbmc3k_filtered_gene_bc_matrices.tar.gz
 * https://www.dropbox.com/s/y6kwho066vugjrg/pbmc33k.R
+
+## References
+
+Hamming I, et al. Tissue distribution of ACE2 protein, the functional receptor for SARS coronavirus. A first step in understanding SARS pathogenesis. *J Pathol*. 2004;203(2):631–637. doi:10.1002/path.1570, https://pubmed.ncbi.nlm.nih.gov/15141377/.
+
