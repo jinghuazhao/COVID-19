@@ -1,4 +1,4 @@
-# 6-4-2020 JHZ
+# 11-4-2020 JHZ
 
 library(GEOquery)
 library(Biobase)
@@ -20,7 +20,7 @@ gpl <- getGEO(filename="GPL96.annot.gz")
 MA <- GDS2MA(gds,GPL=gpl)
 lmFit(MA$M)
 
-# GSM
+# GSM -- lung tissue from wild type mouse
 gsm <- getGEO('GSM4115',GSEMatrix=TRUE)
 Meta(gsm)
 Columns(gsm)
@@ -45,6 +45,10 @@ rownames(pdata) <- names(gsmlist)
 pheno <- as(pdata,"AnnotatedDataFrame")
 eset <- new('ExpressionSet',exprs=d,phenoData=pheno)
 pData(phenoData(eset))
+
+# GSE -- the heart data
+gse <- getGEO('GSE106118',GSEMatrix=FALSE)
+Meta(gse)
 
 # scRNA
 gse <- getGEO("GSM3489195", GSEMatrix=FALSE)
