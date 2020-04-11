@@ -21,3 +21,4 @@
 
 Hamming I, et al. Tissue distribution of ACE2 protein, the functional receptor for SARS coronavirus. A first step in understanding SARS pathogenesis. *J Pathol*. 2004;203(2):631–637. doi:10.1002/path.1570, https://pubmed.ncbi.nlm.nih.gov/15141377/.
 
+RPKM, FPKM and TPM, clearly explained, https://www.rna-seqblog.com/rpkm-fpkm-and-tpm-clearly-explained/
