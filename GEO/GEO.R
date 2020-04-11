@@ -4,7 +4,7 @@ library(GEOquery)
 library(Biobase)
 library(limma)
 
-# GDS
+# GDS -- airway epithelial cells
 gds <- getGEO('GDS2771')
 m <- Meta(gds)
 Columns(gds)
@@ -20,7 +20,7 @@ gpl <- getGEO(filename="GPL96.annot.gz")
 MA <- GDS2MA(gds,GPL=gpl)
 lmFit(MA$M)
 
-# GSM -- lung tissue from wild type mouse
+# GSM -- airway epithelial gene expression
 gsm <- getGEO('GSM4115',GSEMatrix=TRUE)
 Meta(gsm)
 Columns(gsm)
@@ -49,10 +49,6 @@ pData(phenoData(eset))
 # GSE -- the heart data
 gse <- getGEO('GSE106118',GSEMatrix=FALSE)
 Meta(gse)
-
-# scRNA
-gse <- getGEO("GSM3489195", GSEMatrix=FALSE)
-gse
 
 # SRA
 
