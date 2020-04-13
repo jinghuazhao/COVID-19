@@ -1,4 +1,4 @@
-# 11-4-2020 JHZ
+# 13-4-2020 JHZ
 
 library(GEOquery)
 library(Biobase)
@@ -48,6 +48,10 @@ pData(phenoData(eset))
 
 # GSE -- the heart data
 gse <- getGEO('GSE106118',GSEMatrix=FALSE)
+Meta(gse)
+
+# GSE147507
+gse <- getGEO("GSE147507",GSEMatrix=FALSE)
 Meta(gse)
 
 # SRA
