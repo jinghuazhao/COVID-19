@@ -56,10 +56,11 @@ do
    export dbNSFP_2=FATHMM_pred,GERP++_RS,GTEx_V7_tissue,MutPred_protID,Polyphen2_HDIV_pred,Polyphen2_HVAR_pred,SIFT_pred,SIFT4G_pred,fathmm-MKL_coding_pred,
    export dbNSFP_3=rs_dbSNP151,fathmm-MKL_coding_pred,gnomAD_exomes_NFE_AF,gnomAD_genomes_NFE_AF
    export dbNSFP_fields=${dbNSFP_1}${dbNSFP_2}${dbNSFP_3}
-   cd ${LEFTEE}
    vep -i ${wd}/${s}.vepinput -o ${wd}/${s}.dbNSFP --cache --distance 500000 --force --offline --pick --tab \
-       --plugin LoF,loftee_path:.,human_ancestor_fa:human_ancestor.fa.gz \
        --plugin dbNSFP,${VEP}/dbNSFP4.0a/dbNSFP4.0a.gz,${dbNSFP_fields}
+   cd ${LEFTEE}
+   vep -i ${wd}/${s}.vepinput -o ${wd}/${s}.loftee --cache --distance 500000 --force --offline --pick --tab \
+       --plugin LoF,loftee_path:.,human_ancestor_fa:human_ancestor.fa.gz
    cd -
 ## Where the selected ClinVar INFO fields (from the ClinVar VCF file) are:
 # - CLNSIG:     Clinical significance for this single variant
