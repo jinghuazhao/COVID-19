@@ -8,8 +8,16 @@ export ANNOVAR=${HPC_WORK}/annovar
 export LEFTEE=${HPC_WORK}/loftee
 export POLYPHEN=${HPC_WORK}/polyphen-2.2.2
 export VEP=${HPC_WORK}/ensembl-vep
+export wd=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/ACE2
 
-awk 'NR==10||(NR>10 && $4>=15579156 && $4<=15620192)' ${UKB}/ukb_imp_chrX_v3_snpstats.txt > ukb-ACE2.snpstats
+function init()
+{
+  bgenix -g ${UKB}/ukb_imp_chrX_v3.bgen -list -incl-range X:15579156-15620192 > ukb-ACE2
+  bgenix -g ${UKB}/ukb_imp_chrX_v3.bgen -vcf -incl-range X:15579156-15620192  > ukb-ACE2.vcf
+  awk 'NR==10||(NR>10 && $4>=15579156 && $4<=15620192)' ${UKB}/ukb_imp_chrX_v3_snpstats.txt > ukb-ACE2.snpstats
+  ln -sf /rds/user/jhz22/hpc-work/ensembl-vep/clinvar_GRCh37.vcf.gz
+  ln -sf /rds/user/jhz22/hpc-work/ensembl-vep/clinvar_GRCh37.vcf.gz.tbl
+}
 
 R --no-save -q <<END
   snpstats <- read.table("ukb-ACE2.snpstats",as.is=TRUE,header=TRUE)
@@ -29,11 +37,6 @@ R --no-save -q <<END
     writetable(all[vars],vepinput,append=TRUE)
   }
 END
-
-ln -sf /rds/user/jhz22/hpc-work/ensembl-vep/clinvar_GRCh37.vcf.gz
-ln -sf /rds/user/jhz22/hpc-work/ensembl-vep/clinvar_GRCh37.vcf.gz.tbl
-
-export wd=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/ACE2
 
 for s in ukb-ACE2
 do
@@ -58,10 +61,6 @@ do
    export dbNSFP_fields=${dbNSFP_1}${dbNSFP_2}${dbNSFP_3}
    vep -i ${wd}/${s}.vepinput -o ${wd}/${s}.dbNSFP --cache --distance 500000 --force --offline --pick --tab \
        --plugin dbNSFP,${VEP}/dbNSFP4.0a/dbNSFP4.0a.gz,${dbNSFP_fields}
-   cd ${LEFTEE}
-   vep -i ${wd}/${s}.vepinput -o ${wd}/${s}.loftee --cache --distance 500000 --force --offline --pick --tab \
-       --plugin LoF,loftee_path:.,human_ancestor_fa:human_ancestor.fa.gz
-   cd -
 ## Where the selected ClinVar INFO fields (from the ClinVar VCF file) are:
 # - CLNSIG:     Clinical significance for this single variant
 # - CLNREVSTAT: ClinVar review status for the Variation ID
@@ -70,11 +69,8 @@ do
   vep --i ukb-ACE2.vepinput --species homo_sapiens -o ukb-ACE2.clinvar --cache --offline --force_overwrite \
       --custom clinvar_GRCh37.vcf.gz,ClinVar,vcf,exact,0,CLNSIG,CLNREVSTAT,CLNDN --tab \
       --fields Uploaded_variation,Gene,Consequence,ClinVar_CLNSIG,ClinVar_CLNREVSTAT,ClinVar_CLNDN
+   cd ${LEFTEE}
+   vep -i ${wd}/${s}.vepinput -o ${wd}/${s}.loftee --cache --distance 500000 --force --offline --pick --tab \
+       --plugin LoF,loftee_path:.,human_ancestor_fa:human_ancestor.fa.gz
+   cd -
 done
-
-function IPD()
-{
-  bgenix -g ${UKB}/ukb_imp_chrX_v3.bgen -list -incl-range X:15579156-15620192 > ukb-ACE2
-  bgenix -g ${UKB}/ukb_imp_chrX_v3.bgen -vcf -incl-range X:15579156-15620192  > ukb-ACE2.vcf
-
-}
