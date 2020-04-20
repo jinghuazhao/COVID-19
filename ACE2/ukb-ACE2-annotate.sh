@@ -69,8 +69,6 @@ do
   vep --i ukb-ACE2.vepinput --species homo_sapiens -o ukb-ACE2.clinvar --cache --offline --force_overwrite \
       --custom clinvar_GRCh37.vcf.gz,ClinVar,vcf,exact,0,CLNSIG,CLNREVSTAT,CLNDN --tab \
       --fields Uploaded_variation,Gene,Consequence,ClinVar_CLNSIG,ClinVar_CLNREVSTAT,ClinVar_CLNDN
-   cd ${LEFTEE}
-   vep -i ${wd}/${s}.vepinput -o ${wd}/${s}.loftee --cache --distance 500000 --force --offline --pick --tab \
-       --plugin LoF,loftee_path:.,human_ancestor_fa:human_ancestor.fa.gz
-   cd -
+  vep -i ${s}.vepinput -o ${s}.loftee --cache --distance 500000 --force --offline --pick --tab \
+      --plugin LoF,loftee_path:${LOFTEE},human_ancestor_fa:human_ancestor.fa.gz,conservation_file:phylocsf_gerp.sql.gz
 done
