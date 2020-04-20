@@ -1,4 +1,4 @@
-# 18-4-2020 JHZ
+# 20-4-2020 JHZ
 
 export UKB=/rds/project/jmmh2/rds-jmmh2-post_qc_data/uk_biobank/imputed/uk10k_hrc/HRC_UK10K
 export HPC_WORK=/rds/user/${USER}/hpc-work
@@ -72,3 +72,11 @@ do
   vep -i ${s}.vepinput -o ${s}.loftee --cache --distance 500000 --force --offline --pick --tab \
       --plugin LoF,loftee_path:${LOFTEE},human_ancestor_fa:human_ancestor.fa.gz,conservation_file:phylocsf_gerp.sql.gz
 done
+
+# CADD
+# https://cadd.gs.washington.edu/score
+cat ukb-ACE2.vepinput | gzip -f > ukb-ACE2.vcf.gz
+
+# PROVEAN
+# http://provean.jcvi.org/index.php
+sed '1,2d' ukb-ACE2.vepinput | awk -vOFS="," '{print $1,$2,$4,$5}' | xsel -i
