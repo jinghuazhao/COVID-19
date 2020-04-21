@@ -1,4 +1,4 @@
-# 20-4-2020 JHZ
+# 21-4-2020 JHZ
 
 export UKB=/rds/project/jmmh2/rds-jmmh2-post_qc_data/uk_biobank/imputed/uk10k_hrc/HRC_UK10K
 export HPC_WORK=/rds/user/${USER}/hpc-work
@@ -12,14 +12,18 @@ export wd=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/ACE2
 
 function init()
 {
-  bgenix -g ${UKB}/ukb_imp_chrX_v3.bgen -list -incl-range X:15579156-15620192 > ukb-ACE2
-  bgenix -g ${UKB}/ukb_imp_chrX_v3.bgen -vcf -incl-range X:15579156-15620192  > ukb-ACE2.vcf
-  awk 'NR==10||(NR>10 && $4>=15579156 && $4<=15620192)' ${UKB}/ukb_imp_chrX_v3_snpstats.txt > ukb-ACE2.snpstats
+# https://grch37.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=ENSG00000130234;r=X:15579156-15620271
+  gunzip -c ensembl/dbSNP.txt.gz | \
+  cut -f1,4,5,7,17 > ensembl/dbSNP.txt
+  gunzip -c ensembl/gene.txt.gz | \
+  cut -f1,4,5,8,13-16 > ensembl/gene.txt
+  bgenix -g ${UKB}/ukb_imp_chrX_v3.bgen -list -incl-range X:15579156-15620271 > ukb-ACE2
+  bgenix -g ${UKB}/ukb_imp_chrX_v3.bgen -vcf -incl-range X:15579156-15620271  > ukb-ACE2.vcf
+  awk 'NR==10||(NR>10 && $4>=15579156 && $4<=15620271)' ${UKB}/ukb_imp_chrX_v3_snpstats.txt > ukb-ACE2.snpstats
   ln -sf /rds/user/jhz22/hpc-work/ensembl-vep/clinvar_GRCh37.vcf.gz
   ln -sf /rds/user/jhz22/hpc-work/ensembl-vep/clinvar_GRCh37.vcf.gz.tbl
-}
 
-R --no-save -q <<END
+  R --no-save -q <<\ \ END
   snpstats <- read.table("ukb-ACE2.snpstats",as.is=TRUE,header=TRUE)
   ord <- with(snpstats,order(chromosome,position))
   ct <- snpstats[ord,]
@@ -36,7 +40,23 @@ R --no-save -q <<END
     vars <- c("chr","pos","snp","a1","a2","qual","filter","info")
     writetable(all[vars],vepinput,append=TRUE)
   }
-END
+  END
+
+  R --no-save -q <<\ \ END
+    loftee <- read.delim("ukb-ACE2.loftee",as.is=TRUE,skip=29)
+    CSQ <- table(with(loftee,Consequence))
+    lbls <- paste(names(CSQ), "\n", CSQ, sep="")
+    pie(CSQ, labels = lbls, main="Pie Chart of Codons\n (with sample sizes)") 
+  END
+
+# CADD
+# https://cadd.gs.washington.edu/score
+  cat ukb-ACE2.vepinput | gzip -f > ukb-ACE2.vcf.gz
+
+# PROVEAN
+# http://provean.jcvi.org/index.php
+  sed '1,2d' ukb-ACE2.vepinput | awk -vOFS="," '{print $1,$2,$4,$5}' | xsel -i
+}
 
 for s in ukb-ACE2
 do
@@ -72,11 +92,3 @@ do
   vep -i ${s}.vepinput -o ${s}.loftee --cache --distance 500000 --force --offline --pick --tab \
       --plugin LoF,loftee_path:${LOFTEE},human_ancestor_fa:human_ancestor.fa.gz,conservation_file:phylocsf_gerp.sql.gz
 done
-
-# CADD
-# https://cadd.gs.washington.edu/score
-cat ukb-ACE2.vepinput | gzip -f > ukb-ACE2.vcf.gz
-
-# PROVEAN
-# http://provean.jcvi.org/index.php
-sed '1,2d' ukb-ACE2.vepinput | awk -vOFS="," '{print $1,$2,$4,$5}' | xsel -i
