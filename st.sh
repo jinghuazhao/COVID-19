@@ -1,4 +1,4 @@
-# 17-4-2020 JHZ
+# 23-4-2020 JHZ
 
 git add .gitignore
 git commit -m ".gitignore"
@@ -8,7 +8,7 @@ git add doc
 git commit -m "Documents and auxiliary files"
 git add -f cvd2/README.txt cvd2/*sh cvd2/ps.R
 git commit -m "CVD2"
-git add -f ACE2/2805-6_2.metal ACE2/select.sh ACE2/ukb-ACE2-annotate.sh
+git add -f ACE2/2805-6_2.metal ACE2/select.sh ACE2/ukb-ACE2-annotate.sh ACE2/ace2_interval_imputed_ukb_imputed.sh
 git commit -m "SomaLogic"
 git add -f GEO/GEO.R GEO/GEO2R.R GEO/test.ini GEO/test.R GEO/test.sh GEO/README.md
 git commit -m "GEO test"
