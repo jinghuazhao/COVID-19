@@ -66,7 +66,7 @@ do
 # - CLNREVSTAT: ClinVar review status for the Variation ID
 # - CLNDN:      ClinVar's preferred disease name for the concept specified by disease identifiers in CLNDISDB
 # Or the INFO fields you want in the ClinVar VCF file
-  vep --i ukb-ACE2.vepinput --species homo_sapiens -o ukb-ACE2.clinvar --cache --offline --force_overwrite \
+  vep --i ${s}.vepinput --species homo_sapiens -o ${s}.clinvar --cache --offline --force_overwrite \
       --custom clinvar_GRCh37.vcf.gz,ClinVar,vcf,exact,0,CLNSIG,CLNREVSTAT,CLNDN --tab \
       --fields Uploaded_variation,Gene,Consequence,ClinVar_CLNSIG,ClinVar_CLNREVSTAT,ClinVar_CLNDN
   vep -i ${s}.vepinput -o ${s}.loftee --cache --distance 500000 --force --offline --pick --tab \
