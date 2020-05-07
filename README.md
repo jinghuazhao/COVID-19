@@ -21,3 +21,6 @@
 ## GISAID
 * [GISAID](https://www.gisaid.org/) (login: [https://gisaid.org](https://gisaid.org)).
 * [nextstran.org](https://nextstrain.org/ncov/global).
+
+## Phenotypes
+* [Machine-readable version of electronic health record phenotypes](https://github.com/spiros/chronological-map-phenotypes) [Methods](https://github.com/spiros/chronological-map-phenotypes/blob/master/METHODS.md)
