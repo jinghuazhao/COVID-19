@@ -8,9 +8,9 @@
 * [Single Cell Portal](https://singlecell.broadinstitute.org/single_cell)
 
 ## COVID-19
-* [The COVID-19 Host Genetics Initiative](https://covid19hg.netlify.com/) [registration](https://www.covid19hg.org/register/) and [analysis plan](https://docs.google.com/document/d/1Pcq1jttF8W7ifEUXA6-a1WVMsUyEoAybS6IqvuP-Uv8/edit?ts=5e964dc2#).
 * [CITIID](https://covid19.medschl.cam.ac.uk/)
 * [HDRUK/covid-19](https://github.com/HDRUK/covid-19).
+* [The COVID-19 Host Genetics Initiative](https://covid19hg.netlify.com/) ([registration](https://www.covid19hg.org/register/) and [analysis plan](https://docs.google.com/document/d/1Pcq1jttF8W7ifEUXA6-a1WVMsUyEoAybS6IqvuP-Uv8/edit?ts=5e964dc2#)).
 
 ## GISAID
 * [GISAID](https://www.gisaid.org/) (login: [https://gisaid.org](https://gisaid.org)).
