@@ -18,6 +18,7 @@
 
 ## Phenotypes
 * [Machine-readable version of electronic health record phenotypes](https://github.com/spiros/chronological-map-phenotypes) ([Methods](https://github.com/spiros/chronological-map-phenotypes/blob/master/METHODS.md))
+* UK biobank COVID-19 [data](http://biobank.ndph.ox.ac.uk/ukb/exinfo.cgi?src=COVID19), [format](http://biobank.ndph.ox.ac.uk/ukb/exinfo.cgi?src=COVID19_tests) and [field](http://biobank.ctsu.ox.ac.uk/ukb/field.cgi?id=40100).
 
 ## Statistics
 * [Daily tests and proportions of positives](https://pfryz.shinyapps.io/covid-19/).
