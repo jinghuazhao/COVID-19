@@ -24,4 +24,5 @@ merge 1:1 Affymetrix_gwasQC_bl using INTERVAL-pca, gen(dataidpca)
 keep if dataidpca==3
 merge 1:1 identifier using covid, gen(intervalcovid)
 keep if intervalcovid==3
+outsheet Affymetrix_gwasQC_bl agePulse sexPulse PC_1-PC_20 using INTERVAL-covid.txt, noquote replace
 gzsave INTERVAL-covid, replace
