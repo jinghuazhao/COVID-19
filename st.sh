@@ -13,7 +13,7 @@ git commit -m "SomaLogic"
 git add -f GEO/GEO.R GEO/GEO2R.R GEO/test.ini GEO/test.R GEO/test.sh GEO/README.md
 git commit -m "GEO test"
 git add -f HGI/INTERVAL.do HGI/INTERVAL.sh
-git add "INTERVAL analysis"
+git commit -m "INTERVAL analysis"
 git add st.sh
 git commit -m "st.sh"
 git push
