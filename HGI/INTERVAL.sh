@@ -12,45 +12,46 @@ function phenofile()
   module load ceuadmin/stata
   stata -b do INTERVAL.do
 }
+rm INTERVAL.log
 
 function genofile()
 {
 # GRM
   module load plink/2.00-alpha
-  plink2 --bfile ${merged_imputation} --indep-pairwise 1000kb 1 0.1 --out INTERVAL
-  plink2 --bfile ${merged_imputation} --make-bed --extract INTERVAL.prune.in --out INTERVAL
+  plink2 --bfile ${merged_imputation} --indep-pairwise 1000kb 1 0.1 --out work/INTERVAL
+  plink2 --bfile ${merged_imputation} --make-bed --extract work/INTERVAL.prune.in --out work/INTERVAL
 # Autosomes
-  sed '1d' INTERVAL-covid.txt | \
-  cut -d' ' -f1 > INTERVAL.samples
+  sed '1d' work/INTERVAL-covid.txt | \
+  cut -d' ' -f1 > work/INTERVAL.samples
   seq 22 | \
   parallel --env autosomes -C' ' '
-    qctool -g ${autosomes}/impute_{}_interval.bgen -s ${autosomes}/interval.samples -incl-samples INTERVAL.samples -og INTERVAL-{}.bgen
-    bgenix -g INTERVAL-{}.bgen -index -clobber
+    qctool -g ${autosomes}/impute_{}_interval.bgen -s ${autosomes}/interval.samples \
+           -incl-samples work/INTERVAL.samples -bgen-bits 8 -og work/INTERVAL-{}.bgen -os work/INTERVAL-{}.samples
+    bgenix -g work/INTERVAL-{}.bgen -index -clobber
   '
 # HLA region
-  plink2 --bfile ${merged_imputation} --chr 6 --from-bp 25392021 --to-bp 33392022 --make-bed --out INTERVAL-HLA
+  plink2 --bfile ${merged_imputation} --chr 6 --from-bp 25392021 --to-bp 33392022 --make-bed --out work/INTERVAL-HLA
 # Chromosome X
   bcftools query -l ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz | head
-  awk '{print $1 "_" $1}' INTERVAL.samples | \
-  bcftools view -S - ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz -O v --force-samples > X.vcf
-  export idline=$(awk '/POS/ && /QUAL/ {print NR} ' X.vcf)
-  awk -v idline=${idline} 'NR==dline{print} ' X.vcf > INTERVAL.samples2
+  awk '{print $1 "_" $1}' work/INTERVAL.samples | \
+  bcftools view -S - ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz -O v --force-samples > work/INTERVAL-X.vcf
+  export idno=$(awk '/POS/ && /QUAL/ {print NR} ' work/INTERVAL-X.vcf)
+  awk -v idno=${idno} 'NR==idno{print} ' work/INTERVAL-X.vcf > work/INTERVAL.idline
   (
-    cat INTERVAL.samples | \
+    cat work/INTERVAL.samples | \
     parallel --dry-run -C' ' "
       export s={}_{};
       export t={};
-      sed -i 's/'\"\${s}\"'/'\"\${t}\"'/g' INTERVAL.samples2
+      sed -i 's/'\"\${s}\"'/'\"\${t}\"'/g' work/INTERVAL.idline
     "
   ) | bash
   (
-    awk -v idline=${idline} 'NR<idline' X.vcf
-    cat INTERVAL.samples2
-    awk -v idline=${idline} 'NR>idline' X.vcf
+    awk -v idno=${idno} 'NR<idno' work/INTERVAL-X.vcf
+    cat work/INTERVAL.idline
+    awk -v idno=${idno} 'NR>idno' work/INTERVAL-X.vcf
   ) | \
-  qctool -filetype vcf -g - -og X.bgen
-  bgenix -g X.bgen -index -clobber
-  rm INTERVAL.samples2
+  qctool -filetype vcf -g - -bgen-bits 8 -og work/INTERVAL-X.bgen
+  bgenix -g work/INTERVAL-X.bgen -index -clobber
 }
 
 # Analysis 5-susceptibility (phenotype name: ANA5):
@@ -77,7 +78,7 @@ step2_SPAtests.R \
    --bgenFileIndex=INTERVAL-{}.bgen.bgi \
    --minMAF=0.0001 \
    --minMAC=1 \
-   --sampleFile=INTERVAL-covid.txt \
+   --sampleFile=INTERVAL.samples \
    --GMMATmodelFile=INTERVAL.rda \
    --varianceRatioFile=INTERVAL.varianceRatio.txt \
    --SAIGEOutputFile=INTERVAL-{}.txt \
@@ -106,7 +107,6 @@ step2_SPAtests.R \
    --minMAF=0 \
    --minMAC=0.5 \
    --maxMAFforGroupTest=0.01 \
-   --sampleFile=INTERVAL-covid.txt \
    --GMMATmodelFile=INTERVAL.rda \
    --varianceRatioFile=INTERVAL.varianceRatio.txt \
    --SAIGEOutputFile=INTERVAL-{}.SAIGE.gene.txt \
