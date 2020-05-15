@@ -15,7 +15,6 @@ function phenofile()
 
 function genofile()
 {
-# SBATCH -A CARDIO-SL0-CPU -p cardio_intr --qos=cardio_intr
 # GRM
   module load plink/2.00-alpha
   plink2 --bfile ${merged_imputation} --indep-pairwise 1000kb 1 0.1 --out INTERVAL
@@ -34,19 +33,29 @@ function genofile()
   bcftools query -l ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz | head
   awk '{print $1 "_" $1}' INTERVAL.samples | \
   bcftools view -S - ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz -O v --force-samples > X.vcf
+  export idline=$(awk '/POS/ && /QUAL/ {print NR} ' X.vcf)
+  awk -v idline=${idline} 'NR==dline{print} ' X.vcf > INTERVAL.samples2
   (
     cat INTERVAL.samples | \
     parallel --dry-run -C' ' "
       export s={}_{};
       export t={};
-      sed -i 's/'\"\${s}\"'/'\"\${t}\"'/g' X.vcf
+      sed -i 's/'\"\${s}\"'/'\"\${t}\"'/g' INTERVAL.samples2
     "
   ) | bash
-  qctool -g X.vcf -og X.bgen
+  (
+    awk -v idline=${idline} 'NR<idline' X.vcf
+    cat INTERVAL.samples2
+    awk -v idline=${idline} 'NR>idline' X.vcf
+  ) | \
+  qctool -filetype vcf -g - -og X.bgen
   bgenix -g X.bgen -index -clobber
+  rm INTERVAL.samples2
 }
 
 # Analysis 5-susceptibility (phenotype name: ANA5):
+
+module load gcc/6
 
 # Single-variant association tests
 
@@ -61,6 +70,7 @@ step1_fitNULLGLMM.R \
    --nThreads=4
 
 echo $(seq 22) X | \
+tr ' ' '\n' | \
 parallel --env autosomes -C' ' '
 step2_SPAtests.R \
    --bgenFile=INTERVAL-{}.bgen \
@@ -71,7 +81,6 @@ step2_SPAtests.R \
    --GMMATmodelFile=INTERVAL.rda \
    --varianceRatioFile=INTERVAL.varianceRatio.txt \
    --SAIGEOutputFile=INTERVAL-{}.txt \
-   --numLinesOutput=2 \
    --IsOutputNinCaseCtrl=TRUE \
    --IsOutputHetHomCountsinCaseCtrl=TRUE \
    --IsOutputAFinCaseCtrl=TRUE
@@ -82,14 +91,13 @@ step2_SPAtests.R \
 createSparseGRM.R \
    --plinkFile=INTERVAL \
    --minMAF=0.0001 \
-   --minMAC=1 \
-   --sampleFile=INTERVAL-covid.txt \
    --nThreads=4 \
    --outputPrefix=INTERVAL.sparseGRM \
    --numRandomMarkerforSparseKin=2000 \
    --relatednessCutoff=0.125
 
 echo $(seq 22) X | \
+tr ' ' '\n' | \
 parallel --env autosomes -C' ' '
 step2_SPAtests.R \
    --bgenFile=INTERVAL-{}.bgen \
@@ -101,10 +109,10 @@ step2_SPAtests.R \
    --sampleFile=INTERVAL-covid.txt \
    --GMMATmodelFile=INTERVAL.rda \
    --varianceRatioFile=INTERVAL.varianceRatio.txt \
-   --SAIGEOutputFile=INTERVAL.SAIGE.gene-{}.txt \
+   --SAIGEOutputFile=INTERVAL-{}.SAIGE.gene.txt \
    --numLinesOutput=1 \
-   --groupFile=INTERVAL.eneBasedtest.txt \
-   --sparseSigmaFile=INTERVAL.sparseSigma.mtx \
+   --groupFile=INTERVAL-{}.eneBasedtest.txt \
+   --sparseSigmaFile=INTERVAL-{}.sparseSigma.mtx \
    --IsOutputAFinCaseCtrl=TRUE \
    --IsSingleVarinGroupTest=TRUE \
    --IsOutputPvalueNAinGroupTestforBinary=TRUE \
@@ -112,6 +120,7 @@ step2_SPAtests.R \
 '
 ##
 
+# SBATCH -A CARDIO-SL0-CPU -p cardio_intr --qos=cardio_intr
 # createSparseGRM.R --help
 # step1_fitNULLGLMM.R --help
 # step2_SPAtests.R --help
