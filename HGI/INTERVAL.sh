@@ -232,17 +232,6 @@ gsutil cp UKBB.Doe.ANA5.1.ALL.EUR.154.1341.SAIGE.20200515.txt.gz gs://covid19-hg
 # step1_fitNULLGLMM.R --help
 # step2_SPAtests.R --help
 
-# SNP information
-(
-  cut -f1,7,8,15,18,19 $ref/impute_*_interval.snpstats | \
-  head -1
-  seq 22 | \
-  parallel --env ref -C' ' '
-    sed "1d" $ref/impute_{}_interval.snpstats | \
-    cut -f1,7,8,15,18,19
-  '
-) | gzip -f > work/INTERVAL.snpstats.gz
-
 cd 06-05-2020/INTERVAL
 sed '1d' INTERVAL_Covid_06MAY2020.csv | cut -d',' -f1 | sort | join - <(sed '1d' INTERVALdata_06MAY2020.csv | cut -d',' -f1) | wc -l
 sed '1d' INTERVAL_Covid_06MAY2020.csv | cut -d',' -f1 | sort | join - <(sed '1d' INTERVAL_OmicsMap_20200506.csv | cut -d',' -f1) | wc -l
