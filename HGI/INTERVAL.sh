@@ -1,4 +1,4 @@
-# 14-5-2020 JHZ
+# 15-5-2020 JHZ
 
 export dir=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/HGI
 export autosomes=/home/jhz22/rds/post_qc_data/interval/imputed/uk10k_1000g_b37/imputed
@@ -16,9 +16,11 @@ function phenofile()
 function genofile()
 {
 # SBATCH -A CARDIO-SL0-CPU -p cardio_intr --qos=cardio_intr
+# GRM
   module load plink/2.00-alpha
   plink2 --bfile ${merged_imputation} --indep-pairwise 1000kb 1 0.1 --out INTERVAL
   plink2 --bfile ${merged_imputation} --make-bed --extract INTERVAL.prune.in --out INTERVAL
+# Autosomes
   sed '1d' INTERVAL-covid.txt | \
   cut -d' ' -f1 > INTERVAL.samples
   seq 22 | \
@@ -26,14 +28,19 @@ function genofile()
     qctool -g ${autosomes}/impute_{}_interval.bgen -s ${autosomes}/interval.samples -incl-samples INTERVAL.samples -og INTERVAL-{}.bgen
     bgenix -g INTERVAL-{}.bgen -index -clobber
   '
+# HLA region
+  plink2 --bfile ${merged_imputation} --chr 6 --from-bp 25392021 --to-bp 33392022 --make-bed --out INTERVAL-HLA
+# Chromosome X
+  bcftools query -l ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz | head
   awk '{print $1 "_" $1}' INTERVAL.samples | \
   bcftools view -S - ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz -O v --force-samples > X.vcf
-  cat INTERVAL.samples | \
-  parallel --dry-run -C' ' "
-    export s={}_{};
-    export t={};
-    sed -i 's/'\"\${s}\"'/'\"\${t}\"'/g' X.vcf
-  "
+  (
+    cat INTERVAL.samples | \
+    parallel --dry-run -C' ' "
+      export s={}_{};
+      export t={};
+      sed -i 's/'\"\${s}\"'/'\"\${t}\"'/g' X.vcf
+    "
   ) | bash
   qctool -g X.vcf -og X.bgen
   bgenix -g X.bgen -index -clobber
