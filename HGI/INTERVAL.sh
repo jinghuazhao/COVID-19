@@ -16,13 +16,14 @@ rm INTERVAL.log
 
 function genofile()
 {
+  sed '1d' work/INTERVAL-covid.txt | \
+  cut -d' ' -f1 > work/INTERVAL.samples
+  paste -d' ' work/INTERVAL.samples work/INTERVAL.samples > work/INTERAL.samples2
 # GRM
   module load plink/2.00-alpha
   plink2 --bfile ${merged_imputation} --indep-pairwise 1000kb 1 0.1 --out work/INTERVAL
-  plink2 --bfile ${merged_imputation} --make-bed --extract work/INTERVAL.prune.in --out work/INTERVAL
+  plink2 --bfile ${merged_imputation} --make-bed --extract work/INTERVAL.prune.in -keep work/INTERVAL.samples2 --out work/INTERVAL
 # Autosomes
-  sed '1d' work/INTERVAL-covid.txt | \
-  cut -d' ' -f1 > work/INTERVAL.samples
   seq 22 | \
   parallel --env autosomes -C' ' '
     qctool -g ${autosomes}/impute_{}_interval.bgen -s ${autosomes}/interval.samples \
@@ -46,6 +47,7 @@ function genofile()
     "
   ) | bash
   echo 110001440667 > work/INTERVAL-X.excl
+  grep -v 110001440667 work/INTERVAL.samples > work/INTERVAL-X.samples
   (
     awk -v idno=${idno} 'NR<idno' work/INTERVAL-X.vcf
     cat work/INTERVAL.idline
@@ -108,6 +110,7 @@ step2_SPAtests.R \
    --bgenFileIndex=work/INTERVAL-{}.bgen.bgi \
    --minMAF=0.0001 \
    --minMAC=1 \
+   --sampleFile=work/INTERVAL-X.samples \
    --GMMATmodelFile=output/INTERVAL-X.rda \
    --varianceRatioFile=output/INTERVAL.varianceRatio.txt \
    --SAIGEOutputFile=output/INTERVAL-{}.txt \
@@ -121,12 +124,12 @@ step2_SPAtests.R \
 createSparseGRM.R \
    --plinkFile=work/INTERVAL \
    --minMAF=0.0001 \
-   --nThreads=4 \
+   --nThreads=8 \
    --outputPrefix=output/INTERVAL.sparseGRM \
    --numRandomMarkerforSparseKin=2000 \
    --relatednessCutoff=0.125
 
-echo $(seq 22) X | \
+echo $(seq 22) | \
 tr ' ' '\n' | \
 parallel --env autosomes -C' ' '
 step2_SPAtests.R \
@@ -136,12 +139,46 @@ step2_SPAtests.R \
    --minMAF=0 \
    --minMAC=0.5 \
    --maxMAFforGroupTest=0.01 \
+   --sampleFile=work/INTERVAL.samples \
    --GMMATmodelFile=output/INTERVAL.rda \
-   --varianceRatioFile=INTERVAL.varianceRatio.txt \
+   --varianceRatioFile=output/INTERVAL.varianceRatio.txt \
    --SAIGEOutputFile=output/INTERVAL-{}.SAIGE.gene.txt \
    --numLinesOutput=1 \
-   --groupFile=output/INTERVAL-{}.eneBasedtest.txt \
-   --sparseSigmaFile=output/INTERVAL-{}.sparseSigma.mtx \
+   --sparseSigmaFile=output/INTERVAL.sparseGRM_relatednessCutoff_0.125_2000_randomMarkersUsed.sparseGRM.mtx \
+   --IsOutputAFinCaseCtrl=TRUE \
+   --IsSingleVarinGroupTest=TRUE \
+   --IsOutputPvalueNAinGroupTestforBinary=TRUE \
+   --IsAccountforCasecontrolImbalanceinGroupTest=TRUE
+'
+
+## X
+
+paste -d' ' work/INTERVAL-X.samples work/INTERVAL-X.samples > work/INTERVAL-X.samples2
+plink2 --bfile work/INTERVAL --make-bed -keep work/INTERVAL-X.samples2 --out work/INTERVAL-X
+
+createSparseGRM.R \
+   --plinkFile=work/INTERVAL-X \
+   --minMAF=0.0001 \
+   --nThreads=8 \
+   --outputPrefix=output/INTERVAL-X.sparseGRM \
+   --numRandomMarkerforSparseKin=2000 \
+   --relatednessCutoff=0.125
+
+echo X | \
+parallel --env autosomes -C' ' '
+step2_SPAtests.R \
+   --bgenFile=work/INTERVAL-{}.bgen \
+   --bgenFileIndex=work/INTERVAL-{}.bgen.bgi \
+   --chrom={} \
+   --minMAF=0 \
+   --minMAC=0.5 \
+   --maxMAFforGroupTest=0.01 \
+   --sampleFile=work/INTERVAL.samples \
+   --GMMATmodelFile=output/INTERVAL.rda \
+   --varianceRatioFile=output/INTERVAL.varianceRatio.txt \
+   --SAIGEOutputFile=output/INTERVAL-{}.SAIGE.gene.txt \
+   --numLinesOutput=1 \
+   --sparseSigmaFile=output/INTERVAL-X.sparseGRM_relatednessCutoff_0.125_2000_randomMarkersUsed.sparseGRM.mtx \
    --IsOutputAFinCaseCtrl=TRUE \
    --IsSingleVarinGroupTest=TRUE \
    --IsOutputPvalueNAinGroupTestforBinary=TRUE \
