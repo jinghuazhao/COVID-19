@@ -45,12 +45,13 @@ function genofile()
       sed -i 's/'\"\${s}\"'/'\"\${t}\"'/g' work/INTERVAL.idline
     "
   ) | bash
+  echo 110001440667 > work/INTERVAL-X.excl
   (
     awk -v idno=${idno} 'NR<idno' work/INTERVAL-X.vcf
     cat work/INTERVAL.idline
     awk -v idno=${idno} 'NR>idno' work/INTERVAL-X.vcf
   ) | \
-  qctool -filetype vcf -g - -bgen-bits 8 -og work/INTERVAL-X.bgen
+  qctool -filetype vcf -g - -bgen-bits 8 -s work/INTERVAL-22.samples -excl-samples work/INTERVAL-X.excl -og work/INTERVAL-X.bgen
   bgenix -g work/INTERVAL-X.bgen -index -clobber
 }
 
@@ -59,6 +60,7 @@ function genofile()
 module load gcc/6
 
 # Single-variant association tests
+## Autosomal
 
 step1_fitNULLGLMM.R \
    --plinkFile=work/INTERVAL \
@@ -70,7 +72,7 @@ step1_fitNULLGLMM.R \
    --outputPrefix=output/INTERVAL \
    --nThreads=4
 
-echo $(seq 22) X | \
+echo $(seq 22) | \
 tr ' ' '\n' | \
 parallel --env autosomes -C' ' '
 step2_SPAtests.R \
@@ -80,6 +82,33 @@ step2_SPAtests.R \
    --minMAC=1 \
    --sampleFile=work/INTERVAL.samples \
    --GMMATmodelFile=output/INTERVAL.rda \
+   --varianceRatioFile=output/INTERVAL.varianceRatio.txt \
+   --SAIGEOutputFile=output/INTERVAL-{}.txt \
+   --IsOutputNinCaseCtrl=TRUE \
+   --IsOutputHetHomCountsinCaseCtrl=TRUE \
+   --IsOutputAFinCaseCtrl=TRUE
+'
+## X
+
+grep -v -f work/INTERVAL-X.excl work/INTERVAL-covid.txt > work/INTERVAL-covid-X.txt
+step1_fitNULLGLMM.R \
+   --plinkFile=work/INTERVAL \
+   --phenoFile=work/INTERVAL-covid-X.txt \
+   --phenoCol=SARS_CoV \
+   --covarColList=age,sex,PC_1,PC_2,PC_3,PC_4,PC_5,PC_6,PC_7,PC_8,PC_9,PC_10,PC_11,PC_12,PC_13,PC_14,PC_15,PC_16,PC_17,PC_18,PC_19,PC_20 \
+   --sampleIDColinphenoFile=ID \
+   --traitType=binary \
+   --outputPrefix=output/INTERVAL-X \
+   --nThreads=4
+
+echo X | \
+parallel --env autosomes -C' ' '
+step2_SPAtests.R \
+   --bgenFile=work/INTERVAL-{}.bgen \
+   --bgenFileIndex=work/INTERVAL-{}.bgen.bgi \
+   --minMAF=0.0001 \
+   --minMAC=1 \
+   --GMMATmodelFile=output/INTERVAL-X.rda \
    --varianceRatioFile=output/INTERVAL.varianceRatio.txt \
    --SAIGEOutputFile=output/INTERVAL-{}.txt \
    --IsOutputNinCaseCtrl=TRUE \
@@ -118,18 +147,35 @@ step2_SPAtests.R \
    --IsOutputPvalueNAinGroupTestforBinary=TRUE \
    --IsAccountforCasecontrolImbalanceinGroupTest=TRUE
 '
-##
+
+# SNP information
+
+(
+  cut -f1,7,8,15,18,19 $ref/impute_*_interval.snpstats | \
+  head -1
+  seq 22 | \
+  parallel --env ref -C' ' '
+    sed "1d" $ref/impute_{}_interval.snpstats | \
+    cut -f1,7,8,15,18,19
+  '
+) | gzip -f > work/INTERVAL.snpstats.gz
+
+function gsutil_install()
+# https://cloud.google.com/storage/docs/gsutil_install#linux
+{
+  wget https://storage.googleapis.com/pub/gsutil.tar.gz
+  tar xvfz gsutil.tar.gz -C ..
+  cd ../gsutil
+  pip install pyasn1==0.4.8  --user
+  python setup.py install --prefix=$HPC_WORK
+}
+
+gsutil cp UKBB.Doe.ANA5.1.ALL.EUR.154.1341.SAIGE.20200515.txt.gz gs://covid19-hg-upload-INTERVAL/
 
 # SBATCH -A CARDIO-SL0-CPU -p cardio_intr --qos=cardio_intr
 # createSparseGRM.R --help
 # step1_fitNULLGLMM.R --help
 # step2_SPAtests.R --help
-
-(
-  cut -f1,7,8,15,18,19 $ref/impute_*_interval.snpstats | \
-  head -1
-  parallel --env ref -C' ' 'sed '1d' $ref/impute_${chr}_interval.snpstats | cut -f1,7,8,15,18,19 $ref/impute_1_interval.snpstats'
-) | gzip -f INTERVAL.snpstats.gz
 
 cd 06-05-2020/INTERVAL
 sed '1d' INTERVAL_Covid_06MAY2020.csv | cut -d',' -f1 | sort | join - <(sed '1d' INTERVALdata_06MAY2020.csv | cut -d',' -f1) | wc -l
