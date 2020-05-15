@@ -148,17 +148,25 @@ step2_SPAtests.R \
    --IsAccountforCasecontrolImbalanceinGroupTest=TRUE
 '
 
-# SNP information
+# Aggregation of results
 
 (
-  cut -f1,7,8,15,18,19 $ref/impute_*_interval.snpstats | \
-  head -1
+  cut -d' ' -f1-3,5-9,11-14,17,21-26 output/INTERVAL-*.txt | head -1
   seq 22 | \
-  parallel --env ref -C' ' '
-    sed "1d" $ref/impute_{}_interval.snpstats | \
-    cut -f1,7,8,15,18,19
+  parallel -C' ' '
+    sed '1d' output/INTERVAL-{}.txt | \
+    cut -d" " -f1-3,5-9,11-14,17,21-26
   '
-) | gzip -f > work/INTERVAL.snpstats.gz
+) | gzip -f > output/INTERVAL.Zhao.ANA5.1.ALL.EUR.97.237.SAIGE.20200515.txt.gz
+
+(
+  echo second part
+
+) | gzip -f > gene-based.results
+
+# [dataset].[last name].[analysis_name].[freeze_number].[sex].[ancestry].[n_cases].[n_controls].[gwas software].[YYYYMMDD].txt.gz
+# [dataset].[last name].[analysis_name].[freeze_number].[sex].[ancestry].[gwas software].[YYYYMMDD].txt.gz
+# sex=M/MALE, F/FEMALE, ALL
 
 function gsutil_install()
 # https://cloud.google.com/storage/docs/gsutil_install#linux
@@ -170,12 +178,31 @@ function gsutil_install()
   python setup.py install --prefix=$HPC_WORK
 }
 
+# Request an account
+# https://docs.google.com/forms/d/1eAaf-4XNYkplBo5Appbf8LHl2KHJyks9R4t0E3h0jII/viewform?edit_requested=true
+
 gsutil cp UKBB.Doe.ANA5.1.ALL.EUR.154.1341.SAIGE.20200515.txt.gz gs://covid19-hg-upload-INTERVAL/
+
+# Fill the form here,
+# https://airtable.com/shrdJDwSHRZKXv45H
+# Download the data from here,
+# https://tinyurl.com/y97u49jz
 
 # SBATCH -A CARDIO-SL0-CPU -p cardio_intr --qos=cardio_intr
 # createSparseGRM.R --help
 # step1_fitNULLGLMM.R --help
 # step2_SPAtests.R --help
+
+# SNP information
+(
+  cut -f1,7,8,15,18,19 $ref/impute_*_interval.snpstats | \
+  head -1
+  seq 22 | \
+  parallel --env ref -C' ' '
+    sed "1d" $ref/impute_{}_interval.snpstats | \
+    cut -f1,7,8,15,18,19
+  '
+) | gzip -f > work/INTERVAL.snpstats.gz
 
 cd 06-05-2020/INTERVAL
 sed '1d' INTERVAL_Covid_06MAY2020.csv | cut -d',' -f1 | sort | join - <(sed '1d' INTERVALdata_06MAY2020.csv | cut -d',' -f1) | wc -l
