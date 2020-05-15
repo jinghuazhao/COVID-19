@@ -61,27 +61,27 @@ module load gcc/6
 # Single-variant association tests
 
 step1_fitNULLGLMM.R \
-   --plinkFile=INTERVAL \
-   --phenoFile=INTERVAL-covid.txt \
+   --plinkFile=work/INTERVAL \
+   --phenoFile=work/INTERVAL-covid.txt \
    --phenoCol=SARS_CoV \
    --covarColList=age,sex,PC_1,PC_2,PC_3,PC_4,PC_5,PC_6,PC_7,PC_8,PC_9,PC_10,PC_11,PC_12,PC_13,PC_14,PC_15,PC_16,PC_17,PC_18,PC_19,PC_20 \
    --sampleIDColinphenoFile=ID \
    --traitType=binary \
-   --outputPrefix=INTERVAL \
+   --outputPrefix=output/INTERVAL \
    --nThreads=4
 
 echo $(seq 22) X | \
 tr ' ' '\n' | \
 parallel --env autosomes -C' ' '
 step2_SPAtests.R \
-   --bgenFile=INTERVAL-{}.bgen \
-   --bgenFileIndex=INTERVAL-{}.bgen.bgi \
+   --bgenFile=work/INTERVAL-{}.bgen \
+   --bgenFileIndex=work/INTERVAL-{}.bgen.bgi \
    --minMAF=0.0001 \
    --minMAC=1 \
-   --sampleFile=INTERVAL.samples \
-   --GMMATmodelFile=INTERVAL.rda \
-   --varianceRatioFile=INTERVAL.varianceRatio.txt \
-   --SAIGEOutputFile=INTERVAL-{}.txt \
+   --sampleFile=work/INTERVAL.samples \
+   --GMMATmodelFile=output/INTERVAL.rda \
+   --varianceRatioFile=output/INTERVAL.varianceRatio.txt \
+   --SAIGEOutputFile=output/INTERVAL-{}.txt \
    --IsOutputNinCaseCtrl=TRUE \
    --IsOutputHetHomCountsinCaseCtrl=TRUE \
    --IsOutputAFinCaseCtrl=TRUE
@@ -90,10 +90,10 @@ step2_SPAtests.R \
 # Gene-based association tests
 
 createSparseGRM.R \
-   --plinkFile=INTERVAL \
+   --plinkFile=work/INTERVAL \
    --minMAF=0.0001 \
    --nThreads=4 \
-   --outputPrefix=INTERVAL.sparseGRM \
+   --outputPrefix=output/INTERVAL.sparseGRM \
    --numRandomMarkerforSparseKin=2000 \
    --relatednessCutoff=0.125
 
@@ -101,18 +101,18 @@ echo $(seq 22) X | \
 tr ' ' '\n' | \
 parallel --env autosomes -C' ' '
 step2_SPAtests.R \
-   --bgenFile=INTERVAL-{}.bgen \
-   --bgenFileIndex=INTERVAL-{}.bgen.bgi \
+   --bgenFile=work/INTERVAL-{}.bgen \
+   --bgenFileIndex=work/INTERVAL-{}.bgen.bgi \
    --chrom={} \
    --minMAF=0 \
    --minMAC=0.5 \
    --maxMAFforGroupTest=0.01 \
-   --GMMATmodelFile=INTERVAL.rda \
+   --GMMATmodelFile=output/INTERVAL.rda \
    --varianceRatioFile=INTERVAL.varianceRatio.txt \
-   --SAIGEOutputFile=INTERVAL-{}.SAIGE.gene.txt \
+   --SAIGEOutputFile=output/INTERVAL-{}.SAIGE.gene.txt \
    --numLinesOutput=1 \
-   --groupFile=INTERVAL-{}.eneBasedtest.txt \
-   --sparseSigmaFile=INTERVAL-{}.sparseSigma.mtx \
+   --groupFile=output/INTERVAL-{}.eneBasedtest.txt \
+   --sparseSigmaFile=output/INTERVAL-{}.sparseSigma.mtx \
    --IsOutputAFinCaseCtrl=TRUE \
    --IsSingleVarinGroupTest=TRUE \
    --IsOutputPvalueNAinGroupTestforBinary=TRUE \
