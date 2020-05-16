@@ -2,7 +2,7 @@
 
 export glist=${INF}/csd3/glist-hg19
 (
-  awk '$1!="X" && $1!="Y" && $1!="XY"' ${glist} | sort -k1,1n -k2,2n
+  awk '$1!="X" && $1!="Y" && $1!="XY"' ${glist} | sort -k1,1n -k2,2n | awk '{if ($1<10) $1="0"$1};1'
   awk '$1=="X"' ${glist} | sort -k2,2n
   awk '$1=="XY"' ${glist} | sort -k2,2n
   awk '$1=="Y"' ${glist} | sort -k2,2n
@@ -18,7 +18,7 @@ parallel -C' ' '
 echo $(seq 22) X | \
 tr ' ' '\n' | \
 parallel -C' ' '
-   awk "NR>9 && \$8!=\"NA\" && \$1!=\".\" {print \$1}" work/INTERVAL-{}.annotate > work/INTERVAL-{}.incl
+   awk "NR>9 && \$8!=\"NA\" && \$1!=\".\" && \$1!=\"#\"{print \$1}" work/INTERVAL-{}.annotate > work/INTERVAL-{}.incl
    export list=($(awk "NR>8 && \$8!=\"NA\"" work/INTERVAL-{}.annotate | cut -f8 | sort | uniq))
    (
      for g in ${list[@]}
