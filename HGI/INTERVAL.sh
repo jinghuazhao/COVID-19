@@ -48,9 +48,8 @@ step1_fitNULLGLMM.R \
    --covarColList=age,sex,PC_1,PC_2,PC_3,PC_4,PC_5,PC_6,PC_7,PC_8,PC_9,PC_10,PC_11,PC_12,PC_13,PC_14,PC_15,PC_16,PC_17,PC_18,PC_19,PC_20 \
    --sampleIDColinphenoFile=ID \
    --traitType=binary \
-   --invNormalize=TRUE \
    --outputPrefix=output/INTERVAL \
-   --outputPrefix_varRatio=output/INTERVAL-X \
+   --outputPrefix_varRatio=output/INTERVAL \
    --sparseGRMFile=output/INTERVAL.sparseGRM_relatednessCutoff_0.125_2000_randomMarkersUsed.sparseGRM.mtx \
    --sparseGRMSampleIDFile=output/INTERVAL.sparseGRM_relatednessCutoff_0.125_2000_randomMarkersUsed.sparseGRM.mtx.sampleIDs.txt \
    --nThreads=8 \
@@ -71,7 +70,7 @@ step2_SPAtests.R \
    --sampleFile=work/INTERVAL.samples \
    --GMMATmodelFile=output/INTERVAL.rda \
    --varianceRatioFile=output/INTERVAL.varianceRatio.txt \
-   --SAIGEOutputFile=output/INTERVAL-{}.SAIGE.gene.txt \
+   --SAIGEOutputFile=output/INTERVAL-{}.gene.txt \
    --numLinesOutput=1 \
    --sparseSigmaFile=output/INTERVAL.sparseGRM_relatednessCutoff_0.125_2000_randomMarkersUsed.sparseGRM.mtx \
    --idstoIncludeFile=work/INTERVAL-{}.incl \
