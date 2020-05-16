@@ -50,7 +50,7 @@ function genofile()
       if (NF==7) print \$1, SNP, \$3, POS, \$6, \$7, SNP, snpid, CHR, POS, a1, a2
     }"
   ) | \
-  awk 'a[$2]++==0' > work/INTERVAL-{}.map
+  awk 'a[\$2]++==0' > work/INTERVAL-{}.map
   cut -d' ' -f2 work/INTERVAL-{}.map > work/INTERVAL-{}.nodup
   qctool -g work/INTERVAL-{}-rsid.bgen -incl-rsids work/INTERVAL-{}.nodup -map-id-data work/INTERVAL-{}.map -og work/INTERVAL-{}.bgen
   bgenix -g work/INTERVAL-{}.bgen -index -clobber
