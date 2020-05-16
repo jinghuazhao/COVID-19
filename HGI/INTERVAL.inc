@@ -36,18 +36,18 @@ function genofile()
   parallel --env INF -C' ' '
   ( 
     cat ${INF}/csd3/ld.hdr
-    bgenix -g work/INTERVAL-{}-rsid.bgen -list 2&>1 | \
-    awk "NR>9 && NF==7
+    bgenix -g work/INTERVAL-{}-rsid.bgen -list 2>&1 | \
+    sed "1,9d" | \
+    awk "
     {
-      if (\$1<10) CHR= "0" \$3;
-      else CHR=\$3
+      if (\$3<10) CHR= \"0\" \$3; else CHR=\$3
       SNP=\$2
       POS=\$4
-      a1=\$6
-      a2=\$7
+      a1=toupper(\$6)
+      a2=toupper(\$7)
       if (a1>a2) {t=a1; a1=a2; a2=t}
-      snpid=\$3 ":" POS "_" a1 "/" a2
-      print SNP, SNP, CHR, POS, \$6, \$7, SNP, snpid, \$3, POS, a1, a2
+      snpid=\$3 \":\" POS \"_\" a1 \"/\" a2
+      if (NF==7) print SNP, SNP, CHR, POS, \$6, \$7, SNP, snpid, \$3, POS, a1, a2
     }"
   ) > work/INTERVAL-{}.map
   qctool -g work/INTERVAL-{}-rsid.bgen -map-id-data work/INTERVAL-{}.map -og work/INTERVAL-{}.bgen
