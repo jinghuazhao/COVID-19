@@ -72,7 +72,14 @@ function aggregate()
   ) | gzip -f > output/INTERVAL.Zhao.ANA5.1.ALL.EUR.97.237.SAIGE.20200515.txt.gz
 
   (
-    echo second part
+    cut -d' ' -f1,2,11-14 output/INTERVAL-*.gene.txt | head -1
+    echo $(seq 22) X | \
+    tr ' ' '\n' | \
+    parallel -C' ' '
+      sed '1d' output/INTERVAL-{}.gene.txt | \
+      cut -d" " -f1,2,11-14
+    '
+  ) | gzip -f > output/INTERVAL.Zhao.ANA5.1.ALL.EUR.97.237.SAIGE.gene.20200516.txt.gz
 
   ) | gzip -f > gene-based.results
 }
