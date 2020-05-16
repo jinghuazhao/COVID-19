@@ -51,7 +51,7 @@ function genofile()
   ) | \
   awk "a[\$2]++==0" > work/INTERVAL-{}.map
   cut -d" " -f2 work/INTERVAL-{}.map > work/INTERVAL-{}.nodup
-  qctool -g work/INTERVAL-{}-rsid.bgen -incl-rsids work/INTERVAL-{}.nodup -map-id-data work/INTERVAL-{}.map -og work/INTERVAL-{}.bgen
+  qctool -g work/INTERVAL-{}-rsid.bgen -incl-rsids work/INTERVAL-{}.nodup -map-id-data work/INTERVAL-{}.map -bgen-bits 8 -og work/INTERVAL-{}.bgen
   bgenix -g work/INTERVAL-{}.bgen -index -clobber
   '
 # HLA region
