@@ -51,7 +51,7 @@ function genofile()
     }"
   ) > work/INTERVAL-{}.map
   qctool -g work/INTERVAL-{}-rsid.bgen -map-id-data work/INTERVAL-{}.map -og work/INTERVAL-{}.bgen
-  bgenix -g work/INTERVAL-{}.bgen -index -clober
+  bgenix -g work/INTERVAL-{}.bgen -index -clobber
   '
 # HLA region
   plink2 --bfile ${merged_imputation} --chr 6 --from-bp 25392021 --to-bp 33392022 --make-bed --out work/INTERVAL-HLA
