@@ -49,7 +49,7 @@ step1_fitNULLGLMM.R \
    --sampleIDColinphenoFile=ID \
    --traitType=binary \
    --outputPrefix=output/INTERVAL-X \
-   --outputPrefix_varRatio=output/INTERVAL-X_varRatio \
+   --outputPrefix_varRatio=output/INTERVAL-X \
    --sparseGRMFile=output/INTERVAL-X.sparseGRM_relatednessCutoff_0.125_2000_randomMarkersUsed.sparseGRM.mtx \
    --sparseGRMSampleIDFile=output/INTERVAL-X.sparseGRM_relatednessCutoff_0.125_2000_randomMarkersUsed.sparseGRM.mtx.sampleIDs.txt \
    --nThreads=8 \
