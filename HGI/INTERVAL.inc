@@ -47,10 +47,12 @@ function genofile()
       a2=toupper(\$7)
       if (a1>a2) {t=a1; a1=a2; a2=t}
       snpid=CHR \":\" POS \"_\" a1 \"/\" a2
-      if (NF==7) print SNP, SNP, \$3, POS, \$6, \$7, SNP, snpid, CHR, POS, a1, a2
+      if (NF==7) print \$1, SNP, \$3, POS, \$6, \$7, SNP, snpid, CHR, POS, a1, a2
     }"
-  ) > work/INTERVAL-{}.map
-  qctool -g work/INTERVAL-{}-rsid.bgen -map-id-data work/INTERVAL-{}.map -og work/INTERVAL-{}.bgen
+  ) | \
+  awk 'a[$2]++==0' > work/INTERVAL-{}.map
+  cut -d' ' -f2 work/INTERVAL-{}.map > work/INTERVAL-{}.nodup
+  qctool -g work/INTERVAL-{}-rsid.bgen -incl-rsids work/INTERVAL-{}.nodup -map-id-data work/INTERVAL-{}.map -og work/INTERVAL-{}.bgen
   bgenix -g work/INTERVAL-{}.bgen -index -clobber
   '
 # HLA region
