@@ -6,6 +6,8 @@ source INTERVAL.inc
 
 # Single-variant association tests
 
+function svat()
+{
 step1_fitNULLGLMM.R \
    --plinkFile=work/INTERVAL \
    --phenoFile=work/INTERVAL-covid.txt \
@@ -31,8 +33,12 @@ step2_SPAtests.R \
    --IsOutputHetHomCountsinCaseCtrl=TRUE \
    --IsOutputAFinCaseCtrl=TRUE
 '
+}
+
 # Gene-based association tests
 
+function gbat()
+{
 createSparseGRM.R \
    --plinkFile=work/INTERVAL \
    --minMAF=0.0001 \
@@ -80,3 +86,6 @@ step2_SPAtests.R \
    --IsOutputPvalueNAinGroupTestforBinary=TRUE \
    --IsAccountforCasecontrolImbalanceinGroupTest=TRUE
 '
+}
+
+gbat
