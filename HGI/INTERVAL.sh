@@ -145,7 +145,8 @@ step2_SPAtests.R \
    --SAIGEOutputFile=output/INTERVAL-{}.SAIGE.gene.txt \
    --numLinesOutput=1 \
    --sparseSigmaFile=output/INTERVAL.sparseGRM_relatednessCutoff_0.125_2000_randomMarkersUsed.sparseGRM.mtx \
-   --groupFile= \
+   --idstoIncludeFile=work/INTERVAL-{}.incl \
+   --groupFile=work/INTERVAL-{}.gene \
    --IsOutputAFinCaseCtrl=TRUE \
    --IsSingleVarinGroupTest=TRUE \
    --IsOutputPvalueNAinGroupTestforBinary=TRUE \
@@ -180,7 +181,8 @@ step2_SPAtests.R \
    --SAIGEOutputFile=output/INTERVAL-{}.SAIGE.gene.txt \
    --numLinesOutput=1 \
    --sparseSigmaFile=output/INTERVAL-X.sparseGRM_relatednessCutoff_0.125_2000_randomMarkersUsed.sparseGRM.mtx \
-   --groupFile= \
+   --idstoIncludeFile=work/INTERVAL-X.incl \
+   --groupFile=work/INTERVAL-X.gene \
    --IsOutputAFinCaseCtrl=TRUE \
    --IsSingleVarinGroupTest=TRUE \
    --IsOutputPvalueNAinGroupTestforBinary=TRUE \
