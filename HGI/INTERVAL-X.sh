@@ -11,7 +11,8 @@ step1_fitNULLGLMM.R \
    --sampleIDColinphenoFile=ID \
    --traitType=binary \
    --outputPrefix=output/INTERVAL-X \
-   --nThreads=4
+   --nThreads=8 \
+   --IsOverwriteVarianceRatioFile=TRUE 
 
 echo X | \
 parallel --env autosomes -C' ' '

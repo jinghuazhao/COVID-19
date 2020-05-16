@@ -24,8 +24,8 @@ parallel -C' ' '
      for g in ${list[@]}
      do
         awk -v g=${g} "\$8==g" work/INTERVAL-{}.annotate | \
-        awk -vOFS="," "\$1!=\".\" {printf OFS \$1}" | \
-        awk -v g=${g} -v OFS="\t" "{sub(/,/,\"\",\$0);print g,\$0}"
+        awk -vOFS="\t" "\$1!=\".\" {printf OFS \$1}" | \
+        awk -v g=${g} -v OFS="\t" "{print g,\$0}"
      done
    ) > work/INTERVAL-{}.gene
 '

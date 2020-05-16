@@ -117,19 +117,20 @@ function init()
 }
 
 (
-    echo X:2699676_G_A
-    echo X:2699683_G_A
-    echo X:2699739_G_C
-    echo X:2699898_C_CT
-    echo X:2699906_T_G
-    echo X:2699934_C_A
-    echo X:2699968_A_G
-    echo X:2700027_T_C
-    echo X:2700040_T_C
-    echo X:2700089_A_G
-    echo X:2700147_C_T
-    echo X:2700157_G_A
-    echo X:2700185_C_T
-    echo X:2700189_A_G
-    echo X:2700194_C_G
+  echo X:2699676_G_A
+  echo X:2699683_G_A
+  echo X:2699739_G_C
+  echo X:2699898_C_CT
+  echo X:2699906_T_G
+  echo X:2699934_C_A
+  echo X:2699968_A_G
+  echo X:2700027_T_C
+  echo X:2700040_T_C
+  echo X:2700089_A_G
+  echo X:2700147_C_T
+  echo X:2700157_G_A
+  echo X:2700185_C_T
+  echo X:2700189_A_G
+  echo X:2700194_C_G
+  echo X:2700202_A_G
 ) > work/INTERVAL-X.excl-rsids
