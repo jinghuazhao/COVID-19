@@ -46,14 +46,15 @@ function genofile()
       sed -i 's/'\"\${s}\"'/'\"\${t}\"'/g' work/INTERVAL.idline
     "
   ) | bash
-  echo 110001440667 > work/INTERVAL-X.excl
+  echo 110001440667 > work/INTERVAL-X.excl-samples
+  echo X:2699676_G_A > work/INTERVAL-X.excl-rsids
   grep -v 110001440667 work/INTERVAL.samples > work/INTERVAL-X.samples
   (
     awk -v idno=${idno} 'NR<idno' work/INTERVAL-X.vcf
     cat work/INTERVAL.idline
     awk -v idno=${idno} 'NR>idno' work/INTERVAL-X.vcf
   ) | \
-  qctool -filetype vcf -g - -bgen-bits 8 -s work/INTERVAL-22.samples -excl-samples work/INTERVAL-X.excl -og work/INTERVAL-X.bgen
+  qctool -filetype vcf -g - -bgen-bits 8 -s work/INTERVAL-22.samples -excl-samples work/INTERVAL-X.excl-samples -og work/INTERVAL-X.bgen
   bgenix -g work/INTERVAL-X.bgen -index -clobber
 }
 
@@ -92,7 +93,7 @@ step2_SPAtests.R \
 '
 ## X
 
-grep -v -f work/INTERVAL-X.excl work/INTERVAL-covid.txt > work/INTERVAL-covid-X.txt
+grep -v -f work/INTERVAL-X.excl-samples work/INTERVAL-covid.txt > work/INTERVAL-covid-X.txt
 step1_fitNULLGLMM.R \
    --plinkFile=work/INTERVAL \
    --phenoFile=work/INTERVAL-covid-X.txt \
@@ -108,11 +109,12 @@ parallel --env autosomes -C' ' '
 step2_SPAtests.R \
    --bgenFile=work/INTERVAL-{}.bgen \
    --bgenFileIndex=work/INTERVAL-{}.bgen.bgi \
+   --idstoExcludeFile=work/INTERVAL-X.excl-rsids \
    --minMAF=0.0001 \
    --minMAC=1 \
    --sampleFile=work/INTERVAL-X.samples \
    --GMMATmodelFile=output/INTERVAL-X.rda \
-   --varianceRatioFile=output/INTERVAL.varianceRatio.txt \
+   --varianceRatioFile=output/INTERVAL-X.varianceRatio.txt \
    --SAIGEOutputFile=output/INTERVAL-{}.txt \
    --IsOutputNinCaseCtrl=TRUE \
    --IsOutputHetHomCountsinCaseCtrl=TRUE \
@@ -166,24 +168,24 @@ createSparseGRM.R \
    --numRandomMarkerforSparseKin=2000 \
    --relatednessCutoff=0.125
 
-step1_fitNULLGLMM.R     \
-	--plinkFile=work/INTERVAL-X \
-        --phenoFile=work/INTERVAL-covid-X.txt \
-        --phenoCol=SARS_CoV \
-        --covarColList=age,sex,PC_1,PC_2,PC_3,PC_4,PC_5,PC_6,PC_7,PC_8,PC_9,PC_10,PC_11,PC_12,PC_13,PC_14,PC_15,PC_16,PC_17,PC_18,PC_19,PC_20 \
-        --sampleIDColinphenoFile=ID \
-        --traitType=binary \
-        --invNormalize=TRUE \
-        --outputPrefix=output/INTERVAL-X \
-	--outputPrefix_varRatio=output/INTERVAL-X \
-	--sparseGRMFile=output/INTERVAL-X.sparseGRM_relatednessCutoff_0.125_2000_randomMarkersUsed.sparseGRM.mtx \
-        --sparseGRMSampleIDFile=output/INTERVAL-X.sparseGRM_relatednessCutoff_0.125_2000_randomMarkersUsed.sparseGRM.mtx.sampleIDs.txt \
-        --nThreads=8 \
-        --LOCO=FALSE \
-	--skipModelFitting=FALSE \
-        --IsSparseKin=TRUE \
-        --isCateVarianceRatio=TRUE \
-        --IsOverwriteVarianceRatioFile=TRUE
+step1_fitNULLGLMM.R \
+   --plinkFile=work/INTERVAL-X \
+   --phenoFile=work/INTERVAL-covid-X.txt \
+   --phenoCol=SARS_CoV \
+   --covarColList=age,sex,PC_1,PC_2,PC_3,PC_4,PC_5,PC_6,PC_7,PC_8,PC_9,PC_10,PC_11,PC_12,PC_13,PC_14,PC_15,PC_16,PC_17,PC_18,PC_19,PC_20 \
+   --sampleIDColinphenoFile=ID \
+   --traitType=binary \
+   --invNormalize=TRUE \
+   --outputPrefix=output/INTERVAL-X \
+   --outputPrefix_varRatio=output/INTERVAL-X \_varRatio
+   --sparseGRMFile=output/INTERVAL-X.sparseGRM_relatednessCutoff_0.125_2000_randomMarkersUsed.sparseGRM.mtx \
+   --sparseGRMSampleIDFile=output/INTERVAL-X.sparseGRM_relatednessCutoff_0.125_2000_randomMarkersUsed.sparseGRM.mtx.sampleIDs.txt \
+   --nThreads=8 \
+   --LOCO=FALSE \
+   --skipModelFitting=FALSE \
+   --IsSparseKin=TRUE \
+   --isCateVarianceRatio=TRUE \
+   --IsOverwriteVarianceRatioFile=TRUE
 
 echo X | \
 parallel --env autosomes -C' ' '
