@@ -50,8 +50,6 @@ step1_fitNULLGLMM.R \
    --traitType=binary \
    --outputPrefix=output/INTERVAL-X \
    --outputPrefix_varRatio=output/INTERVAL-X \
-   --sparseGRMFile=output/INTERVAL-X.sparseGRM_relatednessCutoff_0.125_2000_randomMarkersUsed.sparseGRM.mtx \
-   --sparseGRMSampleIDFile=output/INTERVAL-X.sparseGRM_relatednessCutoff_0.125_2000_randomMarkersUsed.sparseGRM.mtx.sampleIDs.txt \
    --nThreads=8 \
    --LOCO=FALSE \
    --skipModelFitting=FALSE \
@@ -62,6 +60,7 @@ step1_fitNULLGLMM.R \
 step2_SPAtests.R \
    --bgenFile=work/INTERVAL-X.bgen \
    --bgenFileIndex=work/INTERVAL-X.bgen.bgi \
+   --idstoExcludeFile=work/INTERVAL-X.excl-rsids \
    --minMAF=0 \
    --minMAC=0.5 \
    --maxMAFforGroupTest=0.01 \

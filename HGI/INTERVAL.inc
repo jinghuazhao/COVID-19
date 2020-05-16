@@ -133,4 +133,5 @@ function init()
   echo X:2700189_A_G
   echo X:2700194_C_G
   echo X:2700202_A_G
+  echo X:74273085_AATCTT_A
 ) > work/INTERVAL-X.excl-rsids

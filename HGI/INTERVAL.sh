@@ -56,8 +56,6 @@ step1_fitNULLGLMM.R \
    --traitType=binary \
    --outputPrefix=output/INTERVAL \
    --outputPrefix_varRatio=output/INTERVAL \
-   --sparseGRMFile=output/INTERVAL.sparseGRM_relatednessCutoff_0.125_2000_randomMarkersUsed.sparseGRM.mtx \
-   --sparseGRMSampleIDFile=output/INTERVAL.sparseGRM_relatednessCutoff_0.125_2000_randomMarkersUsed.sparseGRM.mtx.sampleIDs.txt \
    --nThreads=8 \
    --LOCO=FALSE \
    --skipModelFitting=FALSE \
