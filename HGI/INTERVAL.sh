@@ -212,7 +212,8 @@ step2_SPAtests.R \
 
 (
   cut -d' ' -f1-3,5-9,11-14,17,21-26 output/INTERVAL-*.txt | head -1
-  seq 22 | \
+  echo $(seq 22) X | \
+  tr ' ' '\n' | \
   parallel -C' ' '
     sed '1d' output/INTERVAL-{}.txt | \
     cut -d" " -f1-3,5-9,11-14,17,21-26
