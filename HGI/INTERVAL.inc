@@ -40,14 +40,14 @@ function genofile()
     sed "1,9d" | \
     awk "
     {
-      if (\$3<10) CHR= \"0\" \$3; else CHR=\$3
+      CHR=\$3+0
       SNP=\$2
       POS=\$4
       a1=toupper(\$6)
       a2=toupper(\$7)
       if (a1>a2) {t=a1; a1=a2; a2=t}
-      snpid=\$3 \":\" POS \"_\" a1 \"/\" a2
-      if (NF==7) print SNP, SNP, CHR, POS, \$6, \$7, SNP, snpid, \$3, POS, a1, a2
+      snpid=CHR \":\" POS \"_\" a1 \"/\" a2
+      if (NF==7) print SNP, SNP, \$3, POS, \$6, \$7, SNP, snpid, CHR, POS, a1, a2
     }"
   ) > work/INTERVAL-{}.map
   qctool -g work/INTERVAL-{}-rsid.bgen -map-id-data work/INTERVAL-{}.map -og work/INTERVAL-{}.bgen
