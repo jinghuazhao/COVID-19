@@ -29,8 +29,29 @@ function genofile()
   seq 22 | \
   parallel --env autosomes -C' ' '
     qctool -g ${autosomes}/impute_{}_interval.bgen -s ${autosomes}/interval.samples \
-           -incl-samples work/INTERVAL.samples -bgen-bits 8 -og work/INTERVAL-{}.bgen -os work/INTERVAL-{}.samples
-    bgenix -g work/INTERVAL-{}.bgen -index -clobber
+           -incl-samples work/INTERVAL.samples -bgen-bits 8 -og work/INTERVAL-{}-rsid.bgen -os work/INTERVAL-{}-rsid.samples
+    bgenix -g work/INTERVAL-{}-rsid.bgen -index -clobber
+  '
+  seq 22 | \
+  parallel --env INF -C' ' '
+  ( 
+    cat ${INF}/csd3/ld.hdr
+    bgenix -g work/INTERVAL-{}-rsid.bgen -list 2&>1 | \
+    awk "NR>9 && NF==7
+    {
+      if (\$1<10) CHR= "0" \$3;
+      else CHR=\$3
+      SNP=\$2
+      POS=\$4
+      a1=\$6
+      a2=\$7
+      if (a1>a2) {t=a1; a1=a2; a2=t}
+      snpid=\$3 ":" POS "_" a1 "/" a2
+      print SNP, SNP, CHR, POS, \$6, \$7, SNP, snpid, \$3, POS, a1, a2
+    }"
+  ) > work/INTERVAL-{}.map
+  qctool -g work/INTERVAL-{}-rsid.bgen -map-id-data work/INTERVAL-{}.map -og work/INTERVAL-{}.bgen
+  bgenix -g work/INTERVAL-{}.bgen -index -clober
   '
 # HLA region
   plink2 --bfile ${merged_imputation} --chr 6 --from-bp 25392021 --to-bp 33392022 --make-bed --out work/INTERVAL-HLA
