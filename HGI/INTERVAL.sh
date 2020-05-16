@@ -47,7 +47,10 @@ function genofile()
     "
   ) | bash
   echo 110001440667 > work/INTERVAL-X.excl-samples
-  echo X:2699676_G_A > work/INTERVAL-X.excl-rsids
+  (
+    echo X:2699676_G_A
+    echo X:2699683_G_A
+  ) > work/INTERVAL-X.excl-rsids
   grep -v 110001440667 work/INTERVAL.samples > work/INTERVAL-X.samples
   (
     awk -v idno=${idno} 'NR<idno' work/INTERVAL-X.vcf
@@ -177,7 +180,7 @@ step1_fitNULLGLMM.R \
    --traitType=binary \
    --invNormalize=TRUE \
    --outputPrefix=output/INTERVAL-X \
-   --outputPrefix_varRatio=output/INTERVAL-X \_varRatio
+   --outputPrefix_varRatio=output/INTERVAL-X_varRatio \
    --sparseGRMFile=output/INTERVAL-X.sparseGRM_relatednessCutoff_0.125_2000_randomMarkersUsed.sparseGRM.mtx \
    --sparseGRMSampleIDFile=output/INTERVAL-X.sparseGRM_relatednessCutoff_0.125_2000_randomMarkersUsed.sparseGRM.mtx.sampleIDs.txt \
    --nThreads=8 \
@@ -192,7 +195,6 @@ parallel --env autosomes -C' ' '
 step2_SPAtests.R \
    --bgenFile=work/INTERVAL-{}.bgen \
    --bgenFileIndex=work/INTERVAL-{}.bgen.bgi \
-   --chrom={} \
    --minMAF=0 \
    --minMAC=0.5 \
    --maxMAFforGroupTest=0.01 \
