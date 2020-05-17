@@ -40,8 +40,18 @@ function gencode_v19()
     url <- "ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_19/gencode.v19.chr_patch_hapl_scaff.annotation.gtf.gz"
     gtf <- rtracklayer::import("work//gencode.v19.chr_patch_hapl_scaff.annotation.gtf.gz")
     gencode <- as.data.frame(gtf)
-    write.table(gencode, file="work/glist-hg19.gencode",quote=FALSE,row.names=FALSE,sep="\t")
+    select <- with(gene, chrom%in%c(paste(1:22),"X","XY","Y"))
+    cols <- c(1:3,4,10)
+    write.table(gencode[select,cols], file="work/glist-hg19.gencode",quote=FALSE,row.names=FALSE,sep="\t")
   END
+  export glist=work/glist-hg19.gencode
+  (
+    awk '$1!="X" && $1!="Y" && $1!="XY" {sub(/chr/,"");print}' ${glist} | sort -k1,1n -k2,2n
+    awk '$1=="X"' ${glist} | sort -k2,2n
+    awk '$1=="XY"' ${glist} | sort -k2,2n
+    awk '$1=="Y"' ${glist} | sort -k2,2n
+  ) | \
+  awk -vOFS='\t' '{sub(/chr/,"");print $1,$2,$3,$4 "_" $5 "_pLoF"}' > work/glist-hg19.bed
 }
 
 function glist_enshgnc()
