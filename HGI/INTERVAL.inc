@@ -1,4 +1,4 @@
-# 15-5-2020 JHZ
+# 17-5-2020 JHZ
 
 export dir=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/HGI
 export autosomes=/home/jhz22/rds/post_qc_data/interval/imputed/uk10k_1000g_b37/imputed
@@ -58,7 +58,8 @@ function genofile()
   plink2 --bfile ${merged_imputation} --chr 6 --from-bp 25392021 --to-bp 33392022 --make-bed --out work/INTERVAL-HLA
 # Chromosome X
   bcftools query -l ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz | head
-  awk '{print $1 "_" $1}' work/INTERVAL.samples | \
+  grep -v 110001440667 work/INTERVAL.samples > work/INTERVAL-X.samples
+  awk '{print $1 "_" $1}' work/INTERVAL-X.samples | \
   bcftools view -S - ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz -O v --force-samples > work/INTERVAL-X.vcf
   export idno=$(awk '/POS/ && /QUAL/ {print NR} ' work/INTERVAL-X.vcf)
   awk -v idno=${idno} 'NR==idno{print} ' work/INTERVAL-X.vcf > work/INTERVAL.idline
@@ -71,7 +72,6 @@ function genofile()
     "
   ) | bash
   echo 110001440667 > work/INTERVAL-X.excl-samples
-  grep -v 110001440667 work/INTERVAL.samples > work/INTERVAL-X.samples
   (
     awk -v idno=${idno} 'NR<idno' work/INTERVAL-X.vcf
     cat work/INTERVAL.idline
