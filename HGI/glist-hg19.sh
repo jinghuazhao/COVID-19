@@ -34,6 +34,16 @@ function biomart()
   awk -vOFS='\t' '{print $1,$2,$3,$4 "_" $5 "_pLoF"}' > work/glist-hg19.bed
 }
 
+function gencode_v19()
+{
+  R --no-save -q <<\ \ END
+    url <- "ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_19/gencode.v19.chr_patch_hapl_scaff.annotation.gtf.gz"
+    gtf <- rtracklayer::import(url)
+    gencode <- as.data.frame(gtf)
+    write.table(gencode, file="work/glist-hg19.gencode",quote=FALSE,row.names=FALSE,sep="\t")
+  END
+}
+
 function glist_enshgnc()
 {
 
