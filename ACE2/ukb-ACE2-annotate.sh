@@ -1,11 +1,11 @@
-# 21-4-2020 JHZ
+# 17-5-2020 JHZ
 
 export UKB=/rds/project/jmmh2/rds-jmmh2-post_qc_data/uk_biobank/imputed/uk10k_hrc/HRC_UK10K
 export HPC_WORK=/rds/user/${USER}/hpc-work
 export TMPDIR=${HPC_WORK}/work
 
 export ANNOVAR=${HPC_WORK}/annovar
-export LEFTEE=${HPC_WORK}/loftee
+export LOFTEE=${HPC_WORK}/loftee
 export POLYPHEN=${HPC_WORK}/polyphen-2.2.2
 export VEP=${HPC_WORK}/ensembl-vep
 export wd=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/ACE2
