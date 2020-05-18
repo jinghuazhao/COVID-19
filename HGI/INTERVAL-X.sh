@@ -18,9 +18,9 @@ step1_fitNULLGLMM.R \
    --IsOverwriteVarianceRatioFile=TRUE 
 
 step2_SPAtests.R \
-   --bgenFile=work/INTERVAL-X.bgen \
-   --bgenFileIndex=work/INTERVAL-X.bgen.bgi \
-   --idstoExcludeFile=work/INTERVAL-X.excl-rsids \
+   --vcfFile=work/INTERVAL-X-ploidy.vcf.gz \
+   --vcfFileIndex=work/INTERVAL-X-ploidy.vcf.gz.tbi \
+   --chrom=X \
    --minMAF=0.0001 \
    --minMAC=1 \
    --sampleFile=work/INTERVAL-X.samples \
@@ -58,9 +58,9 @@ step1_fitNULLGLMM.R \
    --IsOverwriteVarianceRatioFile=TRUE
 
 step2_SPAtests.R \
-   --bgenFile=work/INTERVAL-X.bgen \
-   --bgenFileIndex=work/INTERVAL-X.bgen.bgi \
-   --idstoExcludeFile=work/INTERVAL-X.excl-rsids \
+   --vcfFile=work/INTERVAL-X-ploidy.vcf.gz \
+   --vcfFileIndex=work/INTERVAL-X-ploidy.vcf.gz.tbi \
+   --chrom=X \
    --minMAF=0 \
    --minMAC=0.5 \
    --maxMAFforGroupTest=0.01 \

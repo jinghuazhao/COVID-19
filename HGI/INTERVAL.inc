@@ -55,14 +55,24 @@ function genofile()
   qctool -g work/INTERVAL-{}-rsid.bgen -incl-rsids work/INTERVAL-{}.nodup -map-id-data work/INTERVAL-{}.map -bgen-bits 8 -og work/INTERVAL-{}.bgen
   bgenix -g work/INTERVAL-{}.bgen -index -clobber
   '
-# HLA region
-  plink2 --bfile ${merged_imputation} --chr 6 --from-bp 25392021 --to-bp 33392022 --make-bed --out work/INTERVAL-HLA
 # Chromosome X -- NOTE that work/INTERVAL-X.samples has a single column
   awk '!/110001440667/' work/INTERVAL.samples > work/INTERVAL-X.samples
   awk '{print $1 "_" $1}' work/INTERVAL-X.samples | \
   bcftools view -S - ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz -O v > work/INTERVAL-X.vcf
   export idno=$(awk '/POS/ && /QUAL/ {print NR} ' work/INTERVAL-X.vcf)
   awk -v idno=${idno} 'NR==idno{print} ' work/INTERVAL-X.vcf > work/INTERVAL.idline
+# HLA region for future imputation
+  plink2 --bfile ${merged_imputation} --chr 6 --from-bp 25392021 --to-bp 33392022 --make-bed --out work/INTERVAL-HLA
+}
+
+function X_vcf()
+# Ploidy: GRCh37
+# The pseudoautosomal regions 60,001-2,699,520 and 154,931,044-155,270,560 with the ploidy 2
+# PAR1	X	60,001 	2,699,520	{ from=>1, to=>60_000, M=>1 }
+# PAR2	X 	154,931,044 	155,260,560	{ from=>2_699_521, to=>154_931_043, M=>1 }
+# https://en.wikipedia.org/wiki/Pseudoautosomal_region
+{
+  export idno=$(awk '/POS/ && /QUAL/ {print NR} ' work/INTERVAL-X.vcf)
   (
     cat work/INTERVAL-X.samples | \
     parallel --dry-run -C' ' "
@@ -76,9 +86,9 @@ function genofile()
     cat work/INTERVAL.idline
     awk -v idno=${idno} 'NR>idno' work/INTERVAL-X.vcf
   ) | \
-  awk '!/110001440667/' work/INTERVAL-22.samples > work/INTERVAL-X.samples2
-  qctool -filetype vcf -g - -bgen-bits 8 -s work/INTERVAL-X.samples2 -og work/INTERVAL-X.bgen
-  bgenix -g work/INTERVAL-X.bgen -index -clobber
+  vcf-fix-ploidy -s work/INTERVAL-X.FM | \
+  bgzip -f > work/INTERVAL-X-ploidy.vcf.gz
+  bcftools index -tf work/INTERVAL-X-ploidy.vcf.gz
 }
 
 function aggregate()
@@ -164,22 +174,33 @@ function init()
   cd -
 }
 
-# Ploidy: GRCh37
-# The pseudoautosomal regions 60,001-2,699,520 and 154,931,044-155,270,560 with the ploidy 2
-# PAR1	X	60,001 	2,699,520	{ from=>1, to=>60_000, M=>1 }
-# PAR2	X 	154,931,044 	155,260,560	{ from=>2_699_521, to=>154_931_043, M=>1 }
-# https://en.wikipedia.org/wiki/Pseudoautosomal_region
-
+function X_bgen_defunct()
+{
+  (
+    cat work/INTERVAL-X.samples | \
+    parallel --dry-run -C' ' "
+      export s={}_{};
+      export t={};
+      sed -i 's/'\"\${s}\"'/'\"\${t}\"'/g' work/INTERVAL.idline
+    "
+  ) | bash
+  (
+    awk -v idno=${idno} 'NR<idno' work/INTERVAL-X.vcf
+    cat work/INTERVAL.idline
+    awk -v idno=${idno} 'NR>idno' work/INTERVAL-X.vcf
+  ) | \
+  awk '!/110001440667/' work/INTERVAL-22.samples > work/INTERVAL-X.samples2
+  qctool -filetype vcf -g - -bgen-bits 8 -s work/INTERVAL-X.samples2 -og work/INTERVAL-X.bgen
+  bgenix -g work/INTERVAL-X.bgen -index -clobber
+# requires the following SAIGE flags:
+# --idstoExcludeFile=work/INTERVAL-X.excl-rsids
 # Exampls
-(
-  echo X:2699676_G_A;  echo X:2699683_G_A;  echo X:2699739_G_C
-  echo X:2699898_C_CT; echo X:2699906_T_G;  echo X:2699934_C_A
-  echo X:2699968_A_G;  echo X:2700027_T_C;  echo X:2700040_T_C
-  echo X:2700089_A_G;  echo X:2700147_C_T;  echo X:2700157_G_A
-  echo X:2700185_C_T;  echo X:2700189_A_G;  echo X:2700194_C_G
-  echo X:2700202_A_G;  echo X:74273085_AATCTT_A
-) > work/INTERVAL-X.excl-rsids
-
-cat work/INTERVAL-X.vcf | \
-vcf-fix-ploidy -s work/INTERVAL-X.FM | \
-gzip -f > work/INTERVAL-X.ploidy.vcf.gz
+  (
+    echo X:2699676_G_A;  echo X:2699683_G_A;  echo X:2699739_G_C
+    echo X:2699898_C_CT; echo X:2699906_T_G;  echo X:2699934_C_A
+    echo X:2699968_A_G;  echo X:2700027_T_C;  echo X:2700040_T_C
+    echo X:2700089_A_G;  echo X:2700147_C_T;  echo X:2700157_G_A
+    echo X:2700185_C_T;  echo X:2700189_A_G;  echo X:2700194_C_G
+    echo X:2700202_A_G;  echo X:74273085_AATCTT_A
+  ) > work/INTERVAL-X.excl-rsids
+}
