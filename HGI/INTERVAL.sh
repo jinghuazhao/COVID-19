@@ -24,6 +24,7 @@ parallel -j1 --env autosomes -C' ' '
 step2_SPAtests.R \
    --bgenFile=work/INTERVAL-{}.bgen \
    --bgenFileIndex=work/INTERVAL-{}.bgen.bgi \
+   --chrom={} \
    --minMAF=0.0001 \
    --minMAC=1 \
    --sampleFile=work/INTERVAL.samples \
@@ -69,6 +70,7 @@ parallel -j1 --env autosomes -C' ' '
 step2_SPAtests.R \
    --bgenFile=work/INTERVAL-{}.bgen \
    --bgenFileIndex=work/INTERVAL-{}.bgen.bgi \
+   --chrom={} \
    --minMAF=0 \
    --minMAC=0.5 \
    --maxMAFforGroupTest=0.01 \

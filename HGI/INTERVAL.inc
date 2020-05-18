@@ -27,6 +27,10 @@ function genofile()
   module load plink/2.00-alpha
   plink2 --bfile ${merged_imputation} --indep-pairwise 1000kb 1 0.1 --out work/INTERVAL
   plink2 --bfile ${merged_imputation} --make-bed --extract work/INTERVAL.prune.in -keep work/INTERVAL.samples2 --out work/INTERVAL
+  awk '!/110001440667/' work/INTERVAL.samples > work/INTERVAL-X.samples
+  awk '!/110001440667/' work/INTERVAL-covid.txt > work/INTERVAL-covid-X.txt
+  awk '{print $1 "_" $1}' work/INTERVAL-X.samples > work/INTERVAL-X.samples2
+  plink2 --bfile work/INTERVAL --make-bed -keep work/INTERVAL-X.samples2 --out work/INTERVAL-X
 # Autosomes
   seq 22 | \
   parallel --env autosomes -C' ' '
@@ -56,7 +60,6 @@ function genofile()
   bgenix -g work/INTERVAL-{}.bgen -index -clobber
   '
 # Chromosome X -- NOTE that work/INTERVAL-X.samples has a single column
-  awk '!/110001440667/' work/INTERVAL.samples > work/INTERVAL-X.samples
   awk '{print $1 "_" $1}' work/INTERVAL-X.samples | \
   bcftools view -S - ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz -O v > work/INTERVAL-X.vcf
   export idno=$(awk '/POS/ && /QUAL/ {print NR} ' work/INTERVAL-X.vcf)
