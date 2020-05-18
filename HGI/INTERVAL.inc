@@ -183,4 +183,3 @@ function init()
 cat work/INTERVAL-X.vcf | \
 vcf-fix-ploidy -s work/INTERVAL-X.FM | \
 gzip -f > work/INTERVAL-X.ploidy.vcf.gz
-
