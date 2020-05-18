@@ -57,22 +57,20 @@ function genofile()
   '
 # HLA region
   plink2 --bfile ${merged_imputation} --chr 6 --from-bp 25392021 --to-bp 33392022 --make-bed --out work/INTERVAL-HLA
-# Chromosome X -- INTERVAL-X.samples2 is single column
-  bcftools query -l ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz | head
-  grep -v 110001440667 work/INTERVAL.samples2 | \
-  tr ' ' '_' > work/INTERVAL-X.samples2
-  bcftools view -S work/INTERVAL-X.samples2 ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz -O v > work/INTERVAL-X.vcf
+# Chromosome X
+  awk '!/110001440667/' work/INTERVAL.samples > work/INTERVAL-X.samples
+  awk '{print $1 "_" $1}' work/INTERVAL-X.samples | \
+  bcftools view -S - ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz -O v > work/INTERVAL-X.vcf
   export idno=$(awk '/POS/ && /QUAL/ {print NR} ' work/INTERVAL-X.vcf)
   awk -v idno=${idno} 'NR==idno{print} ' work/INTERVAL-X.vcf > work/INTERVAL.idline
   (
-    cat work/INTERVAL.samples | \
+    cat work/INTERVAL-X.samples | \
     parallel --dry-run -C' ' "
       export s={}_{};
       export t={};
       sed -i 's/'\"\${s}\"'/'\"\${t}\"'/g' work/INTERVAL.idline
     "
   ) | bash
-  echo 110001440667 > work/INTERVAL-X.excl-samples
   (
     awk -v idno=${idno} 'NR<idno' work/INTERVAL-X.vcf
     cat work/INTERVAL.idline
