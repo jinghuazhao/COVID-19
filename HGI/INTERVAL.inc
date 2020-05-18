@@ -164,22 +164,18 @@ function init()
   cd -
 }
 
+# Ploidy: GRCh37
+# The pseudoautosomal regions 60,001-2,699,520 and 154,931,044-155,270,560 with the ploidy 2
+# PAR1	X	60,001 	2,699,520	{ from=>1, to=>60_000, M=>1 }
+# PAR2	X 	154,931,044 	155,260,560	{ from=>2_699_521, to=>154_931_043, M=>1 }
+# https://en.wikipedia.org/wiki/Pseudoautosomal_region
+
+# Exampls
 (
-  echo X:2699676_G_A
-  echo X:2699683_G_A
-  echo X:2699739_G_C
-  echo X:2699898_C_CT
-  echo X:2699906_T_G
-  echo X:2699934_C_A
-  echo X:2699968_A_G
-  echo X:2700027_T_C
-  echo X:2700040_T_C
-  echo X:2700089_A_G
-  echo X:2700147_C_T
-  echo X:2700157_G_A
-  echo X:2700185_C_T
-  echo X:2700189_A_G
-  echo X:2700194_C_G
-  echo X:2700202_A_G
-  echo X:74273085_AATCTT_A
+  echo X:2699676_G_A;  echo X:2699683_G_A;  echo X:2699739_G_C
+  echo X:2699898_C_CT; echo X:2699906_T_G;  echo X:2699934_C_A
+  echo X:2699968_A_G;  echo X:2700027_T_C;  echo X:2700040_T_C
+  echo X:2700089_A_G;  echo X:2700147_C_T;  echo X:2700157_G_A
+  echo X:2700185_C_T;  echo X:2700189_A_G;  echo X:2700194_C_G
+  echo X:2700202_A_G;  echo X:74273085_AATCTT_A
 ) > work/INTERVAL-X.excl-rsids

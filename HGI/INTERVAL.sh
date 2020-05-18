@@ -1,4 +1,4 @@
-# 15-5-2020 JHZ
+# 18-5-2020 JHZ
 
 source INTERVAL.inc
 
@@ -16,7 +16,8 @@ step1_fitNULLGLMM.R \
    --sampleIDColinphenoFile=ID \
    --traitType=binary \
    --outputPrefix=output/INTERVAL \
-   --nThreads=4
+   --nThreads=8 \
+   --IsOverwriteVarianceRatioFile=TRUE
 
 seq 22 | \
 parallel --env autosomes -C' ' '
@@ -86,4 +87,4 @@ step2_SPAtests.R \
 '
 }
 
-gbat
+svat

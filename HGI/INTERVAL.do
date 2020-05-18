@@ -1,4 +1,4 @@
-// 16-5-2020 JHZ
+// 18-5-2020 JHZ
 
 local dir : env dir
 local ev : env ev
@@ -32,3 +32,6 @@ egen SARS_CoV=rowtotal(SARS_CoV2_1 SARS_CoV2_2 SARS_CoV2_3 SARS_CoV2_4 SARS_CoV2
 replace SARS_CoV=1 if SARS_CoV>0
 outsheet SARS_CoV age sex PC_1-PC_20 ID using work/INTERVAL-covid.txt, delim(" ") noquote replace
 gzsave work/INTERVAL-covid, replace
+label define sexFM 1 "M" 2 "F"
+label values sex sexFM
+outsheet ID sex using work/INTERVAL.FM, noname noquote replace
