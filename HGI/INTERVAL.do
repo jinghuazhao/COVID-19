@@ -1,4 +1,4 @@
-// 18-5-2020 JHZ
+w// 18-5-2020 JHZ
 
 local dir : env dir
 local ev : env ev
@@ -34,4 +34,6 @@ outsheet SARS_CoV age sex PC_1-PC_20 ID using work/INTERVAL-covid.txt, delim(" "
 gzsave work/INTERVAL-covid, replace
 label define sexFM 1 "M" 2 "F"
 label values sex sexFM
-outsheet ID sex using work/INTERVAL.FM, noname noquote replace
+tostring ID, replace format("%15.0g")
+gen ID2=ID + "_" + ID
+outsheet ID2 sex using work/INTERVAL-X.FM if ID!="110001440667", noname noquote replace
