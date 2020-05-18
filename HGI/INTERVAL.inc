@@ -122,12 +122,6 @@ function aggregate()
 
 function annotate()
 {
-  (
-    awk 'BEGIN{print "##fileformat=VCFv4.0"}'
-    awk 'BEGIN{print "#CHROM","POS","ID","REF","ALT","QUAL","FILTER","INFO"}'
-    gunzip -c ${snvResults} | \
-    awk -v OFS="\t" 'NR>1{print $1,$2,$1 ":" $2 "_" $4 "/" $5, $4, $5, ".", ".", $8}'
-  ) > work/INTERVAL.vepinput
   export ANNOVAR=${HPC_WORK}/annovar
   export LEFTEE=${HPC_WORK}/loftee
   export POLYPHEN=$HPC_WORK/polyphen-2.2.2
@@ -137,6 +131,12 @@ function annotate()
   export dbNSFP_2=FATHMM_pred,GERP++_RS,GTEx_V7_tissue,MutPred_protID,Polyphen2_HDIV_pred,Polyphen2_HVAR_pred,SIFT_pred,SIFT4G_pred,fathmm-MKL_coding_pred
   export dbNSFP_3=rs_dbSNP151,fathmm-MKL_coding_pred,gnomAD_exomes_NFE_AF,gnomAD_genomes_NFE_AF
   export dbNSFP_fields=${dbNSFP_1},${dbNSFP_2},${dbNSFP_3}
+  (
+    awk 'BEGIN{print "##fileformat=VCFv4.0"}'
+    awk 'BEGIN{print "#CHROM","POS","ID","REF","ALT","QUAL","FILTER","INFO"}'
+    gunzip -c ${snvResults} | \
+    awk -v OFS="\t" 'NR>1{print $1,$2,$1 ":" $2 "_" $4 "/" $5, $4, $5, ".", ".", $8}'
+  ) > work/INTERVAL.vepinput
   vep -i work/INTERVAL.vepinput -o work/INTERVAL.dbNSFP --cache --distance 500000 --force --offline --pick --tab \
       --plugin LoF,loftee_path:${LOFTEE},human_ancestor_fa:human_ancestor.fa.gz \
       --plugin dbNSFP,${VEP}/dbNSFP4.0a/dbNSFP4.0a.gz,${dbNSFP_fields}

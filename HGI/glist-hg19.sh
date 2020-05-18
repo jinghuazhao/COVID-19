@@ -56,7 +56,6 @@ function gencode_v19()
 
 function glist_enshgnc()
 {
-
   echo $(seq 22) X | \
   tr ' ' '\n' | \
   parallel -C' ' '
