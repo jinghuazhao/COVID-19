@@ -1,4 +1,4 @@
-# 17-5-2020 JHZ
+# 18-5-2020 JHZ
 
 export dir=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/HGI
 export autosomes=/home/jhz22/rds/post_qc_data/interval/imputed/uk10k_1000g_b37/imputed
@@ -6,6 +6,8 @@ export X=/rds/project/jmmh2/rds-jmmh2-projects/covid/ace2/interval_genetic_data/
 export merged_imputation=/home/jhz22/rds/post_qc_data/interval/genotype/affy_ukbiobank_array/genotyped/merged_imputation
 export ref=/home/jhz22/rds/post_qc_data/interval/reference_files/genetic/interval
 export ev=$ref/annot_INT_50PCs_pcs.txt
+export snvResults=output/INTERVAL.Zhao.ANA5.1.ALL.EUR.97.237.SAIGE.20200515.txt.gz
+export geneResults=output/INTERVAL.Zhao.ANA5.1.ALL.EUR.97.237.SAIGE.gene.20200515.txt.gz
 
 module load gcc/6
 
@@ -20,7 +22,7 @@ function genofile()
 {
   sed '1d' work/INTERVAL-covid.txt | \
   cut -d' ' -f1 > work/INTERVAL.samples
-  paste -d' ' work/INTERVAL.samples work/INTERVAL.samples > work/INTERAL.samples2
+  awk '{print $1, $1}' work/INTERVAL.samples > work/INTERAL.samples2
 # GRM
   module load plink/2.00-alpha
   plink2 --bfile ${merged_imputation} --indep-pairwise 1000kb 1 0.1 --out work/INTERVAL
@@ -44,7 +46,6 @@ function genofile()
       POS=\$4
       a1=toupper(\$6)
       a2=toupper(\$7)
-      if (a1>a2) {t=a1; a1=a2; a2=t}
       snpid=CHR \":\" POS \"_\" a1 \"/\" a2
       if (NF==7) print \$1, \$2, \$3, POS, \$6, \$7, \$1, snpid, CHR, POS, a1, a2
     }"
@@ -56,11 +57,11 @@ function genofile()
   '
 # HLA region
   plink2 --bfile ${merged_imputation} --chr 6 --from-bp 25392021 --to-bp 33392022 --make-bed --out work/INTERVAL-HLA
-# Chromosome X
+# Chromosome X -- INTERVAL-X.samples2 is single column
   bcftools query -l ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz | head
-  grep -v 110001440667 work/INTERVAL.samples > work/INTERVAL-X.samples
-  awk '{print $1 "_" $1}' work/INTERVAL-X.samples | \
-  bcftools view -S - ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz -O v --force-samples > work/INTERVAL-X.vcf
+  grep -v 110001440667 work/INTERVAL.samples2 | \
+  tr ' ' '_' > work/INTERVAL-X.samples2
+  bcftools view -S work/INTERVAL-X.samples2 ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz -O v > work/INTERVAL-X.vcf
   export idno=$(awk '/POS/ && /QUAL/ {print NR} ' work/INTERVAL-X.vcf)
   awk -v idno=${idno} 'NR==idno{print} ' work/INTERVAL-X.vcf > work/INTERVAL.idline
   (
@@ -77,7 +78,7 @@ function genofile()
     cat work/INTERVAL.idline
     awk -v idno=${idno} 'NR>idno' work/INTERVAL-X.vcf
   ) | \
-  qctool -filetype vcf -g - -bgen-bits 8 -s work/INTERVAL-22.samples -excl-samples work/INTERVAL-X.excl-samples -og work/INTERVAL-X.bgen
+  qctool -filetype vcf -g - -bgen-bits 8 -s work/INTERVAL-X.samples -og work/INTERVAL-X.bgen
   bgenix -g work/INTERVAL-X.bgen -index -clobber
 }
 
@@ -87,28 +88,47 @@ function aggregate()
     cut -d' ' -f1-3,5-9,11-14,17,21-26 output/INTERVAL-*.txt | head -1
     echo $(seq 22) X | \
     tr ' ' '\n' | \
-    parallel -C' ' '
+    parallel -j1 -C' ' '
       sed '1d' output/INTERVAL-{}.txt | \
       cut -d" " -f1-3,5-9,11-14,17,21-26
     '
-  ) | gzip -f > output/INTERVAL.Zhao.ANA5.1.ALL.EUR.97.237.SAIGE.20200515.txt.gz
-
+  ) | gzip -f > ${snvResults}
   (
     cut -d' ' -f1,2,11-14 output/INTERVAL-*.gene.txt | head -1
     echo $(seq 22) X | \
     tr ' ' '\n' | \
-    parallel -C' ' '
+    parallel -j1 -C' ' '
       sed '1d' output/INTERVAL-{}.gene.txt | \
       cut -d" " -f1,2,11-14
     '
-  ) | gzip -f > output/INTERVAL.Zhao.ANA5.1.ALL.EUR.97.237.SAIGE.gene.20200516.txt.gz
-
-  ) | gzip -f > gene-based.results
+  ) | gzip -f > ${geneResults}
 }
 
 # [dataset].[last name].[analysis_name].[freeze_number].[sex].[ancestry].[n_cases].[n_controls].[gwas software].[YYYYMMDD].txt.gz
 # [dataset].[last name].[analysis_name].[freeze_number].[sex].[ancestry].[gwas software].[YYYYMMDD].txt.gz
 # sex=M/MALE, F/FEMALE, ALL
+
+function annotate()
+{
+  (
+    awk 'BEGIN{print "##fileformat=VCFv4.0"}'
+    awk 'BEGIN{print "#CHROM","POS","ID","REF","ALT","QUAL","FILTER","INFO"}'
+    gunzip -c ${snvResults} | \
+    awk -v OFS="\t" 'NR>1{print $1,$2,$1 ":" $2 "_" $4 "/" $5, $4, $5, ".", ".", $8}'
+  ) > work/INTERVAL.vepinput
+  export ANNOVAR=${HPC_WORK}/annovar
+  export LEFTEE=${HPC_WORK}/loftee
+  export POLYPHEN=$HPC_WORK/polyphen-2.2.2
+  export VEP=${HPC_WORK}/ensembl-vep
+  export TMPDIR=/rds/user/jhz22/hpc-work/work
+  export dbNSFP_1=clinvar_id,clinvar_clnsig,clinvar_review,clinvar_trait,1000Gp3_EUR_AF,CADD_phred,Eigen-PC-phred_coding,ExAC_NFE_AF,LRT_pred
+  export dbNSFP_2=FATHMM_pred,GERP++_RS,GTEx_V7_tissue,MutPred_protID,Polyphen2_HDIV_pred,Polyphen2_HVAR_pred,SIFT_pred,SIFT4G_pred,fathmm-MKL_coding_pred
+  export dbNSFP_3=rs_dbSNP151,fathmm-MKL_coding_pred,gnomAD_exomes_NFE_AF,gnomAD_genomes_NFE_AF
+  export dbNSFP_fields=${dbNSFP_1},${dbNSFP_2},${dbNSFP_3}
+  vep -i ${s}.vepinput -o ${s}.dbNSFP --cache --distance 500000 --force --offline --pick --tab \
+      --plugin LoF,loftee_path:${LOFTEE},human_ancestor_fa:human_ancestor.fa.gz \
+      --plugin dbNSFP,${VEP}/dbNSFP4.0a/dbNSFP4.0a.gz,${dbNSFP_fields}
+}
 
 function gsutil_install()
 # https://cloud.google.com/storage/docs/gsutil_install#linux
