@@ -23,13 +23,13 @@ function genofile()
   sed '1d' work/INTERVAL-covid.txt | \
   cut -d' ' -f1 > work/INTERVAL.samples
   awk '{print $1, $1}' work/INTERVAL.samples > work/INTERAL.samples2
+  awk '!/110001440667/' work/INTERVAL-covid.txt > work/INTERVAL-covid-X.txt
+  awk '!/110001440667/' work/INTERVAL.samples > work/INTERVAL-X.samples
+  awk '{print $1 "_" $1}' work/INTERVAL-X.samples > work/INTERVAL-X.samples2
 # GRM
   module load plink/2.00-alpha
   plink2 --bfile ${merged_imputation} --indep-pairwise 1000kb 1 0.1 --out work/INTERVAL
   plink2 --bfile ${merged_imputation} --make-bed --extract work/INTERVAL.prune.in -keep work/INTERVAL.samples2 --out work/INTERVAL
-  awk '!/110001440667/' work/INTERVAL.samples > work/INTERVAL-X.samples
-  awk '!/110001440667/' work/INTERVAL-covid.txt > work/INTERVAL-covid-X.txt
-  awk '{print $1 "_" $1}' work/INTERVAL-X.samples > work/INTERVAL-X.samples2
   plink2 --bfile work/INTERVAL --make-bed -keep work/INTERVAL-X.samples2 --out work/INTERVAL-X
 # Autosomes
   seq 22 | \
@@ -142,31 +142,6 @@ function annotate()
       --plugin dbNSFP,${VEP}/dbNSFP4.0a/dbNSFP4.0a.gz,${dbNSFP_fields}
 }
 
-function gsutil_install()
-# https://cloud.google.com/storage/docs/gsutil_install#linux
-{
-  wget https://storage.googleapis.com/pub/gsutil.tar.gz
-  tar xvfz gsutil.tar.gz -C ..
-  cd ../gsutil
-  pip install pyasn1==0.4.8  --user
-  python setup.py install --prefix=$HPC_WORK
-}
-
-# Request an account
-# https://docs.google.com/forms/d/1eAaf-4XNYkplBo5Appbf8LHl2KHJyks9R4t0E3h0jII/viewform?edit_requested=true
-
-# gsutil cp UKBB.Doe.ANA5.1.ALL.EUR.154.1341.SAIGE.20200515.txt.gz gs://covid19-hg-upload-INTERVAL/
-
-# Fill the form here,
-# https://airtable.com/shrdJDwSHRZKXv45H
-# Download the data from here,
-# https://tinyurl.com/y97u49jz
-
-# SBATCH -A CARDIO-SL0-CPU -p cardio_intr --qos=cardio_intr
-# createSparseGRM.R --help
-# step1_fitNULLGLMM.R --help
-# step2_SPAtests.R --help
-
 function init()
 {
   cd 06-05-2020/INTERVAL
@@ -197,7 +172,7 @@ function X_bgen_defunct()
   bgenix -g work/INTERVAL-X.bgen -index -clobber
 # requires the following SAIGE flags:
 # --idstoExcludeFile=work/INTERVAL-X.excl-rsids
-# Exampls
+# Examples
   (
     echo X:2699676_G_A;  echo X:2699683_G_A;  echo X:2699739_G_C
     echo X:2699898_C_CT; echo X:2699906_T_G;  echo X:2699934_C_A
@@ -207,3 +182,28 @@ function X_bgen_defunct()
     echo X:2700202_A_G;  echo X:74273085_AATCTT_A
   ) > work/INTERVAL-X.excl-rsids
 }
+
+# createSparseGRM.R --help
+# step1_fitNULLGLMM.R --help
+# step2_SPAtests.R --help
+# SBATCH -A CARDIO-SL0-CPU -p cardio_intr --qos=cardio_intr
+
+function gsutil_install()
+# https://cloud.google.com/storage/docs/gsutil_install#linux
+{
+  wget https://storage.googleapis.com/pub/gsutil.tar.gz
+  tar xvfz gsutil.tar.gz -C ..
+  cd ../gsutil
+  pip install pyasn1==0.4.8  --user
+  python setup.py install --prefix=$HPC_WORK
+}
+
+# Request an account
+# https://docs.google.com/forms/d/1eAaf-4XNYkplBo5Appbf8LHl2KHJyks9R4t0E3h0jII/viewform?edit_requested=true
+
+# gsutil cp ${svResults} ${geneResults} gs://covid19-hg-upload-INTERVAL/
+
+# Fill the form here,
+# https://airtable.com/shrdJDwSHRZKXv45H
+# Download the data from here,
+# https://tinyurl.com/y97u49jz
