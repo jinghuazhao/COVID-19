@@ -30,7 +30,7 @@ rename agePulse age
 rename sexPulse sex
 egen SARS_CoV=rowtotal(SARS_CoV2_1 SARS_CoV2_2 SARS_CoV2_3 SARS_CoV2_4 SARS_CoV2_5 SARS_CoV2_6)
 replace SARS_CoV=1 if SARS_CoV>0
-outsheet SARS_CoV age sex PC_1-PC_20 ID using work/INTERVAL-covid.txt, delim(" ") noquote replace
+outsheet ID SARS_CoV age sex PC_1-PC_20 using work/INTERVAL-covid.txt, delim(" ") noquote replace
 gzsave work/INTERVAL-covid, replace
 label define sexFM 1 "M" 2 "F"
 label values sex sexFM
