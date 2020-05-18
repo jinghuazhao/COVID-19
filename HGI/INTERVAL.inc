@@ -57,7 +57,7 @@ function genofile()
   '
 # HLA region
   plink2 --bfile ${merged_imputation} --chr 6 --from-bp 25392021 --to-bp 33392022 --make-bed --out work/INTERVAL-HLA
-# Chromosome X
+# Chromosome X -- NOTE that work/INTERVAL-X.samples has a single column
   awk '!/110001440667/' work/INTERVAL.samples > work/INTERVAL-X.samples
   awk '{print $1 "_" $1}' work/INTERVAL-X.samples | \
   bcftools view -S - ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz -O v > work/INTERVAL-X.vcf
@@ -76,7 +76,8 @@ function genofile()
     cat work/INTERVAL.idline
     awk -v idno=${idno} 'NR>idno' work/INTERVAL-X.vcf
   ) | \
-  qctool -filetype vcf -g - -bgen-bits 8 -s work/INTERVAL-X.samples -og work/INTERVAL-X.bgen
+  awk '!/110001440667/' work/INTERVAL-22.samples > work/INTERVAL-X.samples2
+  qctool -filetype vcf -g - -bgen-bits 8 -s work/INTERVAL-X.samples2 -og work/INTERVAL-X.bgen
   bgenix -g work/INTERVAL-X.bgen -index -clobber
 }
 
