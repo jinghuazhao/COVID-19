@@ -1,7 +1,8 @@
-# 18-5-2020 JHZ
+# 19-5-2020 JHZ
 
 export dir=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/HGI
 export autosomes=/home/jhz22/rds/post_qc_data/interval/imputed/uk10k_1000g_b37/imputed
+export vcf=/home/jhz22/rds/post_qc_data/interval/imputed/uk10k_1000g_b37
 export X=/rds/project/jmmh2/rds-jmmh2-projects/covid/ace2/interval_genetic_data/interval_imputed_data
 export merged_imputation=/home/jhz22/rds/post_qc_data/interval/genotype/affy_ukbiobank_array/genotyped/merged_imputation
 export ref=/home/jhz22/rds/post_qc_data/interval/reference_files/genetic/interval
@@ -131,15 +132,18 @@ function annotate()
   export dbNSFP_2=FATHMM_pred,GERP++_RS,GTEx_V7_tissue,MutPred_protID,Polyphen2_HDIV_pred,Polyphen2_HVAR_pred,SIFT_pred,SIFT4G_pred,fathmm-MKL_coding_pred
   export dbNSFP_3=rs_dbSNP151,fathmm-MKL_coding_pred,gnomAD_exomes_NFE_AF,gnomAD_genomes_NFE_AF
   export dbNSFP_fields=${dbNSFP_1},${dbNSFP_2},${dbNSFP_3}
-  (
-    awk 'BEGIN{print "##fileformat=VCFv4.0"}'
-    awk 'BEGIN{print "#CHROM","POS","ID","REF","ALT","QUAL","FILTER","INFO"}'
-    gunzip -c ${snvResults} | \
-    awk -v OFS="\t" 'NR>1{print $1,$2,$1 ":" $2 "_" $4 "/" $5, $4, $5, ".", ".", $8}'
-  ) > work/INTERVAL.vepinput
-  vep -i work/INTERVAL.vepinput -o work/INTERVAL.dbNSFP --cache --distance 500000 --force --offline --pick --tab \
-      --plugin LoF,loftee_path:${LOFTEE},human_ancestor_fa:human_ancestor.fa.gz \
-      --plugin dbNSFP,${VEP}/dbNSFP4.0a/dbNSFP4.0a.gz,${dbNSFP_fields}
+  seq 22 | \
+  parallel --env dbNSFP_fields --env vcf --env LOFTEE --env VEP -C' ' '
+    (
+      awk "BEGIN{print \"##fileformat=VCFv4.0\"}"
+      awk "BEGIN{print \"#CHROM\",\"POS\",\"ID\",\"REF\",\"ALT\",\"QUAL\",\"FILTER\",\"INFO\"}"
+      bcftools query -f "%CHROM\t%POS\t%REF\t%ALT\t%QUAL\t%FILTER\n" ${vcf}/{}.pbwt_reference_impute.vcf.gz  | \
+      awk -v OFS="\t" "NR>1{print \$1,\$2,\$1 \":\" \$2 \"_\" \$3 \"/\" \$4, \$3, \$4, \$5, \$6, \".\"}"
+    ) > work/INTERVAL-{}.vepinput
+    vep -i work/INTERVAL-{}.vepinput -o work/INTERVAL-{}.dbNSFP --cache --distance 500000 --force --offline --pick --tab \
+        --plugin LoF,loftee_path:${LOFTEE},human_ancestor_fa:human_ancestor.fa.gz \
+        --plugin dbNSFP,${VEP}/dbNSFP4.0a/dbNSFP4.0a.gz,${dbNSFP_fields}
+  '
 }
 
 function init()
