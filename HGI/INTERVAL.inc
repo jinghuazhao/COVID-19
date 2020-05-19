@@ -137,8 +137,8 @@ function annotate()
     (
       awk "BEGIN{print \"##fileformat=VCFv4.0\"}"
       awk "BEGIN{print \"#CHROM\",\"POS\",\"ID\",\"REF\",\"ALT\",\"QUAL\",\"FILTER\",\"INFO\"}"
-      bcftools query -f "%CHROM\t%POS\t%REF\t%ALT\t%QUAL\t%FILTER\n" ${vcf}/{}.pbwt_reference_impute.vcf.gz  | \
-      awk -v OFS="\t" "NR>1{print \$1,\$2,\$1 \":\" \$2 \"_\" \$3 \"/\" \$4, \$3, \$4, \$5, \$6, \".\"}"
+      bcftools query -f "%CHROM\t%POS\t%REF\t%ALT\t%QUAL\t%FILTER\t%INFO/INFO\n" ${vcf}/{}.pbwt_reference_impute.vcf.gz  | \
+      awk -v OFS="\t" "NR>1{print \$1,\$2,\$1 \":\" \$2 \"_\" \$3 \"/\" \$4, \$3, \$4, \$5, \$6, \$7}"
     ) > work/INTERVAL-{}.vepinput
     vep -i work/INTERVAL-{}.vepinput -o work/INTERVAL-{}.dbNSFP --cache --distance 500000 --force --offline --pick --tab \
         --plugin LoF,loftee_path:${LOFTEE},human_ancestor_fa:human_ancestor.fa.gz \
