@@ -1,8 +1,7 @@
-# 19-5-2020 JHZ
+# 20-5-2020 JHZ
 
 export dir=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/HGI
-export autosomes=/home/jhz22/rds/post_qc_data/interval/imputed/uk10k_1000g_b37/imputed
-export vcf=/home/jhz22/rds/post_qc_data/interval/imputed/uk10k_1000g_b37
+export autosomes=/home/jhz22/rds/post_qc_data/interval/imputed/uk10k_1000g_b37
 export X=/rds/project/jmmh2/rds-jmmh2-projects/covid/ace2/interval_genetic_data/interval_imputed_data
 export merged_imputation=/home/jhz22/rds/post_qc_data/interval/genotype/affy_ukbiobank_array/genotyped/merged_imputation
 export ref=/home/jhz22/rds/post_qc_data/interval/reference_files/genetic/interval
@@ -35,7 +34,7 @@ function genofile()
 # Autosomes
   seq 22 | \
   parallel --env autosomes -C' ' '
-    qctool -g ${autosomes}/impute_{}_interval.bgen -s ${autosomes}/interval.samples \
+    qctool -g ${autosomes}/imputed/impute_{}_interval.bgen -s ${autosomes}/imputed/interval.samples \
            -incl-samples work/INTERVAL.samples -bgen-bits 8 -og work/INTERVAL-{}-rsid.bgen -os work/INTERVAL-{}-rsid.samples
     bgenix -g work/INTERVAL-{}-rsid.bgen -index -clobber
   '
@@ -91,7 +90,7 @@ function X_vcf()
     awk -v idno=${idno} 'NR>idno' work/INTERVAL-X.vcf
   ) | \
   vcf-fix-ploidy -s work/INTERVAL-X.FM | \
-  bgzip -f > work/INTERVAL-X-ploidy.vcf.gz
+  bgzip -cf > work/INTERVAL-X-ploidy.vcf.gz
   bcftools index -tf work/INTERVAL-X-ploidy.vcf.gz
 }
 
@@ -124,25 +123,21 @@ function aggregate()
 function annotate()
 {
   export ANNOVAR=${HPC_WORK}/annovar
-  export LEFTEE=${HPC_WORK}/loftee
+  export LOFTEE=${HPC_WORK}/loftee
   export POLYPHEN=$HPC_WORK/polyphen-2.2.2
   export VEP=${HPC_WORK}/ensembl-vep
   export TMPDIR=/rds/user/jhz22/hpc-work/work
-  export dbNSFP_1=clinvar_id,clinvar_clnsig,clinvar_review,clinvar_trait,1000Gp3_EUR_AF,CADD_phred,Eigen-PC-phred_coding,ExAC_NFE_AF,LRT_pred
-  export dbNSFP_2=FATHMM_pred,GERP++_RS,GTEx_V7_tissue,MutPred_protID,Polyphen2_HDIV_pred,Polyphen2_HVAR_pred,SIFT_pred,SIFT4G_pred,fathmm-MKL_coding_pred
-  export dbNSFP_3=rs_dbSNP151,fathmm-MKL_coding_pred,gnomAD_exomes_NFE_AF,gnomAD_genomes_NFE_AF
-  export dbNSFP_fields=${dbNSFP_1},${dbNSFP_2},${dbNSFP_3}
-  seq 22 | \
-  parallel --env dbNSFP_fields --env vcf --env LOFTEE --env VEP -C' ' '
+  seq 22 -1 1 | \
+  parallel -j2 --env autosomes --env LOFTEE --env VEP -C' ' '
     (
       awk "BEGIN{print \"##fileformat=VCFv4.0\"}"
-      awk "BEGIN{print \"#CHROM\",\"POS\",\"ID\",\"REF\",\"ALT\",\"QUAL\",\"FILTER\",\"INFO\"}"
-      bcftools query -f "%CHROM\t%POS\t%REF\t%ALT\t%QUAL\t%FILTER\t%INFO/INFO\n" ${vcf}/{}.pbwt_reference_impute.vcf.gz  | \
+      awk -vOFS="\t" "BEGIN{print \"#CHROM\",\"POS\",\"ID\",\"REF\",\"ALT\",\"QUAL\",\"FILTER\",\"INFO\"}"
+      bcftools query -f "%CHROM\t%POS\t%REF\t%ALT\t%QUAL\t%FILTER\t%INFO/INFO\n" ${autosomes}/{}.pbwt_reference_impute.vcf.gz  | \
       awk -v OFS="\t" "NR>1{print \$1,\$2,\$1 \":\" \$2 \"_\" \$3 \"/\" \$4, \$3, \$4, \$5, \$6, \$7}"
     ) > work/INTERVAL-{}.vepinput
-    vep -i work/INTERVAL-{}.vepinput -o work/INTERVAL-{}.dbNSFP --cache --distance 500000 --force --offline --pick --tab \
-        --plugin LoF,loftee_path:${LOFTEE},human_ancestor_fa:human_ancestor.fa.gz \
-        --plugin dbNSFP,${VEP}/dbNSFP4.0a/dbNSFP4.0a.gz,${dbNSFP_fields}
+    vep --input_file work/INTERVAL-{}.vepinput --output_file work/INTERVAL-{}.tsv --cache --dir_cache ${VEP}/.vep --dir_plugins ${LOFTEE} --offline \
+        --pick --force_overwrite --species homo_sapiens --assembly GRCh37 --tab \
+        --plugin LoF,loftee_path:${LOFTEE},human_ancestor_fa:human_ancestor.fa.gz,conservation_file:phylocsf_gerp.sql.gz
   '
 }
 

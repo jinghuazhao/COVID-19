@@ -1,10 +1,6 @@
-# 15-5-2020 JHZ
+# 18-5-2020 JHZ
 
 source INTERVAL.inc
-
-grep -v -f work/INTERVAL-X.excl-samples work/INTERVAL-covid.txt > work/INTERVAL-covid-X.txt
-paste -d' ' work/INTERVAL-X.samples work/INTERVAL-X.samples > work/INTERVAL-X.samples2
-plink2 --bfile work/INTERVAL --make-bed -keep work/INTERVAL-X.samples2 --out work/INTERVAL-X
 
 step1_fitNULLGLMM.R \
    --plinkFile=work/INTERVAL-X \
