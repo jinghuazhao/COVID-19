@@ -137,24 +137,26 @@ function annotate()
     ) > work/INTERVAL-{}.vepinput
    # VEP
     cd work
-    vep --input_file INTERVAL-{}.vepinput --output_file INTERVAL-{}.tsv --cache --dir_cache ${VEP}/.vep --dir_plugins ${LOFTEE} --offline \
+    vep --input_file INTERVAL-{}.vepinput.gz --output_file INTERVAL-{}.tsv --cache --dir_cache ${VEP}/.vep --dir_plugins ${LOFTEE} --offline \
         --pick --force_overwrite --species homo_sapiens --assembly GRCh37 --tab \
         --plugin LoF,loftee_path:${LOFTEE},human_ancestor_fa:human_ancestor.fa.gz,conservation_file:phylocsf_gerp.sql.gz
    # ANNOVAR
-    awk -v OFS="\t" "NR>2{print \$1,\$2,\$2,\$4,\$5}" INTERVAL-${s}.vepinput > ${s}.avinput
+    gunzip -c INTERVAL-${s}.vepinput.gz | \
+    awk -v OFS="\t" "NR>2{print \$1,\$2,\$2,\$4,\$5}" > INTERVAL-${s}.avinput
     annotate_variation.pl -buildver hg19 ${s}.avinput ${ANNOVAR}/humandb/ -dbtype ensGene --outfile ${s}
-    table_annovar.pl ${s}.avinput $ANNOVAR/test -buildver hg19 -out ${s} \
+    table_annovar.pl INTERVAL-${s}.avinput $ANNOVAR/test -buildver hg19 -out ${s} \
          -protocol ensGene,refGene,ccdsGene,wgEncodeGencodeBasicV19,cytoBand,exac03,avsnp147,dbnsfp30a,gwasCatalog \
          -operation g,g,g,g,r,f,f,f,r \
          -remove -nastring . -csvout -polish -xref $ANNOVA/example/gene_xref.txt
    # Polyphen-2
-    awk "NR>2{gsub(/_/,\" \",\$3);print \"chr\" \$3}" INTERVAL-${s}.vepinput | \
+    gunzip -c INTERVAL-${s}.vepintput | \
+    awk "NR>2{gsub(/_/,\" \",\$3);print \"chr\" \$3}" | \
     sort -k1,1 | \
-    uniq > ${s}.pph.list
-    mapsnps.pl -g hg19 -m -U -y ${s}.pph.input ${s}.pph.list 1>${s}.pph.features 2>${s}.log
-    run_pph.pl ${s}.pph.input 1>${s}.pph.output 2>${s}.pph.log
-    run_weka.pl ${s}.pph.output >${s}.pph.humdiv.output
-    run_weka.pl -l $POLYPHEN/models/HumVar.UniRef100.NBd.f11.model ${s}.pph.output >${s}.pph.humvar.output
+    uniq > INTERVAL-${s}.pph.list
+    mapsnps.pl -g hg19 -m -U -y ${s}.pph.input INTERVAL-${s}.pph.list 1>INTERVAL-${s}.pph.features 2>INTERVAL-${s}.log
+    run_pph.pl INTERVAL-${s}.pph.input 1>$INTERVAL-{s}.pph.output 2>INTERVAL-${s}.pph.log
+    run_weka.pl INTERVAL-${s}.pph.output >INTERVAL-${s}.pph.humdiv.output
+    run_weka.pl -l $POLYPHEN/models/HumVar.UniRef100.NBd.f11.model INTERVAL-${s}.pph.output >INTERVAL-${s}.pph.humvar.output
     cd -
   '
 }
