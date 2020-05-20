@@ -135,9 +135,27 @@ function annotate()
       bcftools query -f "%CHROM\t%POS\t%REF\t%ALT\t%QUAL\t%FILTER\t%INFO/INFO\n" ${autosomes}/{}.pbwt_reference_impute.vcf.gz  | \
       awk -v OFS="\t" "NR>1{print \$1,\$2,\$1 \":\" \$2 \"_\" \$3 \"/\" \$4, \$3, \$4, \$5, \$6, \$7}"
     ) > work/INTERVAL-{}.vepinput
-    vep --input_file work/INTERVAL-{}.vepinput --output_file work/INTERVAL-{}.tsv --cache --dir_cache ${VEP}/.vep --dir_plugins ${LOFTEE} --offline \
+   # VEP
+    cd work
+    vep --input_file INTERVAL-{}.vepinput --output_file INTERVAL-{}.tsv --cache --dir_cache ${VEP}/.vep --dir_plugins ${LOFTEE} --offline \
         --pick --force_overwrite --species homo_sapiens --assembly GRCh37 --tab \
         --plugin LoF,loftee_path:${LOFTEE},human_ancestor_fa:human_ancestor.fa.gz,conservation_file:phylocsf_gerp.sql.gz
+   # ANNOVAR
+    awk -v OFS="\t" "NR>2{print \$1,\$2,\$2,\$4,\$5}" INTERVAL-${s}.vepinput > ${s}.avinput
+    annotate_variation.pl -buildver hg19 ${s}.avinput ${ANNOVAR}/humandb/ -dbtype ensGene --outfile ${s}
+    table_annovar.pl ${s}.avinput $ANNOVAR/test -buildver hg19 -out ${s} \
+         -protocol ensGene,refGene,ccdsGene,wgEncodeGencodeBasicV19,cytoBand,exac03,avsnp147,dbnsfp30a,gwasCatalog \
+         -operation g,g,g,g,r,f,f,f,r \
+         -remove -nastring . -csvout -polish -xref $ANNOVA/example/gene_xref.txt
+   # Polyphen-2
+    awk "NR>2{gsub(/_/,\" \",\$3);print \"chr\" \$3}" INTERVAL-${s}.vepinput | \
+    sort -k1,1 | \
+    uniq > ${s}.pph.list
+    mapsnps.pl -g hg19 -m -U -y ${s}.pph.input ${s}.pph.list 1>${s}.pph.features 2>${s}.log
+    run_pph.pl ${s}.pph.input 1>${s}.pph.output 2>${s}.pph.log
+    run_weka.pl ${s}.pph.output >${s}.pph.humdiv.output
+    run_weka.pl -l $POLYPHEN/models/HumVar.UniRef100.NBd.f11.model ${s}.pph.output >${s}.pph.humvar.output
+    cd -
   '
 }
 
@@ -185,7 +203,7 @@ function X_bgen_defunct()
 # createSparseGRM.R --help
 # step1_fitNULLGLMM.R --help
 # step2_SPAtests.R --help
-# SBATCH -A CARDIO-SL0-CPU -p cardio_intr --qos=cardio_intr
+# sintr -A CARDIO-SL0-CPU -p cardio_intr --qos=cardio_intr
 
 function gsutil_install()
 # https://cloud.google.com/storage/docs/gsutil_install#linux
