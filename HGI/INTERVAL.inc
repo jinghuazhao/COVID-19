@@ -134,7 +134,8 @@ function annotate()
       awk -vOFS="\t" "BEGIN{print \"#CHROM\",\"POS\",\"ID\",\"REF\",\"ALT\",\"QUAL\",\"FILTER\",\"INFO\"}"
       bcftools query -f "%CHROM\t%POS\t%REF\t%ALT\t%QUAL\t%FILTER\t%INFO/INFO\n" ${autosomes}/{}.pbwt_reference_impute.vcf.gz  | \
       awk -v OFS="\t" "NR>1{print \$1,\$2,\$1 \":\" \$2 \"_\" \$3 \"/\" \$4, \$3, \$4, \$5, \$6, \$7}"
-    ) > work/INTERVAL-{}.vepinput
+    ) | \
+   grep -f > work/INTERVAL-{}.vepinput.gz
    # VEP
     cd work
     vep --input_file INTERVAL-{}.vepinput.gz --output_file INTERVAL-{}.tsv --cache --dir_cache ${VEP}/.vep --dir_plugins ${LOFTEE} --offline \
@@ -143,7 +144,7 @@ function annotate()
    # ANNOVAR
     gunzip -c INTERVAL-${s}.vepinput.gz | \
     awk -v OFS="\t" "NR>2{print \$1,\$2,\$2,\$4,\$5}" > INTERVAL-${s}.avinput
-    annotate_variation.pl -buildver hg19 ${s}.avinput ${ANNOVAR}/humandb/ -dbtype ensGene --outfile ${s}
+    annotate_variation.pl -buildver hg19 INTERVAL-${s}.avinput ${ANNOVAR}/humandb/ -dbtype ensGene --outfile INTERVAL-${s}
     table_annovar.pl INTERVAL-${s}.avinput $ANNOVAR/test -buildver hg19 -out ${s} \
          -protocol ensGene,refGene,ccdsGene,wgEncodeGencodeBasicV19,cytoBand,exac03,avsnp147,dbnsfp30a,gwasCatalog \
          -operation g,g,g,g,r,f,f,f,r \
@@ -153,7 +154,7 @@ function annotate()
     awk "NR>2{gsub(/_/,\" \",\$3);print \"chr\" \$3}" | \
     sort -k1,1 | \
     uniq > INTERVAL-${s}.pph.list
-    mapsnps.pl -g hg19 -m -U -y ${s}.pph.input INTERVAL-${s}.pph.list 1>INTERVAL-${s}.pph.features 2>INTERVAL-${s}.log
+    mapsnps.pl -g hg19 -m -U -y INTERVAL-${s}.pph.input INTERVAL-${s}.pph.list 1>INTERVAL-${s}.pph.features 2>INTERVAL-${s}.log
     run_pph.pl INTERVAL-${s}.pph.input 1>$INTERVAL-{s}.pph.output 2>INTERVAL-${s}.pph.log
     run_weka.pl INTERVAL-${s}.pph.output >INTERVAL-${s}.pph.humdiv.output
     run_weka.pl -l $POLYPHEN/models/HumVar.UniRef100.NBd.f11.model INTERVAL-${s}.pph.output >INTERVAL-${s}.pph.humvar.output
