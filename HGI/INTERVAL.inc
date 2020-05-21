@@ -1,4 +1,4 @@
-# 20-5-2020 JHZ
+# 21-5-2020 JHZ
 
 export dir=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/HGI
 export autosomes=/home/jhz22/rds/post_qc_data/interval/imputed/uk10k_1000g_b37
@@ -6,8 +6,8 @@ export X=/rds/project/jmmh2/rds-jmmh2-projects/covid/ace2/interval_genetic_data/
 export merged_imputation=/home/jhz22/rds/post_qc_data/interval/genotype/affy_ukbiobank_array/genotyped/merged_imputation
 export ref=/home/jhz22/rds/post_qc_data/interval/reference_files/genetic/interval
 export ev=$ref/annot_INT_50PCs_pcs.txt
-export snvResults=output/INTERVAL.Zhao.ANA5.1.ALL.EUR.97.237.SAIGE.20200515.txt.gz
-export geneResults=output/INTERVAL.Zhao.ANA5.1.ALL.EUR.97.237.SAIGE.gene.20200515.txt.gz
+export snvResults=output/INTERVAL.Zhao.ANA5.1.ALL.EUR.97.237.SAIGE.20200521.txt.gz
+export geneResults=output/INTERVAL.Zhao.ANA5.1.ALL.EUR.97.237.SAIGE.gene.20200521.txt.gz
 
 module load gcc/6
 
@@ -41,7 +41,7 @@ function genofile()
   seq 22 | \
   parallel --env INF -C' ' '
   ( 
-    cat ${INF}/csd3/ld.hdr
+    echo alternate_ids rsid chromosome position allele1 allele2 SNPID rsid chromosome position allele1 allele2
     bgenix -g work/INTERVAL-{}-rsid.bgen -list 2>&1 | \
     sed "1,9d" | \
     awk "
@@ -98,11 +98,17 @@ function aggregate()
 {
   (
     cut -d' ' -f1-3,5-9,11-14,17,21-26 output/INTERVAL-*.txt | head -1
-    echo $(seq 22) X | \
+    seq 22 | \
     tr ' ' '\n' | \
     parallel -j1 -C' ' '
-      sed '1d' output/INTERVAL-{}.txt | \
+      sed "1d" output/INTERVAL-{}.txt | \
       cut -d" " -f1-3,5-9,11-14,17,21-26
+    '
+    echo X | \
+    parallel -j1 -C' ' '
+      sed "1d" output/INTERVAL-{}.txt | \
+      cut -d" " -f1-3,4-8,10-13,16,20-25 | \
+      sed "s/X/23/"
     '
   ) | gzip -f > ${snvResults}
   (
@@ -120,6 +126,31 @@ function aggregate()
 # [dataset].[last name].[analysis_name].[freeze_number].[sex].[ancestry].[gwas software].[YYYYMMDD].txt.gz
 # sex=M/MALE, F/FEMALE, ALL
 
+function qqman()
+{
+  export results=${snvResults}
+  R --no-save -q <<\ \ END
+    analysis <- "ANA5"
+    results <- Sys.getenv("results")
+    require(qqman);
+    tbl <- read.table(results,as.is=TRUE,header=TRUE);
+    tbl <- within(tbl,{
+       SNP <- rsid
+       BP <- POS
+       P <- p.value
+    })
+    tbl <- subset(tbl,!is.na(CHR)&!is.na(BP)&!is.na(P))
+    qq <- paste0("output/",analysis,"_qq.png");
+    png(qq,width=12,height=10,units="in",pointsize=4,res=300)
+    qq(with(tbl,P))
+    dev.off()
+    manhattan <- paste0("output/",analysis,"_manhattan.png");
+    png(manhattan,width=12,height=10,units="in",pointsize=4,res=300)
+    manhattan(tbl,genomewideline=-log10(5e-8),suggestiveline=FALSE,ylim=c(0,25));
+    dev.off();
+  END
+}
+
 function annotate()
 {
   export ANNOVAR=${HPC_WORK}/annovar
@@ -127,15 +158,20 @@ function annotate()
   export POLYPHEN=$HPC_WORK/polyphen-2.2.2
   export VEP=${HPC_WORK}/ensembl-vep
   export TMPDIR=/rds/user/jhz22/hpc-work/work
-  seq 22 -1 1 | \
-  parallel -j2 --env autosomes --env LOFTEE --env VEP -C' ' '
+  echo $(seq 22 -1 1) X | \
+  tr ' ' '\n' | \
+  parallel -j2 --env autosomes --env LOFTEE --env VEP --env X -C' ' '
     (
       awk "BEGIN{print \"##fileformat=VCFv4.0\"}"
       awk -vOFS="\t" "BEGIN{print \"#CHROM\",\"POS\",\"ID\",\"REF\",\"ALT\",\"QUAL\",\"FILTER\",\"INFO\"}"
-      bcftools query -f "%CHROM\t%POS\t%REF\t%ALT\t%QUAL\t%FILTER\t%INFO/INFO\n" ${autosomes}/{}.pbwt_reference_impute.vcf.gz  | \
+      if [ "{}" == "X" ]; then
+         export vcfgz=${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz; else export vcfgz=${autosomes}/{}.pbwt_reference_impute.vcf.gz
+      fi
+      bcftools query -f "%CHROM\t%POS\t%REF\t%ALT\t%QUAL\t%FILTER\t%INFO/INFO\n" ${vcfgz}  | \
       awk -v OFS="\t" "NR>1{print \$1,\$2,\$1 \":\" \$2 \"_\" \$3 \"/\" \$4, \$3, \$4, \$5, \$6, \$7}"
     ) | \
-   grep -f > work/INTERVAL-{}.vepinput.gz
+    gzip -f > work/INTERVAL-{}.vepinput.gz
+    parallel -j2 --env autosomes --env LOFTEE --env VEP -C' ' '
    # VEP
     cd work
     vep --input_file INTERVAL-{}.vepinput.gz --output_file INTERVAL-{}.tsv --cache --dir_cache ${VEP}/.vep --dir_plugins ${LOFTEE} --offline \
@@ -158,6 +194,22 @@ function annotate()
     run_pph.pl INTERVAL-${s}.pph.input 1>$INTERVAL-{s}.pph.output 2>INTERVAL-${s}.pph.log
     run_weka.pl INTERVAL-${s}.pph.output >INTERVAL-${s}.pph.humdiv.output
     run_weka.pl -l $POLYPHEN/models/HumVar.UniRef100.NBd.f11.model INTERVAL-${s}.pph.output >INTERVAL-${s}.pph.humvar.output
+    cd -
+  '
+  # Split large chromosomes into chunks at most comparable to chromosome 7
+  seq 5 -1 1 | \
+  parallel -C' ' '
+    cd work
+    gunzip -c INTERVAL-{}.vepinput.gz | \
+    split -l 5000000 --numeric-suffixes=1 --additional-suffix=.vepinput - INTERVAL-{}.
+    gzip -f INTERVAL-{}.01.vepinput
+    (
+      gunzip -c INTERVAL-{}.vepinput.gz | \
+      awk "NR<2{print}"
+      cat INTERVAL-{}.02.vepinput
+      rm INTERVAL-{}.02.vepinput
+    ) | \
+    gzip -f > INTERVAL-{}.02.vepinput.gz
     cd -
   '
 }
@@ -207,6 +259,7 @@ function X_bgen_defunct()
 # step1_fitNULLGLMM.R --help
 # step2_SPAtests.R --help
 # sintr -A CARDIO-SL0-CPU -p cardio_intr --qos=cardio_intr
+# srun -A CARDIO-SL0-CPU -p cardio_intr --qos=cardio_intr -N1 -n1 -c4 -t 12:0:0 --pty bash -i
 
 function gsutil_install()
 # https://cloud.google.com/storage/docs/gsutil_install#linux
