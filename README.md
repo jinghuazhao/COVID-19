@@ -13,7 +13,7 @@
 * [COVID-19 Data Portal](https://www.covid19dataportal.org/).
 * [The COVID-19 Host Genetics Initiative](https://covid19hg.netlify.com/)
   * [Registration](https://www.covid19hg.org/register/)
-  * [Phenotype definition](https://tinyurl.com/ybno3zgy)
+  * Phenotype definition: [v1.0](https://tinyurl.com/ybno3zgy), [v2.0](https://tinyurl.com/yd8hkvjk)
   * [Case severity code](https://tinyurl.com/y7nygjr3)
   * [Analysis plan](https://tinyurl.com/yalt3n28)
 
