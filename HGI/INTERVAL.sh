@@ -1,4 +1,4 @@
-# 18-5-2020 JHZ
+#!/usr/bin/bash
 
 source INTERVAL.inc
 
@@ -71,9 +71,9 @@ step2_SPAtests.R \
    --bgenFile=work/INTERVAL-{}.bgen \
    --bgenFileIndex=work/INTERVAL-{}.bgen.bgi \
    --chrom={} \
-   --minMAF=0 \
-   --minMAC=0.5 \
-   --maxMAFforGroupTest=0.01 \
+   --minMAF=0.0001 \
+   --minMAC=1 \
+   --maxMAFforGroupTest=0.5 \
    --sampleFile=work/INTERVAL.samples \
    --GMMATmodelFile=output/INTERVAL.rda \
    --varianceRatioFile=output/INTERVAL.varianceRatio.txt \
