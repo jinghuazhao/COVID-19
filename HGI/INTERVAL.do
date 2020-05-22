@@ -1,4 +1,4 @@
-w// 18-5-2020 JHZ
+w// 22-5-2020 JHZ
 
 local dir : env dir
 local ev : env ev
@@ -35,3 +35,6 @@ gzsave work/INTERVAL-covid, replace
 label define sexFM 1 "M" 2 "F"
 label values sex sexFM
 outsheet ID sex using work/INTERVAL-X.FM if ID!=110001440667, noname noquote replace
+tab sex
+tabstat age, stat(mean sd) by(sex)
+

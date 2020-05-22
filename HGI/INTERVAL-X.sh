@@ -57,9 +57,9 @@ step2_SPAtests.R \
    --vcfFile=work/INTERVAL-X-ploidy.vcf.gz \
    --vcfFileIndex=work/INTERVAL-X-ploidy.vcf.gz.tbi \
    --chrom=X \
-   --minMAF=0.0001 \
+   --minMAF=0 \
    --minMAC=1 \
-   --maxMAFforGroupTest=0.5 \
+   --maxMAFforGroupTest=0.001 \
    --sampleFile=work/INTERVAL-X.samples \
    --GMMATmodelFile=output/INTERVAL-X.rda \
    --varianceRatioFile=output/INTERVAL-X.varianceRatio.txt \

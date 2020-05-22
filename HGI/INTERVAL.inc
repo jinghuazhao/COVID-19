@@ -1,4 +1,4 @@
-# 21-5-2020 JHZ
+# 22-5-2020 JHZ
 
 export dir=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/HGI
 export autosomes=/home/jhz22/rds/post_qc_data/interval/imputed/uk10k_1000g_b37
@@ -274,7 +274,8 @@ function gsutil_install()
 # Request an account
 # https://docs.google.com/forms/d/1eAaf-4XNYkplBo5Appbf8LHl2KHJyks9R4t0E3h0jII/viewform?edit_requested=true
 
-# gsutil cp ${svResults} ${geneResults} gs://covid19-hg-upload-INTERVAL/
+# gsutil cp ${snvResults} gs://covid19-hg-upload-UK-Blood-Donors-Cohort/
+# gsutil cp ${geneResults} gs://covid19-hg-upload-UK-Blood-Donors-Cohort/
 
 # Fill the form here,
 # https://airtable.com/shrdJDwSHRZKXv45H
