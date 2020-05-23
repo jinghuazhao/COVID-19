@@ -157,43 +157,48 @@ function annotate()
   export LOFTEE=${HPC_WORK}/loftee
   export POLYPHEN=$HPC_WORK/polyphen-2.2.2
   export VEP=${HPC_WORK}/ensembl-vep
+  export APV=VEP
   export TMPDIR=/rds/user/jhz22/hpc-work/work
   echo $(seq 22 -1 1) X | \
   tr ' ' '\n' | \
-  parallel -j2 --env autosomes --env LOFTEE --env VEP --env X -C' ' '
-    (
-      awk "BEGIN{print \"##fileformat=VCFv4.0\"}"
-      awk -vOFS="\t" "BEGIN{print \"#CHROM\",\"POS\",\"ID\",\"REF\",\"ALT\",\"QUAL\",\"FILTER\",\"INFO\"}"
-      if [ "{}" == "X" ]; then
-         export vcfgz=${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz; else export vcfgz=${autosomes}/{}.pbwt_reference_impute.vcf.gz
-      fi
-      bcftools query -f "%CHROM\t%POS\t%REF\t%ALT\t%QUAL\t%FILTER\t%INFO/INFO\n" ${vcfgz}  | \
-      awk -v OFS="\t" "NR>1{print \$1,\$2,\$1 \":\" \$2 \"_\" \$3 \"/\" \$4, \$3, \$4, \$5, \$6, \$7}"
-    ) | \
-    gzip -f > work/INTERVAL-{}.vepinput.gz
-    parallel -j2 --env autosomes --env LOFTEE --env VEP -C' ' '
-   # VEP
+  parallel -j2 --env autosomes --env ANNOVAR --env POLYPHEN --env LOFTEE --env VEP --env APV -C' ' '
     cd work
-    vep --input_file INTERVAL-{}.vepinput.gz --output_file INTERVAL-{}.tsv --cache --dir_cache ${VEP}/.vep --dir_plugins ${LOFTEE} --offline \
-        --pick --force_overwrite --species homo_sapiens --assembly GRCh37 --tab \
-        --plugin LoF,loftee_path:${LOFTEE},human_ancestor_fa:human_ancestor.fa.gz,conservation_file:phylocsf_gerp.sql.gz
+    if [ ${APV} == "setup" ]; then
+      (
+        awk "BEGIN{print \"##fileformat=VCFv4.0\"}"
+        awk -vOFS="\t" "BEGIN{print \"#CHROM\",\"POS\",\"ID\",\"REF\",\"ALT\",\"QUAL\",\"FILTER\",\"INFO\"}"
+        if [ "{}" == "X" ]; then
+           export vcfgz=${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz; else export vcfgz=${autosomes}/{}.pbwt_reference_impute.vcf.gz
+        fi
+        bcftools query -f "%CHROM\t%POS\t%REF\t%ALT\t%QUAL\t%FILTER\t%INFO/INFO\n" ${vcfgz}  | \
+        awk -v OFS="\t" "NR>1{print \$1,\$2,\$1 \":\" \$2 \"_\" \$3 \"/\" \$4, \$3, \$4, \$5, \$6, \$7}"
+      ) | \
+      gzip -f > INTERVAL-{}.vepinput.gz
+    elif [ ${APV} == "VEP" ]; then
+   # VEP
+      vep --input_file INTERVAL-{}.vepinput.gz --output_file INTERVAL-{}.tsv --cache --dir_cache ${VEP}/.vep --dir_plugins ${LOFTEE} --offline \
+          --pick --force_overwrite --species homo_sapiens --assembly GRCh37 --tab
+      #   --plugin LoF,loftee_path:${LOFTEE},human_ancestor_fa:human_ancestor.fa.gz,conservation_file:phylocsf_gerp.sql.gz
+    elif [ ${APV} == "ANNOVAR" ]; then
    # ANNOVAR
-    gunzip -c INTERVAL-${s}.vepinput.gz | \
-    awk -v OFS="\t" "NR>2{print \$1,\$2,\$2,\$4,\$5}" > INTERVAL-${s}.avinput
-    annotate_variation.pl -buildver hg19 INTERVAL-${s}.avinput ${ANNOVAR}/humandb/ -dbtype ensGene --outfile INTERVAL-${s}
-    table_annovar.pl INTERVAL-${s}.avinput $ANNOVAR/test -buildver hg19 -out ${s} \
-         -protocol ensGene,refGene,ccdsGene,wgEncodeGencodeBasicV19,cytoBand,exac03,avsnp147,dbnsfp30a,gwasCatalog \
-         -operation g,g,g,g,r,f,f,f,r \
-         -remove -nastring . -csvout -polish -xref $ANNOVA/example/gene_xref.txt
+      gunzip -c INTERVAL-${s}.vepinput.gz | \
+      awk -v OFS="\t" "NR>2{print \$1,\$2,\$2,\$4,\$5}" > INTERVAL-${s}.avinput
+      annotate_variation.pl -buildver hg19 INTERVAL-${s}.avinput ${ANNOVAR}/humandb/ -dbtype ensGene --outfile INTERVAL-${s}
+      table_annovar.pl INTERVAL-${s}.avinput $ANNOVAR/test -buildver hg19 -out ${s} \
+           -protocol ensGene,refGene,ccdsGene,wgEncodeGencodeBasicV19,cytoBand,exac03,avsnp147,dbnsfp30a,gwasCatalog \
+           -operation g,g,g,g,r,f,f,f,r \
+           -remove -nastring . -csvout -polish -xref $ANNOVA/example/gene_xref.txt
+    else 
    # Polyphen-2
-    gunzip -c INTERVAL-${s}.vepintput | \
-    awk "NR>2{gsub(/_/,\" \",\$3);print \"chr\" \$3}" | \
-    sort -k1,1 | \
-    uniq > INTERVAL-${s}.pph.list
-    mapsnps.pl -g hg19 -m -U -y INTERVAL-${s}.pph.input INTERVAL-${s}.pph.list 1>INTERVAL-${s}.pph.features 2>INTERVAL-${s}.log
-    run_pph.pl INTERVAL-${s}.pph.input 1>$INTERVAL-{s}.pph.output 2>INTERVAL-${s}.pph.log
-    run_weka.pl INTERVAL-${s}.pph.output >INTERVAL-${s}.pph.humdiv.output
-    run_weka.pl -l $POLYPHEN/models/HumVar.UniRef100.NBd.f11.model INTERVAL-${s}.pph.output >INTERVAL-${s}.pph.humvar.output
+      gunzip -c INTERVAL-${s}.vepintput | \
+      awk "NR>2{gsub(/_/,\" \",\$3);print \"chr\" \$3}" | \
+      sort -k1,1 | \
+      uniq > INTERVAL-${s}.pph.list
+      mapsnps.pl -g hg19 -m -U -y INTERVAL-${s}.pph.input INTERVAL-${s}.pph.list 1>INTERVAL-${s}.pph.features 2>INTERVAL-${s}.log
+      run_pph.pl INTERVAL-${s}.pph.input 1>$INTERVAL-{s}.pph.output 2>INTERVAL-${s}.pph.log
+      run_weka.pl INTERVAL-${s}.pph.output >INTERVAL-${s}.pph.humdiv.output
+      run_weka.pl -l $POLYPHEN/models/HumVar.UniRef100.NBd.f11.model INTERVAL-${s}.pph.output >INTERVAL-${s}.pph.humvar.output
+    fi
     cd -
   '
   # Split large chromosomes into chunks at most comparable to chromosome 7
