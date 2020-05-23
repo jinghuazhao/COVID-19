@@ -52,17 +52,43 @@ function gencode_v19()
   awk -vOFS='\t' 'NR>1{print $1,$2,$3,$4 "_" $5}' > work/glist-hg19.bed
 }
 
+function Ensembl_GRCh37()
+{
+  echo $(seq 22 -1 1) X | \
+  tr ' ' '\n' | \
+  parallel -C' ' '
+    (
+      if [ "{}" != "X" ] && [ {} -lt 7 ]; then
+        gunzip -c output/INTERVAL_annotation/INTERVAL-{}-1.txt.gz | \
+        awk "NR>1"
+        gunzip -c output/INTERVAL_annotation/INTERVAL-{}-2.txt.gz | \
+        awk "NR>1"
+      else
+        gunzip -c output/INTERVAL_annotation/INTERVAL-{}.txt.gz | \
+        awk "NR>1"
+      fi
+    ) | \
+    cut -f1,2,4,6,7 | \
+    awk -v OFS="\t" "\$5!=\"-\" {
+      sub(/frameshift_variant|stop_gained|splice_acceptor_variant|splice_donor_variant/,\"pLoF\",\$3);
+      split(\$2,a,\":\")
+      split(a[2],b,\"-\")
+      print a[1],b[1]-1,b[2],\$5 \":\" \$4 \":\" \$3
+    }" > work/INTERVAL-{}.bed
+  '
+}
+
 function glist_enshgnc()
 {
   seq 22 | \
-  parallel -C' ' '
-    qctool -g work/INTERVAL-{}.bgen -annotate-bed4 work/glist-hg19.bed -osnp work/INTERVAL-{}.annotate
+  parallel -j1 -C' ' '
+    qctool -g work/INTERVAL-{}.bgen -annotate-bed4 work/INTERVAL-{}.bed -osnp work/INTERVAL-{}.annotate
   '
   export X=/rds/project/jmmh2/rds-jmmh2-projects/covid/ace2/interval_genetic_data/interval_imputed_data
-  qctool -g ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz -filetype vcf  -annotate-bed4 work/glist-hg19.bed -osnp work/INTERVAL-X.annotate
+  qctool -g ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz -filetype vcf  -annotate-bed4 work/INTERVAL-X.bed -osnp work/INTERVAL-X.annotate
   echo $(seq 22) X | \
   tr ' ' '\n' | \
-  parallel -C' ' '
+  parallel -j1 -C' ' '
      awk "NR>9 && \$8!=\"NA\" && \$1!=\".\" && \$1!=\"#\"{print \$1}" work/INTERVAL-{}.annotate > work/INTERVAL-{}.incl
      export list=($(awk "NR>8 && \$8!=\"NA\"" work/INTERVAL-{}.annotate | cut -f8 | sort | uniq))
      (

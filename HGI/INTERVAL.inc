@@ -1,4 +1,4 @@
-# 22-5-2020 JHZ
+#!/usr/bin/bash
 
 export dir=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/HGI
 export autosomes=/home/jhz22/rds/post_qc_data/interval/imputed/uk10k_1000g_b37
@@ -202,7 +202,7 @@ function annotate()
     cd -
   '
   # Split large chromosomes into chunks at most comparable to chromosome 7
-  seq 5 -1 1 | \
+  seq 6 -1 1 | \
   parallel -C' ' '
     cd work
     gunzip -c INTERVAL-{}.vepinput.gz | \
@@ -210,7 +210,7 @@ function annotate()
     gzip -f INTERVAL-{}.01.vepinput
     (
       gunzip -c INTERVAL-{}.vepinput.gz | \
-      awk "NR<2{print}"
+      awk "NR<3{print}"
       cat INTERVAL-{}.02.vepinput
       rm INTERVAL-{}.02.vepinput
     ) | \
