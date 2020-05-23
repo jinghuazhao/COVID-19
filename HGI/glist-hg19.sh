@@ -46,21 +46,20 @@ function gencode_v19()
   END
   export glist=work/glist-hg19.gencode
   (
-    awk '$1!="X" && $1!="Y" && $1!="XY" {sub(/chr/,"");print}' ${glist} | sort -k1,1n -k2,2n
-    awk '$1=="X"' ${glist} | sort -k2,2n
-    awk '$1=="XY"' ${glist} | sort -k2,2n
-    awk '$1=="Y"' ${glist} | sort -k2,2n
+    awk '{sub(/chr/,"");if($1!="X" && $1!="Y" && $1!="XY") print}' ${glist} | sort -k1,1n -k2,2n
+    awk '{sub(/chr/,"");if($1=="X") print}' ${glist} | sort -k2,2n
   ) | \
-  awk -vOFS='\t' '{sub(/chr/,"");print $1,$2,$3,$4 "_" $5 "_pLoF"}' > work/glist-hg19.bed
+  awk -vOFS='\t' 'NR>1{print $1,$2,$3,$4 "_" $5}' > work/glist-hg19.bed
 }
 
 function glist_enshgnc()
 {
-  echo $(seq 22) X | \
-  tr ' ' '\n' | \
+  seq 22 | \
   parallel -C' ' '
     qctool -g work/INTERVAL-{}.bgen -annotate-bed4 work/glist-hg19.bed -osnp work/INTERVAL-{}.annotate
   '
+  export X=/rds/project/jmmh2/rds-jmmh2-projects/covid/ace2/interval_genetic_data/interval_imputed_data
+  qctool -g ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz -filetype vcf  -annotate-bed4 work/glist-hg19.bed -osnp work/INTERVAL-X.annotate
   echo $(seq 22) X | \
   tr ' ' '\n' | \
   parallel -C' ' '
