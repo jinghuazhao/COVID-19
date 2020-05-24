@@ -12,7 +12,7 @@
 
 export job=$SLURM_ARRAY_TASK_ID
 export TMPDIR=/rds/user/jhz22/hpc-work/work
-export COVID=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop
+export autosomes=/home/jhz22/rds/post_qc_data/interval/imputed/uk10k_1000g_b37
 
 qctool -g ${autosomes}/imputed/impute_${job}_interval.bgen -s ${autosomes}/imputed/interval.samples \
        -incl-samples work/INTERVAL.samples -bgen-bits 8 -og work/INTERVAL-${job}-rsid.bgen -os work/INTERVAL-${job}-rsid.samples
@@ -37,7 +37,7 @@ qctool -g work/INTERVAL-${job}-rsid.bgen -incl-rsids work/INTERVAL-${job}.nodup 
        -map-id-data work/INTERVAL-${job}.map -bgen-bits 8 -og work/INTERVAL-${job}.bgen
 bgenix -g work/INTERVAL-${job}.bgen -index -clobber
 
-function autosomes()
+function autosomes_parallel()
 {
 # Autosomes
   seq 22 | \
