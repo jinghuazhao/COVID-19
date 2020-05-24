@@ -131,20 +131,37 @@ function annotate()
   export TMPDIR=/rds/user/jhz22/hpc-work/work
   echo $(seq 22 -1 1) X | \
   tr ' ' '\n' | \
+  parallel -j2 --env autosomes -C' ' '
+    cd work
+    (
+      awk "BEGIN{print \"##fileformat=VCFv4.0\"}"
+      awk -vOFS="\t" "BEGIN{print \"#CHROM\",\"POS\",\"ID\",\"REF\",\"ALT\",\"QUAL\",\"FILTER\",\"INFO\"}"
+      if [ "{}" == "X" ]; then
+         export vcfgz=${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz; else export vcfgz=${autosomes}/{}.pbwt_reference_impute.vcf.gz
+      fi
+      bcftools query -f "%CHROM\t%POS\t%REF\t%ALT\t%QUAL\t%FILTER\t%INFO/INFO\n" ${vcfgz}  | \
+      awk -v OFS="\t" "NR>1{print \$1,\$2,\$1 \":\" \$2 \"_\" \$3 \"/\" \$4, \$3, \$4, \$5, \$6, \$7}"
+    ) | \
+    gzip -f > INTERVAL-{}.vepinput.gz
+  # Split large chromosomes into chunks at most comparable to chromosome 7
+    if [ {} -le 6 ]; then
+      gunzip -c INTERVAL-{}.vepinput.gz | \
+      split -l 5000000 --numeric-suffixes=1 --additional-suffix=.vepinput - INTERVAL-{}.
+      gzip -f INTERVAL-{}.01.vepinput
+      (
+        gunzip -c INTERVAL-{}.vepinput.gz | \
+        awk "NR<3{print}"
+        cat INTERVAL-{}.02.vepinput
+        rm INTERVAL-{}.02.vepinput
+      ) | \
+      gzip -f > INTERVAL-{}.02.vepinput.gz
+    fi
+  '
+  echo $(seq 22 -1 7) $(seq 6 -1 1 | parallel 'echo {}.01 {}.02') X | \
+  tr ' ' '\n' | \
   parallel -j2 --env autosomes --env ANNOVAR --env POLYPHEN --env LOFTEE --env VEP --env APV -C' ' '
     cd work
-    if [ ${APV} == "setup" ]; then
-      (
-        awk "BEGIN{print \"##fileformat=VCFv4.0\"}"
-        awk -vOFS="\t" "BEGIN{print \"#CHROM\",\"POS\",\"ID\",\"REF\",\"ALT\",\"QUAL\",\"FILTER\",\"INFO\"}"
-        if [ "{}" == "X" ]; then
-           export vcfgz=${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz; else export vcfgz=${autosomes}/{}.pbwt_reference_impute.vcf.gz
-        fi
-        bcftools query -f "%CHROM\t%POS\t%REF\t%ALT\t%QUAL\t%FILTER\t%INFO/INFO\n" ${vcfgz}  | \
-        awk -v OFS="\t" "NR>1{print \$1,\$2,\$1 \":\" \$2 \"_\" \$3 \"/\" \$4, \$3, \$4, \$5, \$6, \$7}"
-      ) | \
-      gzip -f > INTERVAL-{}.vepinput.gz
-    elif [ ${APV} == "VEP" ]; then
+    if [ ${APV} == "VEP" ]; then
    # VEP
       vep --input_file INTERVAL-{}.vepinput.gz --output_file INTERVAL-{}.tsv --cache --dir_cache ${VEP}/.vep --dir_plugins ${LOFTEE} --offline \
           --pick --force_overwrite --species homo_sapiens --assembly GRCh37 --tab
@@ -169,22 +186,6 @@ function annotate()
       run_weka.pl INTERVAL-${s}.pph.output >INTERVAL-${s}.pph.humdiv.output
       run_weka.pl -l $POLYPHEN/models/HumVar.UniRef100.NBd.f11.model INTERVAL-${s}.pph.output >INTERVAL-${s}.pph.humvar.output
     fi
-    cd -
-  '
-  # Split large chromosomes into chunks at most comparable to chromosome 7
-  seq 6 -1 1 | \
-  parallel -C' ' '
-    cd work
-    gunzip -c INTERVAL-{}.vepinput.gz | \
-    split -l 5000000 --numeric-suffixes=1 --additional-suffix=.vepinput - INTERVAL-{}.
-    gzip -f INTERVAL-{}.01.vepinput
-    (
-      gunzip -c INTERVAL-{}.vepinput.gz | \
-      awk "NR<3{print}"
-      cat INTERVAL-{}.02.vepinput
-      rm INTERVAL-{}.02.vepinput
-    ) | \
-    gzip -f > INTERVAL-{}.02.vepinput.gz
     cd -
   '
 }

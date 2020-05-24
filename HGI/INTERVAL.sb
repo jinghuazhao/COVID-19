@@ -4,7 +4,7 @@
 #SBATCH --partition=cardio_short
 #SBATCH --qos=cardio_short
 #SBATCH --job-name=_bgen
-#SBATCH --array=1-22%15
+#SBATCH --array=1-22%12
 #SBATCH --time=12:00:00
 #SBATCH --output=/rds/user/jhz22/hpc-work/work/_bgen_%A_%a.out
 #SBATCH --error=/rds/user/jhz22/hpc-work/work/_bgen_%A_%a.err
@@ -19,7 +19,7 @@ qctool -g ${autosomes}/imputed/impute_${job}_interval.bgen -s ${autosomes}/imput
 bgenix -g work/INTERVAL-${job}-rsid.bgen -index -clobber
 (
   echo alternate_ids rsid chromosome position allele1 allele2 SNPID rsid chromosome position allele1 allele2
-  bgenix -g work/INTERVAL-{}-rsid.bgen -list 2>&1 | \
+  bgenix -g work/INTERVAL-${job}-rsid.bgen -list 2>&1 | \
   sed '1,9d' | \
   awk '
   {
