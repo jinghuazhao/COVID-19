@@ -59,7 +59,33 @@ function genofile()
   vcf-fix-ploidy -s work/INTERVAL-X.FM | \
   bgzip -cf > work/INTERVAL-X-ploidy.vcf.gz
   bcftools index -tf work/INTERVAL-X-ploidy.vcf.gz
-  sbatch INTERVAL.sb
+# sbatch INTERVAL.sb
+# Autosomes
+  seq 22 | \
+  parallel --env autosomes -C' ' '
+    (
+      echo alternate_ids rsid chromosome position allele1 allele2 SNPID rsid chromosome position allele1 allele2
+      bgenix -g ${autosomes}/imputed/impute_{}_interval.bgen -list 2>&1 | \
+      sed "1,9d" | \
+      awk "
+      {
+        CHR=\$3+0
+        POS=\$4
+        a1=toupper(\$6)
+        a2=toupper(\$7)
+        snpid=CHR \":\" POS \"_\" a1 \"/\" a2
+        if (NF==7) print \$1, \$2, \$3, POS, \$6, \$7, \$1, snpid, CHR, POS, a1, a2
+      }"
+    ) | \
+    awk "a[\$2]++==0" > work/INTERVAL-{}.map
+    cut -d" " -f2 work/INTERVAL-{}.map > work/INTERVAL-{}.nodup
+    qctool -g ${autosomes}/imputed/impute_{}_interval.bgen -s ${autosomes}/imputed/interval.samples \
+           -incl-samples work/INTERVAL.samples \
+           -incl-rsids work/INTERVAL-{}.nodup -map-id-data work/INTERVAL-{}.map \
+           -bgen-bits 8 \
+           -og work/INTERVAL-{}.bgen -os work/INTERVAL-{}.samples
+    bgenix -g work/INTERVAL-{}.bgen -index -clobber
+  '
 # HLA region for future imputation
   plink2 --bfile ${merged_imputation} --chr 6 --from-bp 25392021 --to-bp 33392022 --make-bed --out work/INTERVAL-HLA
 }
