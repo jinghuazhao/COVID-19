@@ -123,11 +123,6 @@ function qqman()
 
 function annotate()
 {
-  export ANNOVAR=${HPC_WORK}/annovar
-  export LOFTEE=${HPC_WORK}/loftee
-  export POLYPHEN=$HPC_WORK/polyphen-2.2.2
-  export VEP=${HPC_WORK}/ensembl-vep
-  export APV=VEP
   export TMPDIR=/rds/user/jhz22/hpc-work/work
   echo $(seq 22 -1 1) X | \
   tr ' ' '\n' | \
@@ -143,8 +138,8 @@ function annotate()
       awk -v OFS="\t" "NR>1{print \$1,\$2,\$1 \":\" \$2 \"_\" \$3 \"/\" \$4, \$3, \$4, \$5, \$6, \$7}"
     ) | \
     gzip -f > INTERVAL-{}.vepinput.gz
-  # Split large chromosomes into chunks at most comparable to chromosome 7
-    if [ {} -le 6 ]; then
+  # Split large chromosomes into two chunks (at most comparable to chromosome 7)
+    if [ {} -le 6 ] && [ "{}" != "X" ]; then
       gunzip -c INTERVAL-{}.vepinput.gz | \
       split -l 5000000 --numeric-suffixes=1 --additional-suffix=.vepinput - INTERVAL-{}.
       gzip -f INTERVAL-{}.01.vepinput
@@ -157,6 +152,11 @@ function annotate()
       gzip -f > INTERVAL-{}.02.vepinput.gz
     fi
   '
+  export ANNOVAR=${HPC_WORK}/annovar
+  export LOFTEE=${HPC_WORK}/loftee
+  export POLYPHEN=$HPC_WORK/polyphen-2.2.2
+  export VEP=${HPC_WORK}/ensembl-vep
+  export APV=VEP
   echo $(seq 22 -1 7) $(seq 6 -1 1 | parallel 'echo {}.01 {}.02') X | \
   tr ' ' '\n' | \
   parallel -j2 --env autosomes --env ANNOVAR --env POLYPHEN --env LOFTEE --env VEP --env APV -C' ' '
