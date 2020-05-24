@@ -31,44 +31,11 @@ function genofile()
   plink2 --bfile ${merged_imputation} --indep-pairwise 1000kb 1 0.1 --out work/INTERVAL
   plink2 --bfile ${merged_imputation} --make-bed --extract work/INTERVAL.prune.in -keep work/INTERVAL.samples2 --out work/INTERVAL
   plink2 --bfile work/INTERVAL --make-bed -keep work/INTERVAL-X.samples2 --out work/INTERVAL-X
-# Autosomes
-  seq 22 | \
-  parallel --env autosomes -C' ' '
-    qctool -g ${autosomes}/imputed/impute_{}_interval.bgen -s ${autosomes}/imputed/interval.samples \
-           -incl-samples work/INTERVAL.samples -bgen-bits 8 -og work/INTERVAL-{}-rsid.bgen -os work/INTERVAL-{}-rsid.samples
-    bgenix -g work/INTERVAL-{}-rsid.bgen -index -clobber
-  '
-  seq 22 | \
-  parallel --env INF -C' ' '
-  ( 
-    echo alternate_ids rsid chromosome position allele1 allele2 SNPID rsid chromosome position allele1 allele2
-    bgenix -g work/INTERVAL-{}-rsid.bgen -list 2>&1 | \
-    sed "1,9d" | \
-    awk "
-    {
-      CHR=\$3+0
-      POS=\$4
-      a1=toupper(\$6)
-      a2=toupper(\$7)
-      snpid=CHR \":\" POS \"_\" a1 \"/\" a2
-      if (NF==7) print \$1, \$2, \$3, POS, \$6, \$7, \$1, snpid, CHR, POS, a1, a2
-    }"
-  ) | \
-  awk "a[\$2]++==0" > work/INTERVAL-{}.map
-  cut -d" " -f2 work/INTERVAL-{}.map > work/INTERVAL-{}.nodup
-  qctool -g work/INTERVAL-{}-rsid.bgen -incl-rsids work/INTERVAL-{}.nodup -map-id-data work/INTERVAL-{}.map -bgen-bits 8 -og work/INTERVAL-{}.bgen
-  bgenix -g work/INTERVAL-{}.bgen -index -clobber
-  '
 # Chromosome X -- NOTE that work/INTERVAL-X.samples has a single column
   awk '{print $1 "_" $1}' work/INTERVAL-X.samples | \
   bcftools view -S - ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz -O v > work/INTERVAL-X.vcf
   export idno=$(awk '/POS/ && /QUAL/ {print NR} ' work/INTERVAL-X.vcf)
   awk -v idno=${idno} 'NR==idno{print} ' work/INTERVAL-X.vcf > work/INTERVAL.idline
-# HLA region for future imputation
-  plink2 --bfile ${merged_imputation} --chr 6 --from-bp 25392021 --to-bp 33392022 --make-bed --out work/INTERVAL-HLA
-}
-
-function X_vcf()
 # Ploidy: GRCh37
 # The pseudoautosomal regions 60,001-2,699,520 and 154,931,044-155,270,560 with the ploidy 2
 # PAR1	X	60,001 	2,699,520	{ from=>1, to=>60_000, M=>1 }
@@ -92,6 +59,9 @@ function X_vcf()
   vcf-fix-ploidy -s work/INTERVAL-X.FM | \
   bgzip -cf > work/INTERVAL-X-ploidy.vcf.gz
   bcftools index -tf work/INTERVAL-X-ploidy.vcf.gz
+  sbatch INTERVAL.sb
+# HLA region for future imputation
+  plink2 --bfile ${merged_imputation} --chr 6 --from-bp 25392021 --to-bp 33392022 --make-bed --out work/INTERVAL-HLA
 }
 
 function aggregate()
@@ -220,6 +190,7 @@ function annotate()
 }
 
 function init()
+# ~/COVID-19/HGI/rds-asb38-ceu-restricted/datasets/interval/covid19/version_history/20200520
 {
   cd 06-05-2020/INTERVAL
   sed '1d' INTERVAL_Covid_06MAY2020.csv | cut -d',' -f1 | sort | join - <(sed '1d' INTERVALdata_06MAY2020.csv | cut -d',' -f1) | wc -l
@@ -229,52 +200,10 @@ function init()
   cd -
 }
 
-function X_bgen_defunct()
-{
-  (
-    cat work/INTERVAL-X.samples | \
-    parallel --dry-run -C' ' "
-      export s={}_{};
-      export t={};
-      sed -i 's/'\"\${s}\"'/'\"\${t}\"'/g' work/INTERVAL.idline
-    "
-  ) | bash
-  (
-    awk -v idno=${idno} 'NR<idno' work/INTERVAL-X.vcf
-    cat work/INTERVAL.idline
-    awk -v idno=${idno} 'NR>idno' work/INTERVAL-X.vcf
-  ) | \
-  awk '!/110001440667/' work/INTERVAL-22.samples > work/INTERVAL-X.samples2
-  qctool -filetype vcf -g - -bgen-bits 8 -s work/INTERVAL-X.samples2 -og work/INTERVAL-X.bgen
-  bgenix -g work/INTERVAL-X.bgen -index -clobber
-# requires the following SAIGE flags:
-# --idstoExcludeFile=work/INTERVAL-X.excl-rsids
-# Examples
-  (
-    echo X:2699676_G_A;  echo X:2699683_G_A;  echo X:2699739_G_C
-    echo X:2699898_C_CT; echo X:2699906_T_G;  echo X:2699934_C_A
-    echo X:2699968_A_G;  echo X:2700027_T_C;  echo X:2700040_T_C
-    echo X:2700089_A_G;  echo X:2700147_C_T;  echo X:2700157_G_A
-    echo X:2700185_C_T;  echo X:2700189_A_G;  echo X:2700194_C_G
-    echo X:2700202_A_G;  echo X:74273085_AATCTT_A
-  ) > work/INTERVAL-X.excl-rsids
-}
-
-# createSparseGRM.R --help
-# step1_fitNULLGLMM.R --help
-# step2_SPAtests.R --help
+# srun -A CARDIO-SL0-CPU -p cardio_intr --qos=cardio_intr -N1 -n1 -c8 -t 12:0:0 --pty bash -i
 # sintr -A CARDIO-SL0-CPU -p cardio_intr --qos=cardio_intr
-# srun -A CARDIO-SL0-CPU -p cardio_intr --qos=cardio_intr -N1 -n1 -c4 -t 12:0:0 --pty bash -i
-
-function gsutil_install()
-# https://cloud.google.com/storage/docs/gsutil_install#linux
-{
-  wget https://storage.googleapis.com/pub/gsutil.tar.gz
-  tar xvfz gsutil.tar.gz -C ..
-  cd ../gsutil
-  pip install pyasn1==0.4.8  --user
-  python setup.py install --prefix=$HPC_WORK
-}
+# sbatch -A CARDIO-SL0-CPU -p cardio_long --qos=cardio_long
+# sbatch -A CARDIO-SL0-CPU -p cardio_short --qos=cardio_short
 
 # Request an account
 # https://docs.google.com/forms/d/1eAaf-4XNYkplBo5Appbf8LHl2KHJyks9R4t0E3h0jII/viewform?edit_requested=true

@@ -1,0 +1,70 @@
+#!/usr/bin/bash
+
+#SBATCH --account=CARDIO-SL0-CPU
+#SBATCH --partition=cardio_short
+#SBATCH --qos=cardio_short
+#SBATCH --job-name=_bgen
+#SBATCH --array=1-22%15
+#SBATCH --time=12:00:00
+#SBATCH --output=/rds/user/jhz22/hpc-work/work/_bgen_%A_%a.out
+#SBATCH --error=/rds/user/jhz22/hpc-work/work/_bgen_%A_%a.err
+#SBATCH --export ALL
+
+export job=$SLURM_ARRAY_TASK_ID
+export TMPDIR=/rds/user/jhz22/hpc-work/work
+export COVID=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop
+
+qctool -g ${autosomes}/imputed/impute_${job}_interval.bgen -s ${autosomes}/imputed/interval.samples \
+       -incl-samples work/INTERVAL.samples -bgen-bits 8 -og work/INTERVAL-${job}-rsid.bgen -os work/INTERVAL-${job}-rsid.samples
+bgenix -g work/INTERVAL-${job}-rsid.bgen -index -clobber
+(
+  echo alternate_ids rsid chromosome position allele1 allele2 SNPID rsid chromosome position allele1 allele2
+  bgenix -g work/INTERVAL-{}-rsid.bgen -list 2>&1 | \
+  sed '1,9d' | \
+  awk '
+  {
+    CHR=$3+0
+    POS=$4
+    a1=toupper($6)
+    a2=toupper($7)
+    snpid=CHR ":" POS "_" a1 "/" a2
+    if (NF==7) print $1, $2, $3, POS, $6, $7, $1, snpid, CHR, POS, a1, a2
+  }'
+) | \
+awk 'a[\$2]++==0' > work/INTERVAL-${job}.map
+cut -d' ' -f2 work/INTERVAL-${job}.map > work/INTERVAL-${job}.nodup
+qctool -g work/INTERVAL-${job}-rsid.bgen -incl-rsids work/INTERVAL-${job}.nodup \
+       -map-id-data work/INTERVAL-${job}.map -bgen-bits 8 -og work/INTERVAL-${job}.bgen
+bgenix -g work/INTERVAL-${job}.bgen -index -clobber
+
+function autosomes()
+{
+# Autosomes
+  seq 22 | \
+  parallel --env autosomes -C' ' '
+    qctool -g ${autosomes}/imputed/impute_{}_interval.bgen -s ${autosomes}/imputed/interval.samples \
+           -incl-samples work/INTERVAL.samples -bgen-bits 8 -og work/INTERVAL-{}-rsid.bgen -os work/INTERVAL-{}-rsid.samples
+    bgenix -g work/INTERVAL-{}-rsid.bgen -index -clobber
+  '
+  seq 22 | \
+  parallel --env INF -C' ' '
+  (
+    echo alternate_ids rsid chromosome position allele1 allele2 SNPID rsid chromosome position allele1 allele2
+    bgenix -g work/INTERVAL-{}-rsid.bgen -list 2>&1 | \
+    sed "1,9d" | \
+    awk "
+    {
+      CHR=\$3+0
+      POS=\$4
+      a1=toupper(\$6)
+      a2=toupper(\$7)
+      snpid=CHR \":\" POS \"_\" a1 \"/\" a2
+      if (NF==7) print \$1, \$2, \$3, POS, \$6, \$7, \$1, snpid, CHR, POS, a1, a2
+    }"
+  ) | \
+  awk "a[\$2]++==0" > work/INTERVAL-{}.map
+  cut -d" " -f2 work/INTERVAL-{}.map > work/INTERVAL-{}.nodup
+  qctool -g work/INTERVAL-{}-rsid.bgen -incl-rsids work/INTERVAL-{}.nodup -map-id-data work/INTERVAL-{}.map -bgen-bits 8 -og work/INTERVAL-{}.bgen
+  bgenix -g work/INTERVAL-{}.bgen -index -clobber
+  '
+}

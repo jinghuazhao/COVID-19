@@ -81,14 +81,14 @@ function Ensembl_GRCh37()
 function glist_enshgnc()
 {
   seq 22 | \
-  parallel -j1 -C' ' '
+  parallel -j4 -C' ' '
     qctool -g work/INTERVAL-{}.bgen -annotate-bed4 work/INTERVAL-{}.bed -osnp work/INTERVAL-{}.annotate
   '
   export X=/rds/project/jmmh2/rds-jmmh2-projects/covid/ace2/interval_genetic_data/interval_imputed_data
-  qctool -g ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz -filetype vcf  -annotate-bed4 work/INTERVAL-X.bed -osnp work/INTERVAL-X.annotate
+  qctool -g ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz -filetype vcf -annotate-bed4 work/INTERVAL-X.bed -osnp work/INTERVAL-X.annotate
   echo $(seq 22) X | \
   tr ' ' '\n' | \
-  parallel -j1 -C' ' '
+  parallel -j4 -C' ' '
      awk "NR>9 && \$8!=\"NA\" && \$1!=\".\" && \$1!=\"#\"{print \$1}" work/INTERVAL-{}.annotate > work/INTERVAL-{}.incl
      export list=($(awk "NR>8 && \$8!=\"NA\"" work/INTERVAL-{}.annotate | cut -f8 | sort | uniq))
      (
