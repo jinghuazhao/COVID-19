@@ -84,7 +84,9 @@ function genofile()
            -incl-rsids work/INTERVAL-{}.nodup -map-id-data work/INTERVAL-{}.map \
            -bgen-bits 8 \
            -og work/INTERVAL-{}.bgen -os work/INTERVAL-{}.samples
-    bgenix -g work/INTERVAL-{}.bgen -index -clobber
+  '
+    seq 22 | \
+    parallel -j2 -C 'bgenix -g work/INTERVAL-{}.bgen -index -clobber'
   '
 # HLA region for future imputation
   plink2 --bfile ${merged_imputation} --chr 6 --from-bp 25392021 --to-bp 33392022 --make-bed --out work/INTERVAL-HLA
