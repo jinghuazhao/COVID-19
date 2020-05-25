@@ -6,8 +6,8 @@ export X=/rds/project/jmmh2/rds-jmmh2-projects/covid/ace2/interval_genetic_data/
 export merged_imputation=/home/jhz22/rds/post_qc_data/interval/genotype/affy_ukbiobank_array/genotyped/merged_imputation
 export ref=/home/jhz22/rds/post_qc_data/interval/reference_files/genetic/interval
 export ev=$ref/annot_INT_50PCs_pcs.txt
-export snvResults=output/INTERVAL.Zhao.ANA5.1.ALL.EUR.97.237.SAIGE.20200521.txt.gz
-export geneResults=output/INTERVAL.Zhao.ANA5.1.ALL.EUR.97.237.SAIGE.gene.20200521.txt.gz
+export snvResults=output/INTERVAL.Zhao.ANA5.1.ALL.EUR.97.237.SAIGE.20200526.txt.gz
+export geneResults=output/INTERVAL.Zhao.ANA5.1.ALL.EUR.97.237.SAIGE.gene.20200526.txt.gz
 
 module load gcc/6
 
