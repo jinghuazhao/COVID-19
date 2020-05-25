@@ -64,7 +64,7 @@ function genofile()
   seq 22 | \
   parallel --env autosomes -C' ' '
     (
-      echo alternate_ids rsid chromosome position allele1 allele2 SNPID rsid chromosome position allele1 allele2
+      echo alternate_ids rsid chromosome position allele1 allele2 rsid SNPID chromosome position allele1 allele2
       bgenix -g ${autosomes}/imputed/impute_{}_interval.bgen -list 2>&1 | \
       sed "1,9d" | \
       awk "
