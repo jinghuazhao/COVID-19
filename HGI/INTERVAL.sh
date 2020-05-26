@@ -9,27 +9,28 @@ source INTERVAL.inc
 function svat()
 {
 step1_fitNULLGLMM.R \
-   --plinkFile=work/INTERVAL \
+   --plinkFile=work/INTERVAL-covid \
    --phenoFile=work/INTERVAL-covid.txt \
    --phenoCol=SARS_CoV \
    --covarColList=age,sex,PC_1,PC_2,PC_3,PC_4,PC_5,PC_6,PC_7,PC_8,PC_9,PC_10,PC_11,PC_12,PC_13,PC_14,PC_15,PC_16,PC_17,PC_18,PC_19,PC_20 \
    --sampleIDColinphenoFile=ID \
    --traitType=binary \
-   --outputPrefix=output/INTERVAL \
+   --outputPrefix=output/INTERVAL-covid \
    --nThreads=8 \
    --IsOverwriteVarianceRatioFile=TRUE
 
 seq 22 | \
 parallel -j1 --env autosomes -C' ' '
 step2_SPAtests.R \
-   --bgenFile=work/INTERVAL-{}.bgen \
-   --bgenFileIndex=work/INTERVAL-{}.bgen.bgi \
+   --bgenFile=$autosomes/imputed/impute_{}_interval.bgen \
+   --bgenFileIndex=$autosomes/imputed/impute_{}_interval.bgen.bgi \
    --chrom={} \
    --minMAF=0.0001 \
    --minMAC=1 \
    --sampleFile=work/INTERVAL.samples \
-   --GMMATmodelFile=output/INTERVAL.rda \
-   --varianceRatioFile=output/INTERVAL.varianceRatio.txt \
+   --idstoIncludeFile=work/INTERVAL-covid.samples \
+   --GMMATmodelFile=output/INTERVAL-covid.rda \
+   --varianceRatioFile=output/INTERVAL-covid.varianceRatio.txt \
    --SAIGEOutputFile=output/INTERVAL-{}.txt \
    --IsOutputNinCaseCtrl=TRUE \
    --IsOutputHetHomCountsinCaseCtrl=TRUE \
@@ -75,6 +76,7 @@ step2_SPAtests.R \
    --minMAC=1 \
    --maxMAFforGroupTest=0.001 \
    --sampleFile=work/INTERVAL.samples \
+   --idstoIncludeFile=work/INTERVAL-autosomes.samples \
    --GMMATmodelFile=output/INTERVAL.rda \
    --varianceRatioFile=output/INTERVAL.varianceRatio.txt \
    --SAIGEOutputFile=output/INTERVAL-{}.gene.txt \

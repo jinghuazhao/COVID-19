@@ -6,29 +6,19 @@ module load ceuadmin/stata
 export autosomes=/home/jhz22/rds/post_qc_data/interval/imputed/uk10k_1000g_b37
 export X=/rds/project/jmmh2/rds-jmmh2-projects/covid/ace2/interval_genetic_data/interval_imputed_data
 
-function phenofile()
+function phenotype()
 {
   export dir=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/HGI
   export ref=/home/jhz22/rds/post_qc_data/interval/reference_files/genetic/interval
   export ev=$ref/annot_INT_50PCs_pcs.txt
+  export merged_imputation=/home/jhz22/rds/post_qc_data/interval/genotype/affy_ukbiobank_array/genotyped/merged_imputation
+  sed '1,2d' $autosomes/interval.samples | \
+  cut -d' ' -f1 > work/INTERVAL.samples
   stata -b do INTERVAL.do
-  rm INTERVAL.log
 }
 
-function genofile()
+function genotype()
 {
-  export merged_imputation=/home/jhz22/rds/post_qc_data/interval/genotype/affy_ukbiobank_array/genotyped/merged_imputation
-  sed '1d' work/INTERVAL-covid.txt | \
-  cut -d' ' -f1 > work/INTERVAL.samples
-  awk '{print $1, $1}' work/INTERVAL.samples > work/INTERAL.samples2
-  awk '!/110001440667/' work/INTERVAL-covid.txt > work/INTERVAL-covid-X.txt
-  awk '!/110001440667/' work/INTERVAL.samples > work/INTERVAL-X.samples
-  awk '{print $1 "_" $1}' work/INTERVAL-X.samples > work/INTERVAL-X.samples2
-# GRM
-  module load plink/2.00-alpha
-  plink2 --bfile ${merged_imputation} --indep-pairwise 1000kb 1 0.1 --out work/INTERVAL
-  plink2 --bfile ${merged_imputation} --make-bed --extract work/INTERVAL.prune.in -keep work/INTERVAL.samples2 --out work/INTERVAL
-  plink2 --bfile work/INTERVAL --make-bed -keep work/INTERVAL-X.samples2 --out work/INTERVAL-X
 # Chromosome X
   vcf-fix-ploidy -s work/INTERVAL-X.FM | \
   bgzip -cf > work/INTERVAL-X-ploidy.vcf.gz
@@ -37,8 +27,30 @@ function genofile()
   plink2 --bfile ${merged_imputation} --chr 6 --from-bp 25392021 --to-bp 33392022 --make-bed --out work/INTERVAL-HLA
 }
 
+function GRM()
+{
+  sed '1d' work/INTERVAL-covid.txt | \
+  cut -d' ' -f1 > work/INTERVAL-covid.samples
+  awk '{print $1, $1}' work/INTERVAL-covid.samples > work/INTERVAL-covid.samples2
+  awk '{print $1 "_" $1}' work/INTERVAL-covid.samples | awk '{print $1,$1}' > work/INTERVAL-covid.id2
+  awk '!/110001440667/' work/INTERVAL-covid.txt > work/INTERVAL-covid-X.txt
+  awk '!/110001440667/' work/INTERVAL-covid.samples > work/INTERVAL-covid-X.samples
+  awk '!/110001440667/' work/INTERVAL-covid.id2 > work/INTERVAL-covid-X.id2
+  awk '{print $1 "_" $1}' work/INTERVAL-covid.id2 | awk '!/110001440667/' > work/INTERVAL-covid-X.samples2
+# GRM
+  module load plink/2.00-alpha
+  plink2 --bfile ${merged_imputation} --indep-pairwise 1000kb 1 0.1 --out work/INTERVAL-covid
+  plink2 --bfile ${merged_imputation} --make-bed --extract work/INTERVAL-covid.prune.in -keep work/INTERVAL-covid.samples2 --out work/INTERVAL-covid
+  awk '{$1=$1 "_"_ $1; $2=$2 "_" $2;};1' work/INTERVAL-covid.fam > work/INTERVAL-covid.fam2
+  plink --bed work/INTERVAL-covid.bed --bim work/INTERVAL-covid.bim --fam work/INTERVAL-covid.fam2 \
+        --make-bed -keep work/INTERVAL-covid-X.id2 --out work/INTERVAL-covid-X
+}
+
 function aggregate()
 {
+# [dataset].[last name].[analysis_name].[freeze_number].[sex].[ancestry].[n_cases].[n_controls].[gwas software].[YYYYMMDD].txt.gz
+# [dataset].[last name].[analysis_name].[freeze_number].[sex].[ancestry].[gwas software].[YYYYMMDD].txt.gz
+# sex=M/MALE, F/FEMALE, ALL
   export snvResults=output/INTERVAL.Zhao.ANA5.1.ALL.EUR.97.237.SAIGE.20200526.txt.gz
   export geneResults=output/INTERVAL.Zhao.ANA5.1.ALL.EUR.97.237.SAIGE.gene.20200526.txt.gz
   (
@@ -89,6 +101,4 @@ function aggregate()
   END
 }
 
-# [dataset].[last name].[analysis_name].[freeze_number].[sex].[ancestry].[n_cases].[n_controls].[gwas software].[YYYYMMDD].txt.gz
-# [dataset].[last name].[analysis_name].[freeze_number].[sex].[ancestry].[gwas software].[YYYYMMDD].txt.gz
-# sex=M/MALE, F/FEMALE, ALL
+phenotype
