@@ -17,16 +17,6 @@ function phenotype()
   stata -b do INTERVAL.do
 }
 
-function genotype()
-{
-# Chromosome X
-  vcf-fix-ploidy -s work/INTERVAL-X.FM | \
-  bgzip -cf > work/INTERVAL-X-ploidy.vcf.gz
-  bcftools index -tf work/INTERVAL-X-ploidy.vcf.gz
-# HLA region for future imputation
-  plink2 --bfile ${merged_imputation} --chr 6 --from-bp 25392021 --to-bp 33392022 --make-bed --out work/INTERVAL-HLA
-}
-
 function GRM()
 {
   sed '1d' work/INTERVAL-covid.txt | \
@@ -46,13 +36,32 @@ function GRM()
         --make-bed -keep work/INTERVAL-covid-X.id2 --out work/INTERVAL-covid-X
 }
 
+function genotype()
+{
+# Autosomes
+  seq 22 -1 1 | \
+  parallel -j4 -C' ' '
+    qctool -g ${autosomes}/imputed/impute_{}_interval.bgen -s ${autosomes}/imputed/interval.samples -incl-samples work/INTERVAL-covid.samples \
+           -bgen-bits 8 -og work/INTERVAL-{}.bgen -osamples work/INTERVAL-{}.samples -clobber
+  '
+  parallel -j2 -C' ' '
+    bgenix -g work/INTERVAL-{}.bgen -index -clobber
+  '
+# Chromosome X
+  vcf-fix-ploidy -s work/INTERVAL-X.FM | \
+  bgzip -cf > work/INTERVAL-X-ploidy.vcf.gz
+  bcftools index -tf work/INTERVAL-X-ploidy.vcf.gz
+# HLA region for future imputation
+  plink2 --bfile ${merged_imputation} --chr 6 --from-bp 25392021 --to-bp 33392022 --make-bed --out work/INTERVAL-HLA
+}
+
 function aggregate()
 {
 # [dataset].[last name].[analysis_name].[freeze_number].[sex].[ancestry].[n_cases].[n_controls].[gwas software].[YYYYMMDD].txt.gz
 # [dataset].[last name].[analysis_name].[freeze_number].[sex].[ancestry].[gwas software].[YYYYMMDD].txt.gz
 # sex=M/MALE, F/FEMALE, ALL
-  export snvResults=output/INTERVAL.Zhao.ANA5.1.ALL.EUR.97.237.SAIGE.20200526.txt.gz
-  export geneResults=output/INTERVAL.Zhao.ANA5.1.ALL.EUR.97.237.SAIGE.gene.20200526.txt.gz
+  export snvResults=output/INTERVAL.Zhao.ANA_C1_V2.2.ALL.EUR.163.322.SAIGE.20200527.txt.gz
+  export geneResults=output/INTERVAL.Zhao.ANA_C1_V2.2.ALL.EUR.163.322.SAIGE.gene.20200527.txt.gz
   (
     cut -d' ' -f1-3,5-9,11-14,17,21-26 output/INTERVAL-*.txt | head -1
     seq 22 | \

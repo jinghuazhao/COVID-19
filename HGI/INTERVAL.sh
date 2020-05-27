@@ -27,8 +27,7 @@ step2_SPAtests.R \
    --chrom={} \
    --minMAF=0.0001 \
    --minMAC=1 \
-   --sampleFile=work/INTERVAL.samples \
-   --idstoIncludeFile=work/INTERVAL-covid.samples \
+   --sampleFile=work/INTERVAL-covid.samples \
    --GMMATmodelFile=output/INTERVAL-covid.rda \
    --varianceRatioFile=output/INTERVAL-covid.varianceRatio.txt \
    --SAIGEOutputFile=output/INTERVAL-{}.txt \

@@ -12,6 +12,7 @@ function init()
 }
 
 function genofile()
+# bgen files with SNPid
 {
   sed '1d' work/INTERVAL-covid.txt | \
   cut -d' ' -f1 > work/INTERVAL.samples
@@ -54,6 +55,7 @@ function genofile()
   bcftools index -tf work/INTERVAL-X-ploidy.vcf.gz
 # sbatch INTERVAL.sb
 # Autosomes
+  export autosomes=/home/jhz22/rds/post_qc_data/interval/imputed/uk10k_1000g_b37
   seq 22 | \
   parallel --env autosomes -C' ' '
     (
