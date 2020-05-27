@@ -1,5 +1,7 @@
 #!/usr/bin/bash
 
+# step 4. association analysis on chromosome X variants
+
 source INTERVAL.inc
 
 step1_fitNULLGLMM.R \

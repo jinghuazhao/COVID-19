@@ -7,6 +7,7 @@ export autosomes=/home/jhz22/rds/post_qc_data/interval/imputed/uk10k_1000g_b37
 export X=/rds/project/jmmh2/rds-jmmh2-projects/covid/ace2/interval_genetic_data/interval_imputed_data
 
 function phenotype()
+# step 1. SARS_CoV, age, sex, PCs
 {
   export dir=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/HGI
   export ref=/home/jhz22/rds/post_qc_data/interval/reference_files/genetic/interval
@@ -18,6 +19,7 @@ function phenotype()
 }
 
 function GRM()
+# step 2. inference from directly genotyped variants 
 {
   sed '1d' work/INTERVAL-covid.txt | \
   cut -d' ' -f1 > work/INTERVAL-covid.samples
@@ -37,27 +39,29 @@ function GRM()
 }
 
 function genotype()
+# step 3. sample-specific bgen/vcf.gz files
 {
 # Autosomes
   seq 22 -1 1 | \
   parallel -j2 -C' ' '
-    qctool -g ${autosomes}/imputed/impute_{}_interval.bgen -s ${autosomes}/imputed/interval.samples -incl-samples work/INTERVAL-covid.samples \
+    qctool -g ${autosomes}/imputed/impute_{}_interval.bgen -s ${autosomes}/imputed/interval.samples \
+           -incl-samples work/INTERVAL-covid.samples \
            -bgen-bits 8 -og work/INTERVAL-{}.bgen -os work/INTERVAL-{}.samples
   '
-  parallel -j2 -C' ' '
-    bgenix -g work/INTERVAL-{}.bgen -index -clobber
-  '
+  parallel -j2 -C' ' 'bgenix -g work/INTERVAL-{}.bgen -index -clobber'
 # Chromosome X
   awk '{print $1 "_" $1}' work/INTERVAL-covid-X.samples | \
   bcftools view -S - ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz -O v | \
   vcf-fix-ploidy -s work/INTERVAL-X.FM | \
   bgzip -cf > work/INTERVAL-X-ploidy.vcf.gz
   bcftools index -tf work/INTERVAL-X-ploidy.vcf.gz
-# HLA region for future imputation
-  plink2 --bfile ${merged_imputation} --chr 6 --from-bp 25392021 --to-bp 33392022 --make-bed --out work/INTERVAL-HLA
 }
 
+# step 4. single variant association tests + gene annodation/association analysis
+# INTERVAL.sh + glist_hg19.sh/INTERVAL-X.sh
+
 function aggregate()
+# step 5. summary of results
 {
 # [dataset].[last name].[analysis_name].[freeze_number].[sex].[ancestry].[n_cases].[n_controls].[gwas software].[YYYYMMDD].txt.gz
 # [dataset].[last name].[analysis_name].[freeze_number].[sex].[ancestry].[gwas software].[YYYYMMDD].txt.gz
@@ -91,7 +95,7 @@ function aggregate()
 # qqman
   export results=${snvResults}
   R --no-save -q <<\ \ END
-    analysis <- "ANA5"
+    analysis <- "ANA_C1_V2"
     results <- Sys.getenv("results")
     require(qqman);
     tbl <- read.table(results,as.is=TRUE,header=TRUE);
@@ -111,5 +115,3 @@ function aggregate()
     dev.off();
   END
 }
-
-phenotype

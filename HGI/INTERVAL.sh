@@ -1,13 +1,11 @@
 #!/usr/bin/bash
 
-source INTERVAL.inc
+# step 4. susceptibility (ANA5, ANA_C1_V2) on autosomes
 
-# Analysis 5-susceptibility (phenotype name: ANA5):
+source INTERVAL.inc
 
 # Single-variant association tests
 
-function svat()
-{
 step1_fitNULLGLMM.R \
    --plinkFile=work/INTERVAL-covid \
    --phenoFile=work/INTERVAL-covid.txt \
@@ -35,12 +33,9 @@ step2_SPAtests.R \
    --IsOutputHetHomCountsinCaseCtrl=TRUE \
    --IsOutputAFinCaseCtrl=TRUE
 '
-}
 
 # Gene-based association tests
 
-function gbat()
-{
 createSparseGRM.R \
    --plinkFile=work/INTERVAL \
    --minMAF=0.0001 \
@@ -88,6 +83,3 @@ step2_SPAtests.R \
    --IsOutputPvalueNAinGroupTestforBinary=TRUE \
    --IsAccountforCasecontrolImbalanceinGroupTest=TRUE
 '
-}
-
-svat
