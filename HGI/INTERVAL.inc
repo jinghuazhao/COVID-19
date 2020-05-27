@@ -48,6 +48,8 @@ function genotype()
     bgenix -g work/INTERVAL-{}.bgen -index -clobber
   '
 # Chromosome X
+  awk '{print $1 "_" $1}' work/INTERVAL-covid-X.samples | \
+  bcftools view -S - ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz -O v | \
   vcf-fix-ploidy -s work/INTERVAL-X.FM | \
   bgzip -cf > work/INTERVAL-X-ploidy.vcf.gz
   bcftools index -tf work/INTERVAL-X-ploidy.vcf.gz
