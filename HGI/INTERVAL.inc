@@ -42,7 +42,7 @@ function genotype()
   seq 22 -1 1 | \
   parallel -j4 -C' ' '
     qctool -g ${autosomes}/imputed/impute_{}_interval.bgen -s ${autosomes}/imputed/interval.samples -incl-samples work/INTERVAL-covid.samples \
-           -bgen-bits 8 -og work/INTERVAL-{}.bgen -osamples work/INTERVAL-{}.samples -clobber
+           -bgen-bits 8 -og work/INTERVAL-{}.bgen -os work/INTERVAL-{}.samples
   '
   parallel -j2 -C' ' '
     bgenix -g work/INTERVAL-{}.bgen -index -clobber
