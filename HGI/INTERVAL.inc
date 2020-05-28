@@ -3,13 +3,13 @@
 module load gcc/6
 module load ceuadmin/stata
 
+export dir=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/HGI
 export autosomes=/home/jhz22/rds/post_qc_data/interval/imputed/uk10k_1000g_b37
 export X=/rds/project/jmmh2/rds-jmmh2-projects/covid/ace2/interval_genetic_data/interval_imputed_data
 
 function phenotype()
 # step 1. SARS_CoV, age, sex, PCs
 {
-  export dir=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/HGI
   export ref=/home/jhz22/rds/post_qc_data/interval/reference_files/genetic/interval
   export ev=$ref/annot_INT_50PCs_pcs.txt
   export merged_imputation=/home/jhz22/rds/post_qc_data/interval/genotype/affy_ukbiobank_array/genotyped/merged_imputation
@@ -43,7 +43,7 @@ function genotype()
 {
 # Autosomes
   seq 22 -1 1 | \
-  parallel -j2 -C' ' '
+  parallel -j2 --env autosomes -C' ' '
     qctool -g ${autosomes}/imputed/impute_{}_interval.bgen -s ${autosomes}/imputed/interval.samples \
            -incl-samples work/INTERVAL-covid.samples \
            -bgen-bits 8 -og work/INTERVAL-{}.bgen -os work/INTERVAL-{}.samples
@@ -115,3 +115,24 @@ function aggregate()
     dev.off();
   END
 }
+
+function upload()
+{
+# Request an account
+# https://docs.google.com/forms/d/1eAaf-4XNYkplBo5Appbf8LHl2KHJyks9R4t0E3h0jII/viewform?edit_requested=true
+# https://console.cloud.google.com/storage/browser/covid19-hg-upload-bugbank
+
+  cd ${dir}
+  module load python/3.7
+  virtualenv py37
+  source py37/bin/activate
+  pip install gsutil
+  gsutil cp $1 gs::/covid19-hg-upload-bugbank
+
+# Fill the form here,
+# https://airtable.com/shrdJDwSHRZKXv45H
+# Download the data from here,
+# https://console.cloud.google.com/storage/browser/covid19-hg-analysis
+}
+
+# srun -A CARDIO-SL0-CPU -p cardio_intr --qos=cardio_intr -N1 -n1 -c4 -t 12:0:0 --pty bash -i
