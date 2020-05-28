@@ -43,12 +43,12 @@ function genotype()
 {
 # Autosomes
   seq 22 -1 1 | \
-  parallel -j2 --env autosomes -C' ' '
+  parallel -j1 --env autosomes -C' ' '
     qctool -g ${autosomes}/imputed/impute_{}_interval.bgen -s ${autosomes}/imputed/interval.samples \
            -incl-samples work/INTERVAL-covid.samples \
            -bgen-bits 8 -og work/INTERVAL-{}.bgen -os work/INTERVAL-{}.samples
   '
-  parallel -j2 -C' ' 'bgenix -g work/INTERVAL-{}.bgen -index -clobber'
+  parallel -j1 -C' ' 'bgenix -g work/INTERVAL-{}.bgen -index -clobber'
 # Chromosome X
   awk '{print $1 "_" $1}' work/INTERVAL-covid-X.samples | \
   bcftools view -S - ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz -O v | \
