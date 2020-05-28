@@ -12,7 +12,7 @@ git add ACE2/2805-6_2.metal ACE2/select.sh ACE2/ukb-ACE2-annotate.sh ACE2/ace2_i
 git commit -m "SomaLogic"
 git add GEO/GEO.R GEO/GEO2R.R GEO/test.ini GEO/test.R GEO/test.sh GEO/README.md
 git commit -m "GEO test"
-git add -f HGI/INTERVAL.do HGI/INTERVAL.inc HGI/INTERVAL.rec HGI/INTERVAL.sb HGI/INTERVAL.sh HGI/INTERVAL-X.sh HGI/glist-hg19.sh
+git add HGI/INTERVAL.do HGI/INTERVAL.inc HGI/INTERVAL.rec HGI/INTERVAL.sb HGI/INTERVAL.sh HGI/INTERVAL-X.sh HGI/glist-hg19.sh
 git commit -m "HGI analysis"
 git add st.sh
 git commit -m "st.sh"
