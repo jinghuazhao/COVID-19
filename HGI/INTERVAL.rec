@@ -252,7 +252,7 @@ function gencode_v19()
   awk -vOFS='\t' 'NR>1{print $1,$2,$3,$4 "_" $5}' > work/glist-hg19.bed
 }
 
-function VEP()
+function vepinput()
 {
 # pbwt is incomplete!
   export TMPDIR=/rds/user/jhz22/hpc-work/work
@@ -274,17 +274,19 @@ function VEP()
     ) | \
     gzip -f > INTERVAL-{}.vepinput.gz
   # Split large chromosomes into two chunks (at most comparable to chromosome 7)
-    if [ {} -le 6 ] && [ "{}" != "X" ]; then
-      gunzip -c INTERVAL-{}.vepinput.gz | \
-      split -l 5000000 --numeric-suffixes=1 --additional-suffix=.vepinput - INTERVAL-{}.
-      gzip -f INTERVAL-{}.01.vepinput
-      (
-        gunzip -c INTERVAL-{}.vepinput.gz | \
-        awk "NR<3{print}"
-        cat INTERVAL-{}.02.vepinput
-        rm INTERVAL-{}.02.vepinput
-      ) | \
-      gzip -f > INTERVAL-{}.02.vepinput.gz
+    if [ "{}" != "X" ]; then
+       if [ {} -le 6 ]; then
+          gunzip -c INTERVAL-{}.vepinput.gz | \
+          split -l 5000000 --numeric-suffixes=1 --additional-suffix=.vepinput - INTERVAL-{}.
+          gzip -f INTERVAL-{}.01.vepinput
+          (
+            gunzip -c INTERVAL-{}.vepinput.gz | \
+            awk "NR<3{print}"
+            cat INTERVAL-{}.02.vepinput
+            rm INTERVAL-{}.02.vepinput
+          ) | \
+          gzip -f > INTERVAL-{}.02.vepinput.gz
+       fi
     fi
   '
   export VEP=${HPC_WORK}/ensembl-vep
@@ -347,4 +349,3 @@ function vcf()
     tabix -Cf INTERVAL-{}.vcf.gz
   '
 }
-
