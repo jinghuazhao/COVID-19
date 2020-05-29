@@ -6,24 +6,31 @@ export TMPDIR=/rds/user/jhz22/hpc-work/work
 function do_vep()
 {
   export VEP=${HPC_WORK}/ensembl-vep
-  echo $(seq 22 -1 1) X | \
-  tr ' ' '\n' | \
+  export chunk_size=100000
+  seq 22 | \
   parallel -j2 --env ref --env VEP -C' ' '
     cd work
     (
       export n=$(wc -l $ref/impute_{}_interval.snpstats | cut -d" " -f1)
-      for i in $(seq 100)
+      export g=$(expr ${n} / ${chunk_size})
+      for i in $(seq ${g})
       do
         (
           awk "BEGIN{print \"##fileformat=VCFv4.0\"}"
           awk -vOFS="\t" "BEGIN{print \"#CHROM\",\"POS\",\"ID\",\"REF\",\"ALT\",\"QUAL\",\"FILTER\",\"INFO\"}"
-          awk -v i=${i} -v n=${n} 'NR==(i-1)*50000,NR==i*50000{print \$3,\$4,\$1,\$5,\$6,\".\",\".\",\$19}"
+          if [ ${i} -eq ${g}]; then
+             awk -v i=${i} -v n=${n} -v chunk_size=${chunk_size} "
+                 NR==(i-1)*chunk_size,NR==n {print \$3,\$4,\$1,\$5,\$6,\".\",\".\",\$19}
+                 " $ref/impute_{}_interval.snpstats
+          else
+             awk -v i=${i} -v chunk_size=${chunk_size} "
+                 NR==(i-1)*chunk_size,NR==i*chunk_size {print \$3,\$4,\$1,\$5,\$6,\".\",\".\",\$19}
+                 " $ref/impute_{}_interval.snpstats
+          fi
         ) | \
-        vep  --format vcf -o - --tab \
-             --pick --no_stats | \
-             --cache --dir_cache ${VEP}/.vep --offline --fork 4 \
+        vep  --cache --dir_cache ${VEP}/.vep --offline --fork 4 --format vcf -o - --tab --pick --no_stats  \
              --species homo_sapiens --assembly GRCh37 --port 3337 | \
-        grep -v '#'
+         grep -v '#'
       done
     ) | \
     gzip -f > INTERVAL-{}.vep.gz
