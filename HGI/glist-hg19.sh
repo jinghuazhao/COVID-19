@@ -7,7 +7,7 @@ function do_vep()
 {
   export chunk_size=10000
   seq 22 | \
-  parallel -j2 --env ref -C' ' '
+  parallel -j1 --env ref -C' ' '
     export n=$(wc -l $ref/impute_{}_interval.snpstats | cut -d" " -f1)
     export g=$(expr ${n} / ${chunk_size})
     (
@@ -15,19 +15,19 @@ function do_vep()
         (
           awk "BEGIN{print \"##fileformat=VCFv4.0\"}"
           awk -vOFS="\t" "BEGIN{print \"#CHROM\",\"POS\",\"ID\",\"REF\",\"ALT\",\"QUAL\",\"FILTER\",\"INFO\"}"
-          if [ ${i} -eq ${g}]; then
-             awk -v i=${i} -v n=${n} -v chunk_size=${chunk_size} "
-                 NR==i*chunk_size,NR==n-1 {print \$3,\$4,\$1,\$5,\$6,\".\",\".\",\$19}
-                 " $ref/impute_{}_interval.snpstats
+          if [ ${i} -eq ${g} ]; then
+             sed "1d" ${ref}/impute_{}_interval.snpstats | \ 
+             awk -v i=${i} -v n=${n} -v chunk_size=${chunk_size} -v OFS="\t" "
+                 NR==i*chunk_size+1,NR==n-1 {print \$3,\$4,\$1,\$5,\$6,\".\",\".\",\$19}"
           else
-             awk -v i=${i} -v chunk_size=${chunk_size} "
-                 NR==(i-1)*chunk_size,NR==i*chunk_size {print \$3,\$4,\$1,\$5,\$6,\".\",\".\",\$19}
-                 " $ref/impute_{}_interval.snpstats
+             sed "1d" ${ref}/impute_{}_interval.snpstats | \ 
+             awk -v i=${i} -v chunk_size=${chunk_size} -v OFS="\t" "
+                 NR==(i-1)*chunk_size+1,NR==i*chunk_size {print \$3,\$4,\$1,\$5,\$6,\".\",\".\",\$19}"
           fi
         ) | \
-        vep  --cache --offline --fork 4 --format vcf -o - --tab --pick --no_stats  \
+        vep  --cache --offline --format vcf -o - --tab --pick --no_stats  \
              --species homo_sapiens --assembly GRCh37 --port 3337 | \
-        grep -v '#'
+        grep -v "#"
       done
     ) | \
     gzip -f > work/INTERVAL-{}.vep.gz
