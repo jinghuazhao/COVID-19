@@ -14,7 +14,7 @@
 * [The COVID-19 Host Genetics Initiative](https://covid19hg.netlify.com/)
   * [Registration](https://www.covid19hg.org/register/)
   * [GitHub repositories](https://github.com/covid19-hg/)
-  * [Slack channel](icdaworkspace.slack.com) (icda-office@icda.bio)
+  * [Slack channel](https://icdaworkspace.slack.com) (icda-office@icda.bio)
   * [Analysis plan](https://tinyurl.com/yalt3n28)
   * Phenotype definition: [v1.0](https://tinyurl.com/ybno3zgy), [v2.0](https://tinyurl.com/yd8hkvjk)
   * [Case severity code](https://tinyurl.com/y7nygjr3)
