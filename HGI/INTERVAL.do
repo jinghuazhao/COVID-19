@@ -28,9 +28,10 @@ drop dup
 merge 1:1 ID using work/INTERVAL-pca
 drop _merge
 rename agePulse age
+gen age2=age*age
 rename sexPulse sex
 gen sex1=sex-1
-keep ID identifier sex1 sex age PC_1-PC_20
+keep ID identifier sex1 sex age age2 PC_1-PC_20
 gzsave work/INTERVAL, replace
 
 // 4. COVID-19
@@ -74,11 +75,12 @@ mi register regular PC_1-PC_20
 mi impute chained (logit) SARS_CoV (regress) age (logit) sex1 = PC_1-PC_20, add(1) rseed(123456)
 replace SARS_CoV=_1_SARS_CoV
 replace age=_1_age
+replace age2=age*age
 replace sex=_1_sex1+1
 end
 
 drop if SARS_CoV==.
-outsheet ID SARS_CoV age sex PC_1-PC_20 using work/INTERVAL-covid.txt, delim(" ") noquote replace
+outsheet ID SARS_CoV age age2 sex PC_1-PC_20 using work/INTERVAL-covid.txt, delim(" ") noquote replace
 tostring ID,gen(IDS) format(%15.0g)
 gen str31 ID2=IDS + "_" + IDS
 label define sexFM 1 "M" 2 "F"
