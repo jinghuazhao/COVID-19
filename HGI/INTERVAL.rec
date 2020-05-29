@@ -258,7 +258,7 @@ function VEP()
   export TMPDIR=/rds/user/jhz22/hpc-work/work
   echo $(seq 22 -1 1) X | \
   tr ' ' '\n' | \
-  parallel -j2 --env autosomes -C' ' '
+  parallel -j1 --env autosomes -C' ' '
     cd work
     (
       awk "BEGIN{print \"##fileformat=VCFv4.0\"}"
