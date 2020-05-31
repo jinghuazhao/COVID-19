@@ -20,8 +20,8 @@ step1_fitNULLGLMM.R \
 seq 22 | \
 parallel -j1 --env autosomes -C' ' '
 step2_SPAtests.R \
-   --bgenFile=$autosomes/imputed/impute_{}_interval.bgen \
-   --bgenFileIndex=$autosomes/imputed/impute_{}_interval.bgen.bgi \
+   --bgenFile=work/INTERVAL-{}.bgen \
+   --bgenFileIndex=work/INTERVAL-{}.bgen.bgi \
    --chrom={} \
    --minMAF=0.0001 \
    --minMAC=1 \
