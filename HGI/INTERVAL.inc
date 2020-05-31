@@ -3,7 +3,7 @@
 module load gcc/6
 module load ceuadmin/stata
 
-export dir=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/HGI
+export dir=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop
 export autosomes=/home/jhz22/rds/post_qc_data/interval/imputed/uk10k_1000g_b37
 export X=/rds/project/jmmh2/rds-jmmh2-projects/covid/ace2/interval_genetic_data/interval_imputed_data
 
@@ -122,12 +122,14 @@ function upload()
 # https://docs.google.com/forms/d/1eAaf-4XNYkplBo5Appbf8LHl2KHJyks9R4t0E3h0jII/viewform?edit_requested=true
 # https://console.cloud.google.com/storage/browser/covid19-hg-upload-bugbank
 
-  cd ${dir}/HGI/output
+  cd ${dir}
   module load python/3.7
   virtualenv py37
   source py37/bin/activate
   pip install gsutil
-  gsutil cp $1 gs::/covid19-hg-upload-bugbank
+  cd HGI/output
+# gsutil cp $1 gs::/covid19-hg-upload-bugbank
+  gsutil cp $1 gs://covid19-hg-upload-uk--blood-donors-cohort 
 
 # Fill the form here,
 # https://airtable.com/shrdJDwSHRZKXv45H

@@ -1,7 +1,32 @@
 #!/usr/bin/bash
 
 export ref=/home/jhz22/rds/post_qc_data/interval/reference_files/genetic/interval
+export X=/rds/project/jmmh2/rds-jmmh2-projects/covid/ace2/interval_genetic_data/interval_imputed_data
 export TMPDIR=/rds/user/jhz22/hpc-work/work
+
+function vcf()
+# fast generated
+{
+  echo $(seq 22 -1 1) X | \
+  tr ' ' '\n' | \
+  parallel -j1 --env autosomes --env ref -C' ' '
+    cd work
+    (
+      awk "BEGIN{print \"##fileformat=VCFv4.0\"}"
+      awk -vOFS="\t" "BEGIN{print \"#CHROM\",\"POS\",\"ID\",\"REF\",\"ALT\",\"QUAL\",\"FILTER\",\"INFO\"}"
+      if [ "{}" != "X" ]; then
+         sed "1d" $ref/impute_{}_interval.snpstats | \
+         awk -v OFS="\t" "{print \$3,\$4,\$1,\$5,\$6,\".\",\".\",\$19}"
+      else
+         export vcfgz=${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz;
+         bcftools query -f "%CHROM\t%POS\t%REF\t%ALT\t%QUAL\t%FILTER\t%INFO/INFO\n" ${vcfgz}  | \
+         awk -v OFS="\t" "NR>1{print \$1,\$2,\$1 \":\" \$2 \"_\" \$3 \"/\" \$4, \$3, \$4, \$5, \$6, \$7}"
+      fi
+    ) | \
+    bgzip -cf > INTERVAL-{}.vcf.gz
+    tabix -Cf INTERVAL-{}.vcf.gz
+  '
+}
 
 function do_vep()
 {
