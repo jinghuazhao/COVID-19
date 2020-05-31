@@ -26,17 +26,19 @@ function vcf()
     bgzip -cf > INTERVAL-{}.vcf.gz
     tabix -Cf INTERVAL-{}.vcf.gz
   # Split large chromosomes into two chunks (at most comparable to chromosome 7)
-    if [ {} -le 6 ] && [ "{}" != "X" ]; then
-      gunzip -c INTERVAL-{}.vcf.gz | \
-      split -l 5000000 --numeric-suffixes=1 --additional-suffix=.vcf - INTERVAL-{}.
-      gzip -f INTERVAL-{}.01.vcf
-      (
-        gunzip -c INTERVAL-{}.vcf.gz | \
-        awk "NR<3{print}"
-        cat INTERVAL-{}.02.vcf
-        rm INTERVAL-{}.02.vcf
-      ) | \
-      gzip -f > INTERVAL-{}.02.vcf.gz
+    if [ "{}" != "X" ]; then
+       if [ {} -le 6 ]; then
+          gunzip -c INTERVAL-{}.vcf.gz | \
+          split -l 5000000 --numeric-suffixes=1 --additional-suffix=.vcf - INTERVAL-{}.
+          gzip -f INTERVAL-{}.01.vcf
+          (
+            gunzip -c INTERVAL-{}.vcf.gz | \
+            awk "NR<3{print}"
+            cat INTERVAL-{}.02.vcf
+            rm INTERVAL-{}.02.vcf
+          ) | \
+          gzip -f > INTERVAL-{}.02.vcf.gz
+       fi
     fi
   '
 }
