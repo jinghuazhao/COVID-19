@@ -7,40 +7,37 @@ export TMPDIR=/rds/user/jhz22/hpc-work/work
 function vcf()
 # fast generated
 {
-  echo $(seq 22 -1 1) X | \
-  tr ' ' '\n' | \
-  parallel -j1 --env autosomes --env ref -C' ' '
-    cd work
+  cd work
+  gunzip -c ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz | \
+  bcftools query -f "%CHROM\t%POS\t%REF\t%ALT\t%QUAL\t%FILTER\t%INFO/INFO\n" | \
+  awk -v OFS="\t" "NR>1{print \$1,\$2,\$1 \":\" \$2 \"_\" \$3 \"/\" \$4, \$3, \$4, \$5, \$6, \$7}" | \
+  bgzip -cf > INTERVAL-X.vcf.gz
+  tabix -Cf INTERVAL-X.vcf.gz
+  seq 22 | \
+  parallel -j1 --env ref -C' ' '
     (
       awk "BEGIN{print \"##fileformat=VCFv4.0\"}"
       awk -vOFS="\t" "BEGIN{print \"#CHROM\",\"POS\",\"ID\",\"REF\",\"ALT\",\"QUAL\",\"FILTER\",\"INFO\"}"
-      if [ "{}" != "X" ]; then
-         sed "1d" $ref/impute_{}_interval.snpstats | \
-         awk -v OFS="\t" "{print \$3,\$4,\$1,\$5,\$6,\".\",\".\",\$19}"
-      else
-         export vcfgz=${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz;
-         bcftools query -f "%CHROM\t%POS\t%REF\t%ALT\t%QUAL\t%FILTER\t%INFO/INFO\n" ${vcfgz}  | \
-         awk -v OFS="\t" "NR>1{print \$1,\$2,\$1 \":\" \$2 \"_\" \$3 \"/\" \$4, \$3, \$4, \$5, \$6, \$7}"
-      fi
+      sed "1d" $ref/impute_{}_interval.snpstats | \
+      awk -v OFS="\t" "{print \$3,\$4,\$1,\$5,\$6,\".\",\".\",\$19}"
     ) | \
     bgzip -cf > INTERVAL-{}.vcf.gz
     tabix -Cf INTERVAL-{}.vcf.gz
   # Split large chromosomes into two chunks (at most comparable to chromosome 7)
-    if [ "{}" != "X" ]; then
-       if [ {} -le 6 ]; then
-          gunzip -c INTERVAL-{}.vcf.gz | \
-          split -l 5000000 --numeric-suffixes=1 --additional-suffix=.vcf - INTERVAL-{}.
-          gzip -f INTERVAL-{}.01.vcf
-          (
-            gunzip -c INTERVAL-{}.vcf.gz | \
-            awk "NR<3{print}"
-            cat INTERVAL-{}.02.vcf
-            rm INTERVAL-{}.02.vcf
-          ) | \
-          gzip -f > INTERVAL-{}.02.vcf.gz
-       fi
+    if [ {} -le 6 ]; then
+       gunzip -c INTERVAL-{}.vcf.gz | \
+       split -l 5000000 --numeric-suffixes=1 --additional-suffix=.vcf - INTERVAL-{}.
+       gzip -f INTERVAL-{}.01.vcf
+       (
+         gunzip -c INTERVAL-{}.vcf.gz | \
+         awk "NR<3{print}"
+         cat INTERVAL-{}.02.vcf
+         rm INTERVAL-{}.02.vcf
+       ) | \
+       gzip -f > INTERVAL-{}.02.vcf.gz
     fi
   '
+  cd -
 }
 
 function do_vep()
