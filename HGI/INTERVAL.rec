@@ -258,8 +258,8 @@ function vepinput()
   export TMPDIR=/rds/user/jhz22/hpc-work/work
   echo $(seq 22 -1 1) X | \
   tr ' ' '\n' | \
+  cd work
   parallel -j1 --env autosomes -C' ' '
-    cd work
     (
       awk "BEGIN{print \"##fileformat=VCFv4.0\"}"
       awk -vOFS="\t" "BEGIN{print \"#CHROM\",\"POS\",\"ID\",\"REF\",\"ALT\",\"QUAL\",\"FILTER\",\"INFO\"}"
@@ -293,11 +293,10 @@ function vepinput()
   echo $(seq 22 -1 7) $(seq 6 -1 1 | parallel 'echo {}.01 {}.02') X | \
   tr ' ' '\n' | \
   parallel -j2 --env autosomes --env VEP -C' ' '
-    cd work
     vep --input_file INTERVAL-{}.vepinput.gz --output_file INTERVAL-{}.tsv --cache --dir_cache ${VEP}/.vep --offline \
         --pick --force_overwrite --species homo_sapiens --assembly GRCh37 --fork 4 --tab
-    cd -
   '
+  cd -
 }
 
 function Ensembl_GRCh37()
