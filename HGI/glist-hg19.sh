@@ -12,7 +12,7 @@ function vcf()
   bcftools query -f "%CHROM\t%POS\t%REF\t%ALT\t%QUAL\t%FILTER\t%INFO/INFO\n" | \
   awk -v OFS="\t" "NR>1{print \$1,\$2,\$1 \":\" \$2 \"_\" \$3 \"/\" \$4, \$3, \$4, \$5, \$6, \$7}" | \
   bgzip -cf > INTERVAL-X.vcf.gz
-  tabix -Cf INTERVAL-X.vcf.gz
+  tabix -f INTERVAL-X.vcf.gz
   seq 22 | \
   parallel -j1 --env ref -C' ' '
     (
@@ -22,7 +22,7 @@ function vcf()
       awk -v OFS="\t" "{print \$3,\$4,\$1,\$5,\$6,\".\",\".\",\$19}"
     ) | \
     bgzip -cf > INTERVAL-{}.vcf.gz
-    tabix -Cf INTERVAL-{}.vcf.gz
+    tabix -f INTERVAL-{}.vcf.gz
   # Split large chromosomes into two chunks (at most comparable to chromosome 7)
     if [ {} -le 6 ]; then
        gunzip -c INTERVAL-{}.vcf.gz | \
