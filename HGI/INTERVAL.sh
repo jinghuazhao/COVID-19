@@ -18,7 +18,7 @@ step1_fitNULLGLMM.R \
    --IsOverwriteVarianceRatioFile=TRUE
 
 seq 22 | \
-parallel -j1 --env autosomes -C' ' '
+parallel -j1 --env -C' ' '
 step2_SPAtests.R \
    --bgenFile=work/INTERVAL-{}.bgen \
    --bgenFileIndex=work/INTERVAL-{}.bgen.bgi \
