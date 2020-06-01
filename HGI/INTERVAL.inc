@@ -16,19 +16,20 @@ function phenotype()
   sed '1,2d' $autosomes/interval.samples | \
   cut -d' ' -f1 > work/INTERVAL.samples
   stata -b do INTERVAL.do
+  sed '1d' work/INTERVAL-covid.txt | \
+  cut -d' ' -f1 > work/INTERVAL-covid.samples
+  awk '{print $1, $1}' work/INTERVAL-covid.samples > work/INTERVAL-covid.samples2
+  awk '{print $1 "_" $1}' work/INTERVAL-covid.samples | awk '{print $1,$1}' > work/INTERVAL-covid.id2
+  awk '!/110001440667/' work/INTERVAL-covid.txt | \
+  awk '{if (NR>1) $1=$1 "_" $1};1' > work/INTERVAL-covid-X.txt
+  awk '!/110001440667/' work/INTERVAL-covid.samples > work/INTERVAL-covid-X.samples
+  awk '!/110001440667/' work/INTERVAL-covid.id2 > work/INTERVAL-covid-X.id2
+  awk '{print $1 "_" $1}' work/INTERVAL-covid.id2 | awk '!/110001440667/' > work/INTERVAL-covid-X.samples2
 }
 
 function GRM()
 # step 2. inference from directly genotyped variants 
 {
-  sed '1d' work/INTERVAL-covid.txt | \
-  cut -d' ' -f1 > work/INTERVAL-covid.samples
-  awk '{print $1, $1}' work/INTERVAL-covid.samples > work/INTERVAL-covid.samples2
-  awk '{print $1 "_" $1}' work/INTERVAL-covid.samples | awk '{print $1,$1}' > work/INTERVAL-covid.id2
-  awk '!/110001440667/' work/INTERVAL-covid.txt > work/INTERVAL-covid-X.txt
-  awk '!/110001440667/' work/INTERVAL-covid.samples > work/INTERVAL-covid-X.samples
-  awk '!/110001440667/' work/INTERVAL-covid.id2 > work/INTERVAL-covid-X.id2
-  awk '{print $1 "_" $1}' work/INTERVAL-covid.id2 | awk '!/110001440667/' > work/INTERVAL-covid-X.samples2
 # GRM
   module load plink/2.00-alpha
   plink2 --bfile ${merged_imputation} --indep-pairwise 1000kb 1 0.1 --out work/INTERVAL-covid
@@ -66,8 +67,8 @@ function aggregate()
 # [dataset].[last name].[analysis_name].[freeze_number].[sex].[ancestry].[n_cases].[n_controls].[gwas software].[YYYYMMDD].txt.gz
 # [dataset].[last name].[analysis_name].[freeze_number].[sex].[ancestry].[gwas software].[YYYYMMDD].txt.gz
 # sex=M/MALE, F/FEMALE, ALL
-  export snvResults=output/INTERVAL.Zhao.ANA_C1_V2.2.ALL.EUR.163.322.SAIGE.20200527.txt.gz
-  export geneResults=output/INTERVAL.Zhao.ANA_C1_V2.2.ALL.EUR.163.322.SAIGE.gene.20200527.txt.gz
+  export snvResults=output/INTERVAL.Zhao.ANA_C1_V2.2.ALL.EUR.163.322.SAIGE.20200601.txt.gz
+  export geneResults=output/INTERVAL.Zhao.ANA_C1_V2.2.ALL.EUR.163.322.SAIGE.gene.20200601.txt.gz
   (
     cut -d' ' -f1-3,5-9,11-14,17,21-26 output/INTERVAL-*.txt | head -1
     seq 22 | \
