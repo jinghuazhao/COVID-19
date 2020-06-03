@@ -19,7 +19,7 @@ save work/INTERVAL-data, replace
 // insheet using "`dir'/06-05-2020/INTERVAL/INTERVAL_OmicsMap_20200506.csv", case clear
  insheet using "20200520/INTERVAL_OmicsMap_20200520.csv", case clear
 sort identifier
-merge 1:1 identifier using work/INTERVAL, gen(dataid)
+merge 1:1 identifier using work/INTERVAL-data, gen(dataid)
 rename Affymetrix_gwasQC_bl ID
 format ID %15.0g
 duplicates tag ID, gen(dup)
@@ -64,22 +64,26 @@ drop _merge
 merge 1:1 ID using work/INTERVAL-omics
 keep if _merge==3
 drop _merge
+tab SARS_CoV
 tab sex if SARS_CoV!=.
 tabstat age if SARS_CoV!=., stat(mean sd) by(sex)
+outsheet ID if sex==. | age==. using work/INTERVAL.excl-samples, noname replace
 
 program single_imputation
 // https://stats.idre.ucla.edu/stata/seminars/mi_in_stata_pt1_new/
 mi set wide
-mi register imputed SARS_CoV age sex1
+mi register imputed age sex1
 mi register regular PC_1-PC_20
-mi impute chained (logit) SARS_CoV (regress) age (logit) sex1 = PC_1-PC_20, add(1) rseed(123456)
-replace SARS_CoV=_1_SARS_CoV
+mi impute chained (regress) age (logit) sex1 = PC_1-PC_20, add(1) rseed(123456)
+replace SARS_CoV=0 if SARS_CoV!=1
 replace age=_1_age
 replace age2=age*age
 replace sex=_1_sex1+1
 end
 
-drop if SARS_CoV==.
+// drop if SARS_CoV==.
+// single_imputation
+drop if sex==. | age==.
 outsheet ID SARS_CoV age age2 sex PC_1-PC_20 using work/INTERVAL-covid.txt, delim(" ") noquote replace
 tostring ID,gen(IDS) format(%15.0g)
 gen str31 ID2=IDS + "_" + IDS
