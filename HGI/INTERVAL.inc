@@ -67,8 +67,8 @@ function aggregate()
 # [dataset].[last name].[analysis_name].[freeze_number].[sex].[ancestry].[n_cases].[n_controls].[gwas software].[YYYYMMDD].txt.gz
 # [dataset].[last name].[analysis_name].[freeze_number].[sex].[ancestry].[gwas software].[YYYYMMDD].txt.gz
 # sex=M/MALE, F/FEMALE, ALL
-  export snvResults=output/INTERVAL.Zhao.ANA_C1_V2.2.ALL.EUR.163.322.SAIGE.20200601.txt.gz
-  export geneResults=output/INTERVAL.Zhao.ANA_C1_V2.2.ALL.EUR.163.322.SAIGE.gene.20200601.txt.gz
+  export snvResults=output/INTERVAL.Zhao.ANA_C1_V2.2.ALL.EUR.129.356.SAIGE.20200601.txt.gz
+  export geneResults=output/INTERVAL.Zhao.ANA_C1_V2.2.ALL.EUR.129.356.SAIGE.gene.20200601.txt.gz
   (
     cut -d' ' -f1-3,5-9,11-14,17,21-26 output/INTERVAL-*.txt | head -1
     seq 22 | \
@@ -127,11 +127,11 @@ function upload()
   module load python/3.7
   virtualenv py37
   source py37/bin/activate
-  pip install gsutil
+# pip install gsutil
   cd HGI/output
 # gsutil cp $1 gs::/covid19-hg-upload-bugbank
   gsutil cp $1 gs://covid19-hg-upload-uk--blood-donors-cohort 
-
+# web: https://console.cloud.google.com/storage/browser/covid19-hg-upload-uk--blood-donors-cohort;tab=objects?project=covid-19-hg
 # Fill the form here,
 # https://airtable.com/shrdJDwSHRZKXv45H
 # Download the data from here,
