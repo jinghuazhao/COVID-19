@@ -8,9 +8,13 @@ function vcf()
 # fast generated
 {
   cd work
-  gunzip -c ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz | \
-  bcftools query -f "%CHROM\t%POS\t%REF\t%ALT\t%QUAL\t%FILTER\t%INFO/INFO\n" | \
-  awk -v OFS="\t" "NR>1{print \$1,\$2,\$1 \":\" \$2 \"_\" \$3 \"/\" \$4, \$3, \$4, \$5, \$6, \$7}" | \
+  (
+    awk "BEGIN{print \"##fileformat=VCFv4.0\"}"
+    awk -vOFS="\t" "BEGIN{print \"#CHROM\",\"POS\",\"ID\",\"REF\",\"ALT\",\"QUAL\",\"FILTER\",\"INFO\"}"
+    gunzip -c ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz | \
+    bcftools query -f "%CHROM\t%POS\t%REF\t%ALT\t%QUAL\t%FILTER\t%INFO/INFO\n" | \
+    awk -v OFS="\t" "NR>1{print \$1,\$2,\$1 \":\" \$2 \"_\" \$3 \"/\" \$4, \$3, \$4, \$5, \$6, \$7}" | \
+  ) | \
   bgzip -cf > INTERVAL-X.vcf.gz
   tabix -f INTERVAL-X.vcf.gz
   seq 22 | \
@@ -24,9 +28,9 @@ function vcf()
     bgzip -cf > INTERVAL-{}.vcf.gz
     tabix -f INTERVAL-{}.vcf.gz
   # Split large chromosomes into two chunks (at most comparable to chromosome 7)
-    if [ {} -le 6 ]; then
+    if [ {} -le 11 ]; then
        gunzip -c INTERVAL-{}.vcf.gz | \
-       split -l 5000000 --numeric-suffixes=1 --additional-suffix=.vcf - INTERVAL-{}.
+       split -l 4000000 --numeric-suffixes=1 --additional-suffix=.vcf - INTERVAL-{}.
        gzip -f INTERVAL-{}.01.vcf
        (
          gunzip -c INTERVAL-{}.vcf.gz | \
