@@ -15,16 +15,15 @@ function phenotype()
   export merged_imputation=/home/jhz22/rds/post_qc_data/interval/genotype/affy_ukbiobank_array/genotyped/merged_imputation
   sed '1,2d' $autosomes/interval.samples | \
   cut -d' ' -f1 > work/INTERVAL.samples
+  awk '!/110001440667/{print $1 "_" $1}' work/INTERVAL.samples > work/INTERVAL-X.samples
   stata -b do INTERVAL.do
   sed '1d' work/INTERVAL-covid.txt | \
   cut -d' ' -f1 > work/INTERVAL-covid.samples
   awk '{print $1, $1}' work/INTERVAL-covid.samples > work/INTERVAL-covid.samples2
-  awk '{print $1 "_" $1}' work/INTERVAL-covid.samples | awk '{print $1,$1}' > work/INTERVAL-covid.id2
   awk '!/110001440667/' work/INTERVAL-covid.txt | \
   awk '{if (NR>1) $1=$1 "_" $1};1' > work/INTERVAL-covid-X.txt
   awk '!/110001440667/' work/INTERVAL-covid.samples > work/INTERVAL-covid-X.samples
-  awk '!/110001440667/' work/INTERVAL-covid.id2 > work/INTERVAL-covid-X.id2
-  awk '{print $1 "_" $1}' work/INTERVAL-covid.id2 | awk '!/110001440667/' > work/INTERVAL-covid-X.samples2
+  awk '{print $1,$1}' work/INTERVAL-covid-X.samples > work/INTERVAL-covid-X.samples2
 }
 
 function GRM()
@@ -36,7 +35,7 @@ function GRM()
   plink2 --bfile ${merged_imputation} --make-bed --extract work/INTERVAL-covid.prune.in -keep work/INTERVAL-covid.samples2 --out work/INTERVAL-covid
   awk '{$1=$1 "_"_ $1; $2=$2 "_" $2;};1' work/INTERVAL-covid.fam > work/INTERVAL-covid.fam2
   plink --bed work/INTERVAL-covid.bed --bim work/INTERVAL-covid.bim --fam work/INTERVAL-covid.fam2 \
-        --make-bed -keep work/INTERVAL-covid-X.id2 --out work/INTERVAL-covid-X
+        --make-bed -keep work/INTERVAL-covid-X.samples2 --out work/INTERVAL-covid-X
 }
 
 function genotype()

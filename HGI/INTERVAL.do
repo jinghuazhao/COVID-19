@@ -31,7 +31,8 @@ rename agePulse age
 gen age2=age*age
 rename sexPulse sex
 gen sex1=sex-1
-keep ID identifier sex1 sex age age2 PC_1-PC_20
+gen sexage=sex*age
+keep ID identifier sex1 sex age age2 sexage PC_1-PC_20
 gzsave work/INTERVAL, replace
 
 // 4. COVID-19
@@ -79,12 +80,13 @@ replace SARS_CoV=0 if SARS_CoV!=1
 replace age=_1_age
 replace age2=age*age
 replace sex=_1_sex1+1
+replace sexage=sex*age
 end
 
 // drop if SARS_CoV==.
 // single_imputation
 drop if sex==. | age==.
-outsheet ID SARS_CoV age age2 sex PC_1-PC_20 using work/INTERVAL-covid.txt, delim(" ") noquote replace
+outsheet ID SARS_CoV sex age age2 sexage PC_1-PC_20 using work/INTERVAL-covid.txt, delim(" ") noquote replace
 tostring ID,gen(IDS) format(%15.0g)
 gen str31 ID2=IDS + "_" + IDS
 label define sexFM 1 "M" 2 "F"
