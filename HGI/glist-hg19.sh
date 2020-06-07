@@ -23,7 +23,7 @@ function vcf()
       awk "BEGIN{print \"##fileformat=VCFv4.0\"}"
       awk -vOFS="\t" "BEGIN{print \"#CHROM\",\"POS\",\"ID\",\"REF\",\"ALT\",\"QUAL\",\"FILTER\",\"INFO\"}"
       sed "1d" $ref/impute_{}_interval.snpstats | \
-      awk -v OFS="\t" "{print \$3,\$4,\$1,\$5,\$6,\".\",\".\",\$19}"
+      awk -v OFS="\t" "{print \$3+0,\$4,\$1,\$5,\$6,\".\",\".\",\$19}"
     ) | \
     bgzip -cf > INTERVAL-{}.vcf.gz
     tabix -f INTERVAL-{}.vcf.gz
@@ -46,7 +46,7 @@ function vcf()
 
 function do_vep()
 {
-  export chunk_size=1000
+  export chunk_size=10000
   seq 22 | \
   parallel -j1 --env ref -C' ' '
     export n=$(wc -l $ref/impute_{}_interval.snpstats | cut -d" " -f1)
