@@ -13,7 +13,7 @@ function vcf()
     awk -vOFS="\t" "BEGIN{print \"#CHROM\",\"POS\",\"ID\",\"REF\",\"ALT\",\"QUAL\",\"FILTER\",\"INFO\"}"
     gunzip -c ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz | \
     bcftools query -f "%CHROM\t%POS\t%REF\t%ALT\t%QUAL\t%FILTER\t%INFO/INFO\n" | \
-    awk -v OFS="\t" "NR>1{print \$1,\$2,\$1 \":\" \$2 \"_\" \$3 \"/\" \$4, \$3, \$4, \$5, \$6, \$7}" | \
+    awk -v OFS="\t" "NR>1{print \$1,\$2,\$1 \":\" \$2 \"_\" \$3 \"/\" \$4, \$3, \$4, \$5, \$6, \$7}"
   ) | \
   bgzip -cf > INTERVAL-X.vcf.gz
   tabix -f INTERVAL-X.vcf.gz
@@ -69,7 +69,7 @@ function do_vep()
         ) | \
         vep  --cache --offline --format vcf -o - --tab --pick --no_stats  \
              --species homo_sapiens --assembly GRCh37 --port 3337 | \
-        grep -v "#"
+        if [ ${i} -gt 1 ]; then grep -v "#"; fi
       done
     ) | \
     gzip -f > work/INTERVAL-{}.vep.gz
@@ -115,3 +115,5 @@ function glist_annotate()
      ) > work/INTERVAL-{}.gene
   '
 }
+
+do_vep
