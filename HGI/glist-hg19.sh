@@ -69,7 +69,9 @@ function do_vep()
         ) | \
         vep  --cache --offline --format vcf -o - --tab --pick --no_stats  \
              --species homo_sapiens --assembly GRCh37 --port 3337 | \
-        if [ ${i} -gt 1 ]; then grep -v "#"; fi
+        (
+          if [ ${i} -eq 1 ]; then cat; else grep -v "#"; fi
+        )
       done
     ) | \
     gzip -f > work/INTERVAL-{}.vep.gz
