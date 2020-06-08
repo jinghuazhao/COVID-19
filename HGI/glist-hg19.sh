@@ -4,47 +4,8 @@ export ref=/home/jhz22/rds/post_qc_data/interval/reference_files/genetic/interva
 export X=/rds/project/jmmh2/rds-jmmh2-projects/covid/ace2/interval_genetic_data/interval_imputed_data
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 
-function vcf()
-# fast generated
-{
-  cd work
-  (
-    awk "BEGIN{print \"##fileformat=VCFv4.0\"}"
-    awk -vOFS="\t" "BEGIN{print \"#CHROM\",\"POS\",\"ID\",\"REF\",\"ALT\",\"QUAL\",\"FILTER\",\"INFO\"}"
-    gunzip -c ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz | \
-    bcftools query -f "%CHROM\t%POS\t%REF\t%ALT\t%QUAL\t%FILTER\t%INFO/INFO\n" | \
-    awk -v OFS="\t" "NR>1{print \$1,\$2,\$1 \":\" \$2 \"_\" \$3 \"/\" \$4, \$3, \$4, \$5, \$6, \$7}"
-  ) | \
-  bgzip -cf > INTERVAL-X.vcf.gz
-  tabix -f INTERVAL-X.vcf.gz
-  seq 22 | \
-  parallel -j1 --env ref -C' ' '
-    (
-      awk "BEGIN{print \"##fileformat=VCFv4.0\"}"
-      awk -vOFS="\t" "BEGIN{print \"#CHROM\",\"POS\",\"ID\",\"REF\",\"ALT\",\"QUAL\",\"FILTER\",\"INFO\"}"
-      sed "1d" $ref/impute_{}_interval.snpstats | \
-      awk -v OFS="\t" "{print \$3+0,\$4,\$1,\$5,\$6,\".\",\".\",\$19}"
-    ) | \
-    bgzip -cf > INTERVAL-{}.vcf.gz
-    tabix -f INTERVAL-{}.vcf.gz
-  # Split large chromosomes into two chunks (at most comparable to chromosome 7)
-    if [ {} -le 11 ]; then
-       gunzip -c INTERVAL-{}.vcf.gz | \
-       split -l 4000000 --numeric-suffixes=1 --additional-suffix=.vcf - INTERVAL-{}.
-       gzip -f INTERVAL-{}.01.vcf
-       (
-         gunzip -c INTERVAL-{}.vcf.gz | \
-         awk "NR<3{print}"
-         cat INTERVAL-{}.02.vcf
-         rm INTERVAL-{}.02.vcf
-       ) | \
-       gzip -f > INTERVAL-{}.02.vcf.gz
-    fi
-  '
-  cd -
-}
-
-function do_vep()
+function local_vep()
+# local annotation to guarantee success
 {
   export chunk_size=10000
   seq 22 | \
@@ -118,5 +79,3 @@ function glist_annotate()
      ) > work/INTERVAL-{}.gene
   '
 }
-
-do_vep
