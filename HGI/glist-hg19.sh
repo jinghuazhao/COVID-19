@@ -51,18 +51,19 @@ function do_vep()
   parallel -j1 --env ref -C' ' '
     export n=$(wc -l $ref/impute_{}_interval.snpstats | cut -d" " -f1)
     export g=$(expr ${n} / ${chunk_size})
+    export s=$(expr $n - 1 - $(( $g * $chunk_size)))
     (
       for i in $(seq ${g}); do
         (
           awk "BEGIN{print \"##fileformat=VCFv4.0\"}"
           awk -vOFS="\t" "BEGIN{print \"#CHROM\",\"POS\",\"ID\",\"REF\",\"ALT\",\"QUAL\",\"FILTER\",\"INFO\"}"
-          sed "1d" ${ref}/impute_{}_interval.snpstats | \ 
           (
-            if [ ${i} -lt ${g} ]; then
-               awk -v i=${i} -v chunk_size=${chunk_size} -v OFS="\t" "NR==(i-1)*chunk_size+1,NR==i*chunk_size {
-                   if(\$1==\".\") \$1=\$3+0 \":\" \$4 \"_\" \$5 \"/\" \$6; print \$3+0,\$4,\$1,\$5,\$6,\".\",\".\",\$19}"
-            else
-               awk -v i=${i} -v chunk_size=${chunk_size} -v OFS="\t" -v n=${n} "NR==i*chunk_size+1,NR==n-1 {
+            sed "1d" ${ref}/impute_{}_interval.snpstats | \ 
+            awk -v i=${i} -v chunk_size=${chunk_size} -v OFS="\t" "NR==(i-1)*chunk_size+1,NR==i*chunk_size {
+                if(\$1==\".\") \$1=\$3+0 \":\" \$4 \"_\" \$5 \"/\" \$6; print \$3+0,\$4,\$1,\$5,\$6,\".\",\".\",\$19}"
+            if [ ${s} -gt 0 ] && [ ${i} -eq ${g} ]; then
+             sed "1d" ${ref}/impute_{}_interval.snpstats | \ 
+             awk -v i=${i} -v chunk_size=${chunk_size} -v OFS="\t" -v n=${n} "NR==i*chunk_size+1,NR==n-1 {
                    if(\$1==\".\") \$1=\$3+0 \":\" \$4 \"_\" \$5 \"/\" \$6; print \$3+0,\$4,\$1,\$5,\$6,\".\",\".\",\$19}"
             fi
           )
