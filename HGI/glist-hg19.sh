@@ -12,7 +12,7 @@ function local_vep()
   parallel -j1 --env ref -C' ' '
     export n=$(wc -l $ref/impute_{}_interval.snpstats | cut -d" " -f1)
     export g=$(expr ${n} / ${chunk_size})
-    export s=$(expr $n - 1 - $(( $g * $chunk_size)))
+    export s=$(expr $n - 1 - $(($g * $chunk_size)))
     (
       for i in $(seq ${g}); do
         (
