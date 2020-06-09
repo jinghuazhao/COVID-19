@@ -8,6 +8,30 @@ function local_vep()
 # local annotation to guarantee success
 {
   export chunk_size=10000
+  gunzip -c ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz | \
+  bcftools query -f "%CHROM\t%POS\t%REF\t%ALT\t%QUAL\t%FILTER\t%INFO/INFO\n" | \
+  awk -v OFS="\t" "NR>1{print \$1,\$2,\$1 \":\" \$2 \"_\" \$3 \"/\" \$4, \$3, \$4, \$5, \$6, \$7}" > work/INTERVAL-X.query
+  export n=$(wc -l work/INTERVAL-X.query | cut -d" " -f1)
+  export g=$(expr ${n} / ${chunk_size})
+  export s=$(expr $n - 1 - $(($g * $chunk_size)))
+  (
+    for i in $(seq ${g}); do
+    (
+      awk "BEGIN{print \"##fileformat=VCFv4.0\"}"
+      awk -vOFS="\t" "BEGIN{print \"#CHROM\",\"POS\",\"ID\",\"REF\",\"ALT\",\"QUAL\",\"FILTER\",\"INFO\"}"
+      awk -v i=${i} -v chunk_size=${chunk_size} -v OFS="\t" "NR==(i-1)*chunk_size+1,NR==i*chunk_size" work/INTERVAL-X.query
+      if [ ${s} -gt 0 ] && [ ${i} -eq ${g} ]; then
+         awk -v i=${i} -v chunk_size=${chunk_size} -v OFS="\t" -v n=${n} "NR==i*chunk_size+1,NR==n-1" work/INTERVAL-X.query
+      fi
+    ) | \
+    vep  --cache --offline --format vcf -o - --tab --pick --no_stats  \
+         --species homo_sapiens --assembly GRCh37 --port 3337 | \
+    (
+      if [ ${i} -eq 1 ]; then cat; else grep -v "#"; fi
+    ) 
+    done
+  ) | \
+  gzip -f > work/INTERVAL-X.vep.gz
   seq 22 | \
   parallel -j1 --env ref -C' ' '
     export n=$(wc -l $ref/impute_{}_interval.snpstats | cut -d" " -f1)

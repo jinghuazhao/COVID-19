@@ -11,13 +11,15 @@ save work/INTERVAL-pca, replace
 
 // 2. Data
 // insheet using "`dir'/06-05-2020/INTERVAL/INTERVALdata_06MAY2020.csv", case clear
-insheet using "20200520/INTERVALdata_20MAY2020.csv", case clear
+// insheet using "20200520/INTERVALdata_20MAY2020.csv", case clear
+insheet using "`dir'/20200603/INTERVALdata_03JUN2020.csv", case clear
 sort identifier
 save work/INTERVAL-data, replace
 
 // 3. Omics
 // insheet using "`dir'/06-05-2020/INTERVAL/INTERVAL_OmicsMap_20200506.csv", case clear
- insheet using "20200520/INTERVAL_OmicsMap_20200520.csv", case clear
+// insheet using "20200520/INTERVAL_OmicsMap_20200520.csv", case clear
+insheet using "`dir'/20200603/INTERVAL_OmicsMap_20200603.csv", case clear
 sort identifier
 merge 1:1 identifier using work/INTERVAL-data, gen(dataid)
 rename Affymetrix_gwasQC_bl ID
@@ -37,11 +39,12 @@ gzsave work/INTERVAL, replace
 
 // 4. COVID-19
 // insheet using "06-05-2020/INTERVAL/INTERVAL_Covid_06MAY2020.csv", case clear
-insheet using "20200520/INTERVAL_Covid_20MAY2020.csv", case clear
+// insheet using "20200520/INTERVAL_Covid_20MAY2020.csv", case clear
+insheet using "`dir'/20200603/INTERVAL_Covid_03JUN2020.csv", case clear
 sort identifier
-egen SARS_CoV=rowtotal(SARS_CoV2_1 SARS_CoV2_2 SARS_CoV2_3 SARS_CoV2_4 SARS_CoV2_5 SARS_CoV2_6)
+egen SARS_CoV=rowtotal(SARS_CoV2_1 SARS_CoV2_2 SARS_CoV2_3 SARS_CoV2_4 SARS_CoV2_5 SARS_CoV2_6 SARS_CoV2_7)
 replace SARS_CoV=1 if SARS_CoV>0
-drop SARS_CoV2_1-SARS_CoV2_6
+drop SARS_CoV2* specimenDate*
 save work/covid, replace
 
 // 5. INTERVAL-COVID
@@ -83,8 +86,6 @@ replace sex=_1_sex1+1
 replace sexage=sex*age
 end
 
-// drop if SARS_CoV==.
-// single_imputation
 drop if sex==. | age==.
 outsheet ID SARS_CoV sex age age2 sexage PC_1-PC_20 using work/INTERVAL-covid.txt, delim(" ") noquote replace
 tostring ID,gen(IDS) format(%15.0g)

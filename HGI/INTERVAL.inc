@@ -3,7 +3,7 @@
 module load gcc/6
 module load ceuadmin/stata
 
-export dir=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop
+export dir=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/HGI
 export autosomes=/home/jhz22/rds/post_qc_data/interval/imputed/uk10k_1000g_b37
 export X=/rds/project/jmmh2/rds-jmmh2-projects/covid/ace2/interval_genetic_data/interval_imputed_data
 
@@ -22,7 +22,7 @@ function phenotype()
   awk '{print $1, $1}' work/INTERVAL-covid.samples > work/INTERVAL-covid.samples2
   awk '!/110001440667/' work/INTERVAL-covid.txt | \
   awk '{if (NR>1) $1=$1 "_" $1};1' > work/INTERVAL-covid-X.txt
-  awk '!/110001440667/' work/INTERVAL-covid.samples > work/INTERVAL-covid-X.samples
+  awk '!/110001440667/{print $1"_"$1}' work/INTERVAL-covid.samples > work/INTERVAL-covid-X.samples
   awk '{print $1,$1}' work/INTERVAL-covid-X.samples > work/INTERVAL-covid-X.samples2
 }
 
@@ -50,8 +50,7 @@ function genotype()
     bgenix -g work/INTERVAL-{}.bgen -index -clobber
   '
 # Chromosome X
-  awk '{print $1 "_" $1}' work/INTERVAL-covid-X.samples | \
-  bcftools view -S - ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz -O v | \
+  bcftools view -S work/INTERVAL-covid-X.samples ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz -O v | \
   vcf-fix-ploidy -s work/INTERVAL-X.FM | \
   bgzip -cf > work/INTERVAL-X-ploidy.vcf.gz
   bcftools index -tf work/INTERVAL-X-ploidy.vcf.gz
@@ -66,8 +65,8 @@ function aggregate()
 # [dataset].[last name].[analysis_name].[freeze_number].[sex].[ancestry].[n_cases].[n_controls].[gwas software].[YYYYMMDD].txt.gz
 # [dataset].[last name].[analysis_name].[freeze_number].[sex].[ancestry].[gwas software].[YYYYMMDD].txt.gz
 # sex=M/MALE, F/FEMALE, ALL
-  export snvResults=output/INTERVAL.Zhao.ANA_C1_V2.2.ALL.EUR.129.356.SAIGE.20200601.txt.gz
-  export geneResults=output/INTERVAL.Zhao.ANA_C1_V2.2.ALL.EUR.129.356.SAIGE.gene.20200601.txt.gz
+  export snvResults=output/INTERVAL.Zhao.ANA_C1_V2.3.ALL.EUR.137.472.SAIGE.20200603.txt.gz
+  export geneResults=output/INTERVAL.Zhao.ANA_C1_V2.3.ALL.EUR.137.472.SAIGE.gene.20200603.txt.gz
   (
     cut -d' ' -f1-3,5-9,11-14,17,21-26 output/INTERVAL-*.txt | head -1
     seq 22 | \
@@ -82,7 +81,9 @@ function aggregate()
       cut -d" " -f1-3,4-8,10-13,16,20-25 | \
       sed "s/X/23/"
     '
-  ) | gzip -f > ${snvResults}
+  ) | \
+  awk -v OFS="\t" '{$1=$1+0;$3=$1+0 ":" $2 "_" $4 "/" $5};1' | \
+  gzip -f > ${snvResults}
   (
     cut -d' ' -f1,2,11-14 output/INTERVAL-*.gene.txt | head -1
     echo $(seq 22) X | \
@@ -130,7 +131,7 @@ function upload()
   cd HGI/output
 # gsutil cp $1 gs::/covid19-hg-upload-bugbank
   gsutil cp $1 gs://covid19-hg-upload-uk--blood-donors-cohort 
-# web: https://console.cloud.google.com/storage/browser/covid19-hg-upload-uk--blood-donors-cohort;tab=objects?project=covid-19-hg
+# web: https://console.cloud.google.com/storage/browser/covid19-hg-upload-uk--blood-donors-cohort?project=covid-19-hg
 # Fill the form here,
 # https://airtable.com/shrdJDwSHRZKXv45H
 # Download the data from here,
