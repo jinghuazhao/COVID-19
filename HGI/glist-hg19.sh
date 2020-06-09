@@ -3,11 +3,11 @@
 export ref=/home/jhz22/rds/post_qc_data/interval/reference_files/genetic/interval
 export X=/rds/project/jmmh2/rds-jmmh2-projects/covid/ace2/interval_genetic_data/interval_imputed_data
 export TMPDIR=/rds/user/jhz22/hpc-work/work
+export chunk_size=10000
 
-function local_vep()
+function local_vep_X()
 # local annotation to guarantee success
 {
-  export chunk_size=10000
   gunzip -c ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz | \
   bcftools query -f "%CHROM\t%POS\t%REF\t%ALT\t%QUAL\t%FILTER\t%INFO/INFO\n" | \
   awk -v OFS="\t" "NR>1{print \$1,\$2,\$1 \":\" \$2 \"_\" \$3 \"/\" \$4, \$3, \$4, \$5, \$6, \$7}" > work/INTERVAL-X.query
@@ -32,6 +32,10 @@ function local_vep()
     done
   ) | \
   gzip -f > work/INTERVAL-X.vep.gz
+}
+
+function local_vep()
+{
   seq 22 | \
   parallel -j1 --env ref -C' ' '
     export n=$(wc -l $ref/impute_{}_interval.snpstats | cut -d" " -f1)
@@ -53,7 +57,7 @@ function local_vep()
             fi
           )
         ) | \
-        vep  --cache --offline --format vcf -o - --tab --pick --no_stats  \
+        vep  --cache --offline --format vcf -o - --tab --pick --no_stats --symbol \
              --species homo_sapiens --assembly GRCh37 --port 3337 | \
         (
           if [ ${i} -eq 1 ]; then cat; else grep -v "#"; fi
