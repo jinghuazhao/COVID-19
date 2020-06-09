@@ -21,10 +21,10 @@ function local_vep()
       awk -vOFS="\t" "BEGIN{print \"#CHROM\",\"POS\",\"ID\",\"REF\",\"ALT\",\"QUAL\",\"FILTER\",\"INFO\"}"
       awk -v i=${i} -v chunk_size=${chunk_size} -v OFS="\t" "NR==(i-1)*chunk_size+1,NR==i*chunk_size" work/INTERVAL-X.query
       if [ ${s} -gt 0 ] && [ ${i} -eq ${g} ]; then
-         awk -v i=${i} -v chunk_size=${chunk_size} -v OFS="\t" -v n=${n} "NR==i*chunk_size+1,NR==n-1" work/INTERVAL-X.query
+         awk -v i=${i} -v chunk_size=${chunk_size} -v OFS="\t" -v n=${n} "NR==i*chunk_size+1,NR==n" work/INTERVAL-X.query
       fi
     ) | \
-    vep  --cache --offline --format vcf -o - --tab --pick --no_stats  \
+    vep  --cache --offline --format vcf -o - --tab --pick --no_stats --symbol \
          --species homo_sapiens --assembly GRCh37 --port 3337 | \
     (
       if [ ${i} -eq 1 ]; then cat; else grep -v "#"; fi
@@ -70,13 +70,13 @@ function to_bed4()
   tr ' ' '\n' | \
   parallel -C' ' '
     gunzip -c output/INTERVAL_annotation/INTERVAL-{}.vep.gz | \
-    awk "NR>1" | \
+    awk "NR>40" | \
     cut -f1,2,4,6,7 | \
     awk -v OFS="\t" "\$5!=\"-\" {
-      sub(/frameshift_variant|stop_gained|splice_acceptor_variant|splice_donor_variant/,\"pLoF\",\$3);
+      sub(/frameshift_variant|stop_gained|splice_acceptor_variant|splice_donor_variant/,\"pLoF\",\$5);
       split(\$2,a,\":\")
       split(a[2],b,\"-\")
-      print a[1],b[1]-1,b[2],\$5 \":\" \$4 \":\" \$3
+      print a[1],b[1]-1,b[1],\$5 \":\" \$4 \":\" \$5
     }" > work/INTERVAL-{}.bed4
   '
 }

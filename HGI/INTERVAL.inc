@@ -82,7 +82,7 @@ function aggregate()
       sed "s/X/23/"
     '
   ) | \
-  awk -v OFS="\t" '{$1=$1+0;$3=$1+0 ":" $2 "_" $4 "/" $5};1' | \
+  awk '{if(NR>1){$1=$1+0;$3=$1+0 ":" $2 "_" $4 "/" $5}};1' | \
   gzip -f > ${snvResults}
   (
     cut -d' ' -f1,2,11-14 output/INTERVAL-*.gene.txt | head -1
