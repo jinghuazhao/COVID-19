@@ -80,6 +80,7 @@ function to_bed4()
       sub(/frameshift_variant|stop_gained|splice_acceptor_variant|splice_donor_variant/,\"pLoF\",\$4);
       split(\$2,a,\":\")
       split(a[2],b,\"-\")
+      if (a[1]<10) printf 0
       print a[1],b[1]-1,b[1],\$3 \":\" \$5 \":\" \$4
     }" > work/INTERVAL-{}.bed4
   '
@@ -89,13 +90,13 @@ function glist_annotate()
 {
   export src=20200603-ANA_C1_V2
   seq 22 | \
-  parallel -j4 --env src -C' ' 'qctool -g ${src}/work/INTERVAL-{}.bgen -annotate-bed4 work/INTERVAL-{}.bed4 -osnp work/INTERVAL-{}.annotate'
+  parallel -j1 --env src -C' ' 'qctool -g ${src}/work/INTERVAL-{}.bgen -annotate-bed4 work/INTERVAL-{}.bed4 -osnp work/INTERVAL-{}.annotate'
   qctool -g ${src}/work/INTERVAL-X-ploidy.vcf.gz -filetype vcf -annotate-bed4 work/INTERVAL-X.bed4 -osnp work/INTERVAL-X.annotate
   echo $(seq 22) X | \
   tr ' ' '\n' | \
-  parallel -j4 -C' ' '
+  parallel -j3 -C' ' '
      awk "NR>9 && \$8!=\"NA\" && \$2!=\".\" && \$1!=\"#\"{print \$1}" work/INTERVAL-{}.annotate > work/INTERVAL-{}.incl
-     export list=($(awk "NR>8 && \$8!=\"NA\"" work/INTERVAL-{}.annotate | cut -f8 | sort | uniq))
+     export list=($(awk "NR>9 && \$8!=\"NA\"" work/INTERVAL-{}.annotate | cut -f8 | sort | uniq))
      (
        for g in ${list[@]}
        do
