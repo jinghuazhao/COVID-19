@@ -90,7 +90,7 @@ function glist_annotate()
   export src=20200603-ANA_C1_V2
   seq 22 | \
   parallel -j4 --env src -C' ' 'qctool -g ${src}/work/INTERVAL-{}.bgen -annotate-bed4 work/INTERVAL-{}.bed4 -osnp work/INTERVAL-{}.annotate'
-  qctool -g ${src}/work/INTERVAL-X.bgen -annotate-bed4 work/INTERVAL-X.bed4 -osnp work/INTERVAL-X.annotate
+  qctool -g ${src}/work/INTERVAL-X-ploidy.vcf.gz -filetype vcf -annotate-bed4 work/INTERVAL-X.bed4 -osnp work/INTERVAL-X.annotate
   echo $(seq 22) X | \
   tr ' ' '\n' | \
   parallel -j4 -C' ' '
