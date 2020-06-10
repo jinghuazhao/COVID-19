@@ -74,24 +74,23 @@ function to_bed4()
   tr ' ' '\n' | \
   parallel -C' ' '
     gunzip -c output/INTERVAL_annotation/INTERVAL-{}.vep.gz | \
-    awk "NR>40" | \
-    cut -f1,2,4,6,7 | \
-    awk -v OFS="\t" "\$5!=\"-\" {
-      sub(/frameshift_variant|stop_gained|splice_acceptor_variant|splice_donor_variant/,\"pLoF\",\$5);
+    awk "NR>43" | \
+    cut -f1,2,4,7,18 | \
+    awk -v OFS="\t" "\$3!=\"-\" {
+      sub(/frameshift_variant|stop_gained|splice_acceptor_variant|splice_donor_variant/,\"pLoF\",\$4);
       split(\$2,a,\":\")
       split(a[2],b,\"-\")
-      print a[1],b[1]-1,b[1],\$5 \":\" \$4 \":\" \$5
+      print a[1],b[1]-1,b[1],\$3 \":\" \$5 \":\" \$4
     }" > work/INTERVAL-{}.bed4
   '
 }
 
 function glist_annotate()
 {
-  export autosomes=/home/jhz22/rds/post_qc_data/interval/imputed/uk10k_1000g_b37
+  export src=20200603-ANA_C1_V2
   seq 22 | \
-  parallel -j4 -C' ' 'qctool -g work/INTERVAL-{}.bgen -annotate-bed4 work/INTERVAL-{}.bed4 -osnp work/INTERVAL-{}.annotate'
-  export X=/rds/project/jmmh2/rds-jmmh2-projects/covid/ace2/interval_genetic_data/interval_imputed_data
-  qctool -g ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz -filetype vcf -annotate-bed4 work/INTERVAL-X.bed4 -osnp work/INTERVAL-X.annotate
+  parallel -j4 --env src -C' ' 'qctool -g ${src}/work/INTERVAL-{}.bgen -annotate-bed4 work/INTERVAL-{}.bed4 -osnp work/INTERVAL-{}.annotate'
+  qctool -g ${src}/work/INTERVAL-X.bgen -annotate-bed4 work/INTERVAL-X.bed4 -osnp work/INTERVAL-X.annotate
   echo $(seq 22) X | \
   tr ' ' '\n' | \
   parallel -j4 -C' ' '
