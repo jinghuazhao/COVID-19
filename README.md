@@ -19,6 +19,7 @@
   * [Analysis plan](https://tinyurl.com/yalt3n28)
   * Phenotype definition: [v1.0](https://tinyurl.com/ybno3zgy), [v2.0](https://tinyurl.com/yd8hkvjk)
   * [Case severity code](https://tinyurl.com/y7nygjr3)
+* [zenodo](https://zenodo.org/)
 
 ## GISAID
 * [GISAID](https://www.gisaid.org/) (login: [https://gisaid.org](https://gisaid.org)).
