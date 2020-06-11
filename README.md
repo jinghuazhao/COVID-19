@@ -9,6 +9,7 @@
 
 ## COVID-19
 * [CITIID](https://covid19.medschl.cam.ac.uk/)
+* [CUH clinical update](https://cuhstaffportal.co.uk/operational/clinical-updates/).
 * [HDRUK/covid-19](https://github.com/HDRUK/covid-19).
 * [COVID-19 Data Portal](https://www.covid19dataportal.org/).
 * [The COVID-19 Host Genetics Initiative](https://covid19hg.netlify.com/)
