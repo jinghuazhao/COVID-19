@@ -92,10 +92,10 @@ function glist_annotate()
   seq 22 | \
   parallel -j1 --env src -C' ' 'qctool -g ${src}/work/INTERVAL-{}.bgen -annotate-bed4 work/INTERVAL-{}.bed4 -osnp work/INTERVAL-{}.annotate'
   qctool -g ${src}/work/INTERVAL-X-ploidy.vcf.gz -filetype vcf -annotate-bed4 work/INTERVAL-X.bed4 -osnp work/INTERVAL-X.annotate
-  echo $(seq 22) X | \
+  echo X | \
   tr ' ' '\n' | \
   parallel -j3 -C' ' '
-     awk "NR>9 && \$8!=\"NA\" && \$2!=\".\" && \$1!=\"#\"{print \$1}" work/INTERVAL-{}.annotate > work/INTERVAL-{}.incl
+     awk "NR>9 && \$8!=\"NA\" && \$2!=\".\" && \$1!=\"#\"{print \$1}" work/INTERVAL-{}.annotate > output/INTERVAL-{}.incl
      export list=($(awk "NR>9 && \$8!=\"NA\"" work/INTERVAL-{}.annotate | cut -f8 | sort | uniq))
      (
        for g in ${list[@]}
@@ -104,6 +104,7 @@ function glist_annotate()
           awk -vOFS="\t" "\$2!=\".\" {printf OFS \$2}" | \
           awk -v g=${g} -v OFS="\t" "{print g,\$0}"
        done
-     ) > work/INTERVAL-{}.gene
+     ) > output/INTERVAL-{}.gene
   '
+  sbatch glist-hg19.sb
 }
