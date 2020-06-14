@@ -26,6 +26,57 @@ function phenotype()
   awk '{print $1,$1}' work/INTERVAL-covid-X.samples > work/INTERVAL-covid-X.samples2
 }
 
+function genotype()
+# step 3. sample-specific bgen/vcf.gz files
+{
+# Autosomes -- to long for the whole cohort, so SLURM is used.
+  seq 22 -1 1 | \
+  parallel -j1 --env autosomes -C' ' '
+    qctool -g ${autosomes}/imputed/impute_{}_interval.bgen -s ${autosomes}/imputed/interval.samples \
+           -incl-samples work/INTERVAL-covid.samples \
+           -bgen-bits 8 -og work/INTERVAL-{}.bgen -os work/INTERVAL-{}.samples
+    bgenix -g work/INTERVAL-{}.bgen -index -clobber
+  '
+# Chromosome X, 58 samples do not exist in INTERVAL_X_imp_ann_filt_v2.vcf.gz
+  bcftools query -l ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz | \
+  join - work/INTERVAL-covid-X.samples -v2 > work/INTERVAL-covid-X.excl-samples
+  grep -v -f work/INTERVAL-covid-X.excl-samples work/INTERVAL-X.FM > work/INTERVAL-covid-X.FM
+  grep -v -f work/INTERVAL-covid-X.excl-samples work/INTERVAL-covid-X.samples | \
+  bcftools view -S - ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz -O v | \
+  vcf-fix-ploidy -s work/INTERVAL-covid-X.FM | \
+  bgzip -cf > work/INTERVAL-X-ploidy.vcf.gz
+  bcftools index -tf work/INTERVAL-X-ploidy.vcf.gz
+}
+
+function genotype_sbatch()
+{
+#!/usr/bin/bash
+
+#SBATCH --job-name=_bgen
+#SBATCH --account CARDIO-SL0-CPU
+#SBATCH --partition cardio
+#SBATCH --qos=cardio
+#SBATCH --array=1,3,4,6,14-17
+#SBATCH --mem=28800
+#SBATCH --time=5-00:00:00
+#SBATCH --output=/rds/user/jhz22/hpc-work/work/_bgen_%A_%a.out
+#SBATCH --error=/rds/user/jhz22/hpc-work/work/_bgen_%A_%a.err
+#SBATCH --export ALL
+
+export job=$SLURM_ARRAY_TASK_ID
+export autosomes=/home/jhz22/rds/post_qc_data/interval/imputed/uk10k_1000g_b37
+export TMPDIR=/rds/user/jhz22/hpc-work/work
+
+qctool -g ${autosomes}/imputed/impute_${job}_interval.bgen -s ${autosomes}/imputed/interval.samples \
+       -incl-samples work/INTERVAL-covid.samples \
+       -bgen-bits 8 -og work/INTERVAL-${job}.bgen -os work/INTERVAL-${job}.samples
+
+bgenix -g work/INTERVAL-${job}.bgen -index -clobber
+}
+
+# step 4. single variant association tests + gene annodation/association analysis
+# INTERVAL.sh + glist_hg19.sh/INTERVAL-X.sh
+
 function GRM()
 # step 2. inference from directly genotyped variants 
 {
@@ -37,27 +88,6 @@ function GRM()
   plink --bed work/INTERVAL-covid.bed --bim work/INTERVAL-covid.bim --fam work/INTERVAL-covid.fam2 \
         --make-bed -keep work/INTERVAL-covid-X.samples2 --out work/INTERVAL-covid-X
 }
-
-function genotype()
-# step 3. sample-specific bgen/vcf.gz files
-{
-# Autosomes
-  seq 22 -1 1 | \
-  parallel -j1 --env autosomes -C' ' '
-    qctool -g ${autosomes}/imputed/impute_{}_interval.bgen -s ${autosomes}/imputed/interval.samples \
-           -incl-samples work/INTERVAL-covid.samples \
-           -bgen-bits 8 -og work/INTERVAL-{}.bgen -os work/INTERVAL-{}.samples
-    bgenix -g work/INTERVAL-{}.bgen -index -clobber
-  '
-# Chromosome X
-  bcftools view -S work/INTERVAL-covid-X.samples ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz -O v | \
-  vcf-fix-ploidy -s work/INTERVAL-X.FM | \
-  bgzip -cf > work/INTERVAL-X-ploidy.vcf.gz
-  bcftools index -tf work/INTERVAL-X-ploidy.vcf.gz
-}
-
-# step 4. single variant association tests + gene annodation/association analysis
-# INTERVAL.sh + glist_hg19.sh/INTERVAL-X.sh
 
 function aggregate()
 # step 5. summary of results
@@ -138,4 +168,4 @@ function upload()
 # https://console.cloud.google.com/storage/browser/covid19-hg-analysis
 }
 
-# srun -A CARDIO-SL0-CPU -p cardio_intr --qos=cardio_intr -N1 -n1 -c4 -t 12:0:0 --pty bash -i
+# srun -A CARDIO-SL0-CPU -p cardio_intr --qos=cardio_intr -N1 -n1 -c4 --mem=28800 -t 12:0:0 --pty bash -i

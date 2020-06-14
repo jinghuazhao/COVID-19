@@ -93,7 +93,6 @@ function glist_annotate()
   parallel -j1 --env src -C' ' 'qctool -g ${src}/work/INTERVAL-{}.bgen -annotate-bed4 work/INTERVAL-{}.bed4 -osnp work/INTERVAL-{}.annotate'
   qctool -g ${src}/work/INTERVAL-X-ploidy.vcf.gz -filetype vcf -annotate-bed4 work/INTERVAL-X.bed4 -osnp work/INTERVAL-X.annotate
   echo X | \
-  tr ' ' '\n' | \
   parallel -j3 -C' ' '
      awk "NR>9 && \$8!=\"NA\" && \$2!=\".\" && \$1!=\"#\"{print \$1}" work/INTERVAL-{}.annotate > output/INTERVAL-{}.incl
      export list=($(awk "NR>9 && \$8!=\"NA\"" work/INTERVAL-{}.annotate | cut -f8 | sort | uniq))
