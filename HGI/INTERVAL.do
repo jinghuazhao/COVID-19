@@ -44,7 +44,7 @@ insheet using "`dir'/20200603/INTERVAL_Covid_03JUN2020.csv", case clear
 sort identifier
 egen SARS_CoV=rowtotal(SARS_CoV2_1 SARS_CoV2_2 SARS_CoV2_3 SARS_CoV2_4 SARS_CoV2_5 SARS_CoV2_6 SARS_CoV2_7)
 replace SARS_CoV=1 if SARS_CoV>0
-drop SARS_CoV2* specimenDate*
+keep identifier SARS_CoV
 save work/covid, replace
 
 // 5. INTERVAL-COVID
@@ -87,6 +87,7 @@ replace sexage=sex*age
 end
 
 drop if sex==. | age==.
+replace SARS_CoV=0 if SARS_CoV==.
 outsheet ID SARS_CoV sex age age2 sexage PC_1-PC_20 using work/INTERVAL-covid.txt, delim(" ") noquote replace
 tostring ID,gen(IDS) format(%15.0g)
 gen str31 ID2=IDS + "_" + IDS
