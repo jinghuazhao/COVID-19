@@ -36,8 +36,8 @@ function genotype()
   parallel -j1 --env autosomes -C' ' '
     qctool -g ${autosomes}/imputed/impute_{}_interval.bgen -s ${autosomes}/imputed/interval.samples \
            -incl-samples work/INTERVAL-covid.samples \
-           -bgen-bits 8 -og work/INTERVAL-{}.bgen -os work/INTERVAL-{}.samples
-    bgenix -g work/INTERVAL-{}.bgen -index -clobber
+           -bgen-bits 8 -og work/INTERVAL-{}.bgen -os output/INTERVAL-{}.samples
+    bgenix -g output/INTERVAL-{}.bgen -index -clobber
   '
 # Chromosome X, 58 samples do not exist in INTERVAL_X_imp_ann_filt_v2.vcf.gz
   grep -v -f work/INTERVAL-covid-X.excl-samples work/INTERVAL-covid-X.samples | \
@@ -55,7 +55,7 @@ function genotype_sbatch()
 #SBATCH --account CARDIO-SL0-CPU
 #SBATCH --partition cardio
 #SBATCH --qos=cardio
-#SBATCH --array=1,3,4,6,14-17
+#SBATCH --array=1-22
 #SBATCH --mem=28800
 #SBATCH --time=5-00:00:00
 #SBATCH --output=/rds/user/jhz22/hpc-work/work/_bgen_%A_%a.out
@@ -68,9 +68,9 @@ export TMPDIR=/rds/user/jhz22/hpc-work/work
 
 qctool -g ${autosomes}/imputed/impute_${job}_interval.bgen -s ${autosomes}/imputed/interval.samples \
        -incl-samples work/INTERVAL-covid.samples \
-       -bgen-bits 8 -og work/INTERVAL-${job}.bgen -os work/INTERVAL-${job}.samples
+       -bgen-bits 8 -og output/INTERVAL-${job}.bgen -os output/INTERVAL-${job}.samples
 
-bgenix -g work/INTERVAL-${job}.bgen -index -clobber
+bgenix -g output/INTERVAL-${job}.bgen -index -clobber
 }
 
 # step 4. single variant association tests + gene annodation/association analysis

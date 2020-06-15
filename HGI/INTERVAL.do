@@ -56,6 +56,7 @@ drop _merge
 save work/INTERVAL-covid, replace
 
 insheet ID using work/INTERVAL.samples, case clear
+format ID %15.0g
 gen idn=_n
 save work/INTERVAL-omics, replace
 insheet ID2 using work/INTERVAL-X.samples, case clear
