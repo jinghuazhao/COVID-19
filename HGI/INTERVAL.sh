@@ -69,7 +69,7 @@ step2_SPAtests.R \
    --minMAF=0 \
    --minMAC=1 \
    --maxMAFforGroupTest=0.001 \
-   --sampleFile=output/INTERVAL-{}.samples \
+   --sampleFile=work/INTERVAL-covid.samples \
    --GMMATmodelFile=output/INTERVAL-covid.rda \
    --varianceRatioFile=output/INTERVAL-covid.varianceRatio.txt \
    --SAIGEOutputFile=output/INTERVAL-{}.gene \

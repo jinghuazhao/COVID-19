@@ -88,22 +88,21 @@ function to_bed4()
 
 function glist_annotate()
 {
-  export src=20200603-ANA_C1_V2
   seq 22 | \
-  parallel -j1 --env src -C' ' 'qctool -g ${src}/work/INTERVAL-{}.bgen -annotate-bed4 work/INTERVAL-{}.bed4 -osnp work/INTERVAL-{}.annotate'
-  qctool -g ${src}/work/INTERVAL-X-ploidy.vcf.gz -filetype vcf -annotate-bed4 work/INTERVAL-X.bed4 -osnp work/INTERVAL-X.annotate
+  parallel -j1 --env src -C' ' 'qctool -g output/INTERVAL-{}.bgen -annotate-bed4 output/INTERVAL-{}.bed4 -osnp output/INTERVAL-{}.annotate'
+  sbatch glist-hg19.sb
+  qctool -g output/INTERVAL-X-ploidy.vcf.gz -filetype vcf -annotate-bed4 output/INTERVAL-X.bed4 -osnp output/INTERVAL-X.annotate
   echo X | \
   parallel -j3 -C' ' '
-     awk "NR>9 && \$8!=\"NA\" && \$2!=\".\" && \$1!=\"#\"{print \$1}" work/INTERVAL-{}.annotate > output/INTERVAL-{}.incl
-     export list=($(awk "NR>9 && \$8!=\"NA\"" work/INTERVAL-{}.annotate | cut -f8 | sort | uniq))
+     awk "NR>10 && \$8!=\"NA\" && \$2!=\".\" && \$1!=\"#\"{print \$2}" output/INTERVAL-{}.annotate > output/INTERVAL-{}.incl
+     export list=($(awk "NR>10 && \$8!=\"NA\"" output/INTERVAL-{}.annotate | cut -f8 | sort | uniq))
      (
        for g in ${list[@]}
        do
-          awk -v g=${g} "\$8==g" work/INTERVAL-{}.annotate | \
+          awk -v g=${g} "\$8==g" output/INTERVAL-{}.annotate | \
           awk -vOFS="\t" "\$2!=\".\" {printf OFS \$2}" | \
           awk -v g=${g} -v OFS="\t" "{print g,\$0}"
        done
      ) > output/INTERVAL-{}.gene
   '
-  sbatch glist-hg19.sb
 }
