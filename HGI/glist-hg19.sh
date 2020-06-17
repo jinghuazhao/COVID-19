@@ -104,5 +104,13 @@ function glist_annotate()
           awk -v g=${g} -v OFS="\t" "{print g \$0}"
        done
      ) > output/INTERVAL-{}.gene
+     (
+       for g in ${list[@]}
+       do
+          awk -v g=${g} "\$8==g" output/INTERVAL-{}.annotate | \
+          awk -vOFS="\t" "\$2!=\".\" {split(\$2,a,\"_\");printf OFS a[1] \"_\" a[2] \"/\" a[3]}" | \
+          awk -v g=${g} -v OFS="\t" "{print g \$0}"
+       done
+     ) > output/INTERVAL-{}.gene-snpid
   '
 }
