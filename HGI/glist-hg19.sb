@@ -25,3 +25,11 @@ export list=($(awk "NR>9 && \$8!=\"NA\"" work/INTERVAL-${job}.annotate | cut -f8
       awk -v g=${g} -v OFS="\t" "{print g \$0}"
   done
 ) > output/INTERVAL-${job}.gene
+(
+  for g in ${list[@]}
+  do
+      awk -v g=${g} "\$8==g" work/INTERVAL-${job}.annotate | \
+      awk -vOFS="\t" "\$2!=\".\" {printf OFS \$3+0 \":\" \$4 \"_\" \$5 \"/\" \$6}" | \
+      awk -v g=${g} -v OFS="\t" "{print g \$0}"
+  done
+) > output/INTERVAL-${job}.gene-snpid
