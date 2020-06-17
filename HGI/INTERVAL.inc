@@ -45,6 +45,10 @@ function genotype()
   vcf-fix-ploidy -s work/INTERVAL-covid-X.FM | \
   bgzip -cf > work/INTERVAL-X-ploidy.vcf.gz
   bcftools index -tf work/INTERVAL-X-ploidy.vcf.gz
+# to delete two individuals in INTERVAL-X.remove
+# vcftools --remove INTERVAL-X.remove --gzvcf work/INTERVAL-X-ploidy.vcf.gz --recode --stdout | \
+# bgzip -cf > INTERVAL-X-ploidy.vcf.gz
+# bcftools index -tf INTERVAL-X-ploidy.vcf.gz
 }
 
 function genotype_sbatch()
