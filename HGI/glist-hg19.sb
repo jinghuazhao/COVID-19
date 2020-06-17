@@ -22,6 +22,6 @@ export list=($(awk "NR>9 && \$8!=\"NA\"" work/INTERVAL-${job}.annotate | cut -f8
   do
       awk -v g=${g} "\$8==g" work/INTERVAL-${job}.annotate | \
       awk -vOFS="\t" "\$2!=\".\" {printf OFS \$2}" | \
-      awk -v g=${g} -v OFS="\t" "{print g,\$0}"
+      awk -v g=${g} -v OFS="\t" "{print g \$0}"
   done
 ) > output/INTERVAL-${job}.gene

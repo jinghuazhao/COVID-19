@@ -101,7 +101,7 @@ function glist_annotate()
        do
           awk -v g=${g} "\$8==g" output/INTERVAL-{}.annotate | \
           awk -vOFS="\t" "\$2!=\".\" {printf OFS \$2}" | \
-          awk -v g=${g} -v OFS="\t" "{print g,\$0}"
+          awk -v g=${g} -v OFS="\t" "{print g \$0}"
        done
      ) > output/INTERVAL-{}.gene
   '
