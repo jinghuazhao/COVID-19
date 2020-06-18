@@ -55,6 +55,10 @@ function genofile()
   vcf-fix-ploidy -s work/INTERVAL-X.FM | \
   bgzip -cf > work/INTERVAL-X-ploidy.vcf.gz
   bcftools index -tf work/INTERVAL-X-ploidy.vcf.gz
+# to delete two individuals in INTERVAL-X.remove
+# vcftools --remove INTERVAL-X.remove --gzvcf work/INTERVAL-X-ploidy.vcf.gz --recode --stdout | \
+# bgzip -cf > INTERVAL-X-ploidy.vcf.gz
+# bcftools index -tf INTERVAL-X-ploidy.vcf.gz
 # sbatch INTERVAL.sb
 # Autosomes
   export autosomes=/home/jhz22/rds/post_qc_data/interval/imputed/uk10k_1000g_b37
@@ -128,6 +132,19 @@ qctool -g ${autosomes}/imputed/impute_${job}_interval.bgen -s ${autosomes}/imput
        -incl-rsids work/INTERVAL-${job}.nodup \
        -map-id-data work/INTERVAL-${job}.map -bgen-bits 8 -og work/INTERVAL-${job}.bgen
 bgenix -g work/INTERVAL-${job}.bgen -index -clobber
+}
+
+function autosomes()
+# step 3. sample-specific bgen files
+{
+# Autosomes -- too long for the whole cohort, so SLURM is used.
+  seq 22 -1 1 | \
+  parallel -j1 --env autosomes -C' ' '
+    qctool -g ${autosomes}/imputed/impute_{}_interval.bgen -s ${autosomes}/imputed/interval.samples \
+           -incl-samples work/INTERVAL-covid.samples \
+           -bgen-bits 8 -og work/INTERVAL-{}.bgen -os output/INTERVAL-{}.samples
+    bgenix -g output/INTERVAL-{}.bgen -index -clobber
+  '
 }
 
 function annotate()

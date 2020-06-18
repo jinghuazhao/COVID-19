@@ -28,34 +28,7 @@ function phenotype()
   grep -v -f work/INTERVAL-covid-X.excl-samples work/INTERVAL-X.FM > work/INTERVAL-covid-X.FM
 }
 
-function genotype()
-# step 3. sample-specific bgen/vcf.gz files
-{
-# Autosomes -- to long for the whole cohort, so SLURM is used.
-  seq 22 -1 1 | \
-  parallel -j1 --env autosomes -C' ' '
-    qctool -g ${autosomes}/imputed/impute_{}_interval.bgen -s ${autosomes}/imputed/interval.samples \
-           -incl-samples work/INTERVAL-covid.samples \
-           -bgen-bits 8 -og work/INTERVAL-{}.bgen -os output/INTERVAL-{}.samples
-    bgenix -g output/INTERVAL-{}.bgen -index -clobber
-  '
-# Chromosome X, 58 samples do not exist in INTERVAL_X_imp_ann_filt_v2.vcf.gz
-  grep -v -f work/INTERVAL-covid-X.excl-samples work/INTERVAL-covid-X.samples | \
-  bcftools view -S - ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz -O v | \
-  vcf-fix-ploidy -s work/INTERVAL-covid-X.FM | \
-  bgzip -cf > work/INTERVAL-X-ploidy.vcf.gz
-  bcftools index -tf work/INTERVAL-X-ploidy.vcf.gz
-# to delete two individuals in INTERVAL-X.remove
-# vcftools --remove INTERVAL-X.remove --gzvcf work/INTERVAL-X-ploidy.vcf.gz --recode --stdout | \
-# bgzip -cf > INTERVAL-X-ploidy.vcf.gz
-# bcftools index -tf INTERVAL-X-ploidy.vcf.gz
-# bcftools query -l ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz | \
-# tr '_' ' ' | \
-# awk '{print $1"_"$1, $2}' | \
-# bcftools reheader -s - ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz -o output/INTERVAL-X-src.vcf.gz --threads 12
-}
-
-function genotype_sbatch()
+function autosomes_sbatch()
 {
 #!/usr/bin/bash
 
@@ -81,6 +54,21 @@ qctool -g ${autosomes}/imputed/impute_${job}_interval.bgen -s ${autosomes}/imput
 bgenix -g output/INTERVAL-${job}.bgen -index -clobber
 }
 
+function X()
+{
+# Chromosome X, 58 samples do not exist in INTERVAL_X_imp_ann_filt_v2.vcf.gz
+  bcftools query -l ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz | \
+  tr '_' ' ' | \
+  awk '{print $1"_"$1, $2}' | \
+  bcftools reheader -s - ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz -o work/INTERVAL-X-src.vcf.gz --threads 12
+  bcftools annotate --set-id '%CHROM:%POS\_%REF\/%FIRST_ALT' work/INTERVAL-X-src.vcf.gz -O z -o output/INTERVAL-X-src.vcf.gz
+  bcftools index -tf output/INTERVAL-X-src.vcf.gz
+  grep -v -f work/INTERVAL-covid-X.excl-samples work/INTERVAL-covid-X.samples | \
+  bcftools view -S - output/INTERVAL-X-src.vcf.gz -O v | \
+  vcf-fix-ploidy -s output/INTERVAL-covid-X.FM | \
+  bgzip -cf > output/INTERVAL-X-ploidy.vcf.gz
+  bcftools index -tf output/INTERVAL-X-ploidy.vcf.gz
+}
 # step 4. single variant association tests + gene annodation/association analysis
 # INTERVAL.sh + glist_hg19.sh/INTERVAL-X.sh
 
