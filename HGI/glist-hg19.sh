@@ -112,5 +112,6 @@ function glist_annotate()
           awk -v g=${g} -v OFS="\t" "{print g \$0}"
        done
      ) > output/INTERVAL-{}.gene-snpid
+     sed -i 's/\t/;/g;s/;/\t/' ../output/INTERVAL-{}.gene-snpid
   '
 }

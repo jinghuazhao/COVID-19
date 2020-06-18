@@ -49,6 +49,10 @@ function genotype()
 # vcftools --remove INTERVAL-X.remove --gzvcf work/INTERVAL-X-ploidy.vcf.gz --recode --stdout | \
 # bgzip -cf > INTERVAL-X-ploidy.vcf.gz
 # bcftools index -tf INTERVAL-X-ploidy.vcf.gz
+# bcftools query -l ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz | \
+# tr '_' ' ' | \
+# awk '{print $1"_"$1, $2}' | \
+# bcftools reheader -s - ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz -o output/INTERVAL-X-src.vcf.gz --threads 12
 }
 
 function genotype_sbatch()
