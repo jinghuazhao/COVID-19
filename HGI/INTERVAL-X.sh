@@ -28,6 +28,7 @@ step2_SPAtests.R \
    --IsOutputNinCaseCtrl=TRUE \
    --IsOutputHetHomCountsinCaseCtrl=TRUE \
    --IsOutputAFinCaseCtrl=TRUE
+gzip -f output/INTERVAL-X.txt
 
 # Gene-based association tests
 

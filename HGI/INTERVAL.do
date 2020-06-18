@@ -1,5 +1,19 @@
 // Phenotype
 
+program single_imputation
+// https://stats.idre.ucla.edu/stata/seminars/mi_in_stata_pt1_new/
+// less useful after conversion of the whole cohort into 8-bit format
+   mi set wide
+   mi register imputed age sex1
+   mi register regular PC_1-PC_20
+   mi impute chained (regress) age (logit) sex1 = PC_1-PC_20, add(1) rseed(123456)
+   replace SARS_CoV=0 if SARS_CoV!=1
+   replace age=_1_age
+   replace age2=age*age
+   replace sex=_1_sex1+1
+   replace sexage=sex*age
+end
+
 local dir : env dir
 local ev : env ev
 
@@ -14,6 +28,7 @@ save work/INTERVAL-pca, replace
 // insheet using "`dir'/06-05-2020/INTERVAL/INTERVALdata_06MAY2020.csv", case clear
 // insheet using "20200520/INTERVALdata_20MAY2020.csv", case clear
 insheet using "20200603/INTERVALdata_03JUN2020.csv", case clear
+// insheet using "20200617/INTERVALdata_17JUN2020.csv", case clear
 sort identifier
 keep identifier sexPulse agePulse
 rename agePulse age
@@ -26,10 +41,11 @@ save work/INTERVAL-data, replace
 // insheet using "`dir'/06-05-2020/INTERVAL/INTERVAL_OmicsMap_20200506.csv", case clear
 // insheet using "20200520/INTERVAL_OmicsMap_20200520.csv", case clear
 insheet using "20200603/INTERVAL_OmicsMap_20200603.csv", case clear
+// insheet using "20200617/INTERVAL_OmicsMap_20200617.csv", case clear
 keep identifier Affymetrix_QC_bl Affymetrix_gwasQC_bl
 format Affymetrix_QC_bl %15.0g
 format Affymetrix_gwasQC_bl %15.0g
-rename Affymetrix_QC_bl ID
+rename Affymetrix_gwasQC_bl ID
 merge 1:1 identifier using work/INTERVAL-data, gen(omics_data)
 count if ID==.
 drop if ID==.
@@ -75,22 +91,11 @@ tab SARS_CoV
 tab sex if SARS_CoV!=.
 tabstat age if SARS_CoV!=., stat(mean sd) by(sex)
 outsheet ID if sex==. | age==. using work/INTERVAL.excl-samples, noname replace
-
-program single_imputation
-// https://stats.idre.ucla.edu/stata/seminars/mi_in_stata_pt1_new/
-mi set wide
-mi register imputed age sex1
-mi register regular PC_1-PC_20
-mi impute chained (regress) age (logit) sex1 = PC_1-PC_20, add(1) rseed(123456)
-replace SARS_CoV=0 if SARS_CoV!=1
-replace age=_1_age
-replace age2=age*age
-replace sex=_1_sex1+1
-replace sexage=sex*age
-end
-
 drop if sex==. | age==.
 replace SARS_CoV=0 if SARS_CoV==.
+tab SARS_CoV
+tab sex if SARS_CoV!=.
+tabstat age if SARS_CoV!=., stat(mean sd) by(sex)
 outsheet ID SARS_CoV sex age age2 sexage PC_1-PC_20 using work/INTERVAL-covid.txt, delim(" ") noquote replace
 tostring ID,gen(IDS) format(%15.0g)
 gen str31 ID2=IDS + "_" + IDS
