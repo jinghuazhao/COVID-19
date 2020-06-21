@@ -38,9 +38,9 @@ function local_vep()
 {
   seq 22 | \
   parallel -j1 --env ref -C' ' '
-    export n=$(wc -l $ref/impute_{}_interval.snpstats | cut -d" " -f1)
+    export n=$(awk "END{print NR-1}")
     export g=$(expr ${n} / ${chunk_size})
-    export s=$(expr $n - 1 - $(($g * $chunk_size)))
+    export s=$(expr $n - $(($g * $chunk_size)))
     (
       for i in $(seq ${g}); do
         (
@@ -52,7 +52,7 @@ function local_vep()
                 if(\$1==\".\") \$1=\$3+0 \":\" \$4 \"_\" \$5 \"/\" \$6; print \$3+0,\$4,\$1,\$5,\$6,\".\",\".\",\$19}"
             if [ ${s} -gt 0 ] && [ ${i} -eq ${g} ]; then
              sed "1d" ${ref}/impute_{}_interval.snpstats | \ 
-             awk -v i=${i} -v chunk_size=${chunk_size} -v OFS="\t" -v n=${n} "NR==i*chunk_size+1,NR==n-1 {
+             awk -v i=${i} -v chunk_size=${chunk_size} -v OFS="\t" -v n=${n} "NR==i*chunk_size+1,NR==n {
                    if(\$1==\".\") \$1=\$3+0 \":\" \$4 \"_\" \$5 \"/\" \$6; print \$3+0,\$4,\$1,\$5,\$6,\".\",\".\",\$19}"
             fi
           )
