@@ -7,7 +7,7 @@
 #SBATCH --array=1-22
 #SBATCH --mem=28800
 #SBATCH --time=1-00:00:00
-#SBATCH --output=/rds/user/jhz22/hpc-work/work/_glist_%A_%a.out
+#SBATCH --work=/rds/user/jhz22/hpc-work/work/_glist_%A_%a.out
 #SBATCH --error=/rds/user/jhz22/hpc-work/work/_glist_%A_%a.err
 #SBATCH --export ALL
 
@@ -15,7 +15,7 @@ export job=$SLURM_ARRAY_TASK_ID
 export autosomes=/home/jhz22/rds/post_qc_data/interval/imputed/uk10k_1000g_b37
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 
-awk "NR>9 && \$8!=\"NA\" && \$2!=\".\" && \$1!=\"#\"{print \$1}" work/INTERVAL-${job}.annotate > output/INTERVAL-${job}.incl
+awk "NR>9 && \$8!=\"NA\" && \$2!=\".\" && \$1!=\"#\"{print \$1}" work/INTERVAL-${job}.annotate > work/INTERVAL-${job}.incl
 export list=($(awk "NR>9 && \$8!=\"NA\"" work/INTERVAL-${job}.annotate | cut -f8 | sort | uniq))
 (
   for g in ${list[@]}
@@ -24,7 +24,7 @@ export list=($(awk "NR>9 && \$8!=\"NA\"" work/INTERVAL-${job}.annotate | cut -f8
       awk -vOFS="\t" "\$2!=\".\" {printf OFS \$2}" | \
       awk -v g=${g} -v OFS="\t" "{print g \$0}"
   done
-) > output/INTERVAL-${job}.gene
+) > work/INTERVAL-${job}.gene
 (
   for g in ${list[@]}
   do
@@ -32,5 +32,5 @@ export list=($(awk "NR>9 && \$8!=\"NA\"" work/INTERVAL-${job}.annotate | cut -f8
       awk -vOFS="\t" "\$2!=\".\" {printf OFS \$3+0 \":\" \$4 \"_\" \$5 \"/\" \$6}" | \
       awk -v g=${g} -v OFS="\t" "{print g \$0}"
   done
-) > output/INTERVAL-${job}.gene-snpid
-sed -i 's/\t/;/g;s/;/\t/' output/INTERVAL-${job}.gene-snpid
+) > work/INTERVAL-${job}.gene-snpid
+sed -i 's/\t/;/g;s/;/\t/' work/INTERVAL-${job}.gene-snpid

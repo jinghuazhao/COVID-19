@@ -40,8 +40,8 @@ save work/INTERVAL-data, replace
 // 3. Omics
 // insheet using "`dir'/06-05-2020/INTERVAL/INTERVAL_OmicsMap_20200506.csv", case clear
 // insheet using "20200520/INTERVAL_OmicsMap_20200520.csv", case clear
-insheet using "20200603/INTERVAL_OmicsMap_20200603.csv", case clear
-// insheet using "20200617/INTERVAL_OmicsMap_20200617.csv", case clear
+// insheet using "20200603/INTERVAL_OmicsMap_20200603.csv", case clear
+insheet using "20200617/INTERVAL_OmicsMap_20200617.csv", case clear
 keep identifier Affymetrix_QC_bl Affymetrix_gwasQC_bl
 format Affymetrix_QC_bl %15.0g
 format Affymetrix_gwasQC_bl %15.0g
@@ -67,7 +67,8 @@ save work/INTERVAL-omics-X, replace
 // 4. COVID-19
 // insheet using "06-05-2020/INTERVAL/INTERVAL_Covid_06MAY2020.csv", case clear
 // insheet using "20200520/INTERVAL_Covid_20MAY2020.csv", case clear
-insheet using "20200603/INTERVAL_Covid_03JUN2020.csv", case clear
+// insheet using "20200603/INTERVAL_Covid_03JUN2020.csv", case clear
+insheet using "20200617/INTERVAL_Covid_17JUN2020.csv", case clear
 sort identifier
 egen SARS_CoV=rowtotal(SARS_CoV2_1 SARS_CoV2_2 SARS_CoV2_3 SARS_CoV2_4 SARS_CoV2_5 SARS_CoV2_6 SARS_CoV2_7)
 replace SARS_CoV=1 if SARS_CoV>0
@@ -92,7 +93,7 @@ tab sex if SARS_CoV!=.
 tabstat age if SARS_CoV!=., stat(mean sd) by(sex)
 outsheet ID if sex==. | age==. using work/INTERVAL.excl-samples, noname replace
 drop if sex==. | age==.
-replace SARS_CoV=0 if SARS_CoV==.
+// replace SARS_CoV=0 if SARS_CoV==.
 tab SARS_CoV
 tab sex if SARS_CoV!=.
 tabstat age if SARS_CoV!=., stat(mean sd) by(sex)

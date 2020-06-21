@@ -75,7 +75,7 @@ step2_SPAtests.R \
    --varianceRatioFile=output/INTERVAL-covid.varianceRatio.txt \
    --SAIGEOutputFile=output/INTERVAL-{}.gene \
    --numLinesOutput=1 \
-   --sparseSigmaFile=output/INTERVAL.sparseGRM_relatednessCutoff_0.125_2000_randomMarkersUsed.sparseGRM.mtx \
+   --sparseSigmaFile=output/INTERVAL-covid.sparseGRM_relatednessCutoff_0.125_2000_randomMarkersUsed.sparseGRM.mtx \
    --idstoIncludeFile=work/INTERVAL-{}.incl \
    --groupFile=work/INTERVAL-{}.gene \
    --IsOutputAFinCaseCtrl=TRUE \

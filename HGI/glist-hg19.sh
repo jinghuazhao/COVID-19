@@ -73,7 +73,7 @@ function to_bed4()
   echo $(seq 22 -1 1) X | \
   tr ' ' '\n' | \
   parallel -C' ' '
-    gunzip -c output/INTERVAL_annotation/INTERVAL-{}.vep.gz | \
+    gunzip -c work/INTERVAL_annotation/INTERVAL-{}.vep.gz | \
     awk "NR>43" | \
     cut -f1,2,4,7,18 | \
     awk -v OFS="\t" "\$3!=\"-\" {
@@ -89,29 +89,29 @@ function to_bed4()
 function glist_annotate()
 {
   seq 22 | \
-  parallel -j1 --env src -C' ' 'qctool -g output/INTERVAL-{}.bgen -annotate-bed4 output/INTERVAL-{}.bed4 -osnp output/INTERVAL-{}.annotate'
+  parallel -j1 --env src -C' ' 'qctool -g work/INTERVAL-{}.bgen -annotate-bed4 work/INTERVAL-{}.bed4 -osnp work/INTERVAL-{}.annotate'
   sbatch glist-hg19.sb
-  qctool -g output/INTERVAL-X-ploidy.vcf.gz -filetype vcf -annotate-bed4 output/INTERVAL-X.bed4 -osnp output/INTERVAL-X.annotate
+  qctool -g work/INTERVAL-X-ploidy.vcf.gz -filetype vcf -annotate-bed4 work/INTERVAL-X.bed4 -osnp work/INTERVAL-X.annotate
   echo X | \
   parallel -j3 -C' ' '
-     awk "NR>10 && \$8!=\"NA\" && \$2!=\".\" && \$1!=\"#\"{print \$2}" output/INTERVAL-{}.annotate > output/INTERVAL-{}.incl
-     export list=($(awk "NR>10 && \$8!=\"NA\"" output/INTERVAL-{}.annotate | cut -f8 | sort | uniq))
+     awk "NR>10 && \$8!=\"NA\" && \$2!=\".\" && \$1!=\"#\"{print \$2}" work/INTERVAL-{}.annotate > work/INTERVAL-{}.incl
+     export list=($(awk "NR>10 && \$8!=\"NA\"" work/INTERVAL-{}.annotate | cut -f8 | sort | uniq))
      (
        for g in ${list[@]}
        do
-          awk -v g=${g} "\$8==g" output/INTERVAL-{}.annotate | \
+          awk -v g=${g} "\$8==g" work/INTERVAL-{}.annotate | \
           awk -vOFS="\t" "\$2!=\".\" {printf OFS \$2}" | \
           awk -v g=${g} -v OFS="\t" "{print g \$0}"
        done
-     ) > output/INTERVAL-{}.gene
+     ) > work/INTERVAL-{}.gene
      (
        for g in ${list[@]}
        do
-          awk -v g=${g} "\$8==g" output/INTERVAL-{}.annotate | \
+          awk -v g=${g} "\$8==g" work/INTERVAL-{}.annotate | \
           awk -vOFS="\t" "\$2!=\".\" {split(\$2,a,\"_\");printf OFS a[1] \"_\" a[2] \"/\" a[3]}" | \
           awk -v g=${g} -v OFS="\t" "{print g \$0}"
        done
-     ) > output/INTERVAL-{}.gene-snpid
-     sed -i 's/\t/;/g;s/;/\t/' ../output/INTERVAL-{}.gene-snpid
+     ) > work/INTERVAL-{}.gene-snpid
+     sed -i 's/\t/;/g;s/;/\t/' ../work/INTERVAL-{}.gene-snpid
   '
 }
