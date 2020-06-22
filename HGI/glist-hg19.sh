@@ -88,8 +88,6 @@ function to_bed4()
 
 function glist_annotate()
 {
-  seq 22 | \
-  parallel -j1 --env src -C' ' 'qctool -g work/INTERVAL-{}.bgen -annotate-bed4 work/INTERVAL-{}.bed4 -osnp work/INTERVAL-{}.annotate'
   sbatch glist-hg19.sb
   qctool -g work/INTERVAL-X-ploidy.vcf.gz -filetype vcf -annotate-bed4 work/INTERVAL-X.bed4 -osnp work/INTERVAL-X.annotate
   echo X | \
@@ -100,18 +98,9 @@ function glist_annotate()
        for g in ${list[@]}
        do
           awk -v g=${g} "\$8==g" work/INTERVAL-{}.annotate | \
-          awk -vOFS="\t" "\$2!=\".\" {printf OFS \$2}" | \
-          awk -v g=${g} -v OFS="\t" "{print g \$0}"
-       done
-     ) > work/INTERVAL-{}.gene
-     (
-       for g in ${list[@]}
-       do
-          awk -v g=${g} "\$8==g" work/INTERVAL-{}.annotate | \
           awk -vOFS="\t" "\$2!=\".\" {split(\$2,a,\"_\");printf OFS a[1] \"_\" a[2] \"/\" a[3]}" | \
           awk -v g=${g} -v OFS="\t" "{print g \$0}"
        done
      ) > work/INTERVAL-{}.gene-snpid
-     sed -i 's/\t/;/g;s/;/\t/' ../work/INTERVAL-{}.gene-snpid
   '
 }
