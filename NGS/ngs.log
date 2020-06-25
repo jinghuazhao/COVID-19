@@ -28,3 +28,10 @@ Notes:
 . local opt : env opt
 
 . 
+. insheet using work/NPX-`opt'.csv, case clear delim(;)
+(12 vars, 736,000 obs)
+
+. keep if Panel=="`panel'"
+(577,888 observations deleted)
+
+. merge m:1 SampleID using work/dataomics, gen(olink_ngs)

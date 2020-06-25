@@ -25,13 +25,13 @@ overlaps <- setdiff(intersect(names(d),names(od)),"Affymetrix_gwasQC_bl")
 load("work/ids.rda")
 ids <- subset(ids, UniProt%in%overlaps)
 pdf(paste0(rt,".pdf"))
-cat("NGS","UniProt","Prot","r","\n",file=paste0(rt,".log"))
+cat("NGS","UniProt","Prot","r","\n",file=paste0(rt,".dat"))
 for(i in overlaps) with(odd, {
   Prot <- ids[ids$UniProt==i,"Prot"]
   x <- odd[[paste0(i,".x")]]
   y <- odd[[paste0(i,".y")]]
   r <- cor(x,y,use="everything")
-  cat(panel, i, Prot, r, "\n",append=TRUE,file=paste0(rt,".log"))
+  cat(panel, i, Prot, r, "\n",append=TRUE,file=paste0(rt,".dat"))
   plot(x,y,main=paste0(i,"-",Prot,"(r=",r,")"),xlab="Old panel",ylab="NGS")
 })
 dev.off()
