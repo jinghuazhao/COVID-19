@@ -2,7 +2,8 @@
 
 function init()
 {
-  grep -v -e CSA tmp_raw_data/20200292_Danesh_NPX_2020-06-03.csv > work/NPX.csv
+  grep -v -e CSA tmp_raw_data/20200292_Danesh_NPX_2020-06-03.csv | \
+  sed 's/NaN/./g' > work/NPX.csv
   ln -sf $HOME/rds/post_qc_data/interval/phenotype/olink_proteomics
   module load ceuadmin/stata
   staya <<\ \ END
@@ -26,10 +27,11 @@ function init()
 for panel in CARDIOMETABOLIC INFLAMMATION NEUROLOGY ONCOLOGY
 do
   export panel=${panel}
-  for opt in LOD QC column1
+  for opt in LOD QC col1
+  do
       export opt=${opt}
       if [ ${opt} == "LOD" ]; then
-         awk -vFS=';' '$11 > $12 {$12="NA")};1' work/NPX.csv > work/NPX-${opt}.csv
+         awk -vFS=';' '$11 > $12 {$12="."};1' work/NPX.csv > work/NPX-${opt}.csv
       elif [ ${opt} == "QC" ]; then
          grep -v -e WARN work/NPX.csv > work/NPX-${opt}.csv
       else

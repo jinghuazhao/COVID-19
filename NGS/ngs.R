@@ -15,7 +15,7 @@ corr <- function()
     with(odd, {
     x <- odd[[paste0(i,".x")]]
     y <- odd[[paste0(i,".y")]]
-    cat(panel, "-", i, ":", cor(x,y,use="everything"), "\n")
+    cat(panel, "-", i, ":", cor(x,y,use="everything"), "\n",append=TRUE,file=paste0("work/",panel,"-",opt,".log"))
     plot(x,y,main=paste0(i))
     })
   }
@@ -37,6 +37,6 @@ names(d)[enum+2] <- uniprot
 d <- d[,-enum]
 write.table(d,file=paste0("work/",panel,".csv"),quote=FALSE,row.names=FALSE,sep=",")
 # old Olink panels
-cat("Panel =",panel,ids[sel],"\n")
+cat("Panel =",panel,ids[sel],"\n",file=paste0("work/",panel,"-",opt,".log"))
 corr()
-if (sel==2) {sel=3; cat("Panel =",panel,ids[sel],"\n"); corr()}
+if (sel==2) {sel=3; cat("Panel =",panel,ids[sel],"\n",file=paste0("work/",panel,"-",opt,".log")); corr()}
