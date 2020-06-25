@@ -26,8 +26,9 @@ panels <- c("NEUROLOGY", "CARDIOMETABOLIC", "INFLAMMATION")
 qc <- c("neu_qc", "qc_cvd2", "qc_cvd3", "qc_inf")
 ids <- c("neu","cvd2","cvd3","inf")
 panel <- Sys.getenv("panel")
+opt <- Sys.getenv("opt")
 sel <- which(panel==panels)
-d <-read.delim(paste0("work/",panel,".out"),as.is=TRUE)
+d <-read.delim(paste0("work/",panel,"-",opt,".out"),as.is=TRUE)
 ncols <- length(d[1,-1])/3
 enum <- (1:ncols)*3-1
 uniprot <- d[1,enum]
