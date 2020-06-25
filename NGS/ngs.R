@@ -22,13 +22,16 @@ od <- merge(omics_id,od,by.x=Olink_id,by.y="ALIQUOT_ID")
 odd <- merge(d,od,by="Affymetrix_gwasQC_bl")
 # correlations and scatter plots
 overlaps <- setdiff(intersect(names(d),names(od)),"Affymetrix_gwasQC_bl")
+load("work/ids.rda")
+ids <- subset(ids, UniProt%in%overlaps)
 pdf(paste0(rt,".pdf"))
-cat("NGS","Prot","r","\n",file=paste0(rt,".log"))
+cat("NGS","UniProt","Prot","r","\n",file=paste0(rt,".log"))
 for(i in overlaps) with(odd, {
+  Prot <- ids[ids$UniProt==i,"Prot"]
   x <- odd[[paste0(i,".x")]]
   y <- odd[[paste0(i,".y")]]
   r <- cor(x,y,use="everything")
-  cat(panel, i, r, "\n",append=TRUE,file=paste0(rt,".log"))
-  plot(x,y,main=paste0(i,"(r=",r,")"),xlab="Old panel",ylab="NGS")
+  cat(panel, i, Prot, r, "\n",append=TRUE,file=paste0(rt,".log"))
+  plot(x,y,main=paste0(i,"-",Prot,"(r=",r,")"),xlab="Old panel",ylab="NGS")
 })
 dev.off()

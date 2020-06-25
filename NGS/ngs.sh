@@ -8,6 +8,10 @@ function init()
   sort | \
   uniq | \
   tr ';' ' ' > work/ids.dat
+  R --no-save -q <<\ \ END
+    ids <- read.table("work/ids.dat",col.names=c("UniProt","Prot"),as.is=TRUE)
+    save(ids,file="work/ids.rda")
+  END
   grep -v -e CSA ${src} | \
   sed 's/NaN/./g' > work/NPX.csv
   ln -sf $HOME/rds/post_qc_data/interval/phenotype/olink_proteomics
