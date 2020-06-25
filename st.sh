@@ -14,7 +14,7 @@ git add GEO/GEO.R GEO/GEO2R.R GEO/test.ini GEO/test.R GEO/test.sh GEO/README.md
 git commit -m "GEO test"
 git add HGI/INTERVAL.do HGI/INTERVAL.inc HGI/INTERVAL.rec HGI/INTERVAL.sh HGI/INTERVAL-X.sh HGI/glist-hg19.sb HGI/glist-hg19.sh
 git commit -m "HGI analysis"
-git add NGS/ngs.sh
+git add NGS/ngs.*
 git commit -m "Olink/NGS pilot"
 git add st.sh
 git commit -m "st.sh"
