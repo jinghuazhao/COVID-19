@@ -21,13 +21,10 @@ Notes:
 . do ngs.do 
 
 . 
+. local opanel: env opanel
+
 . local panel : env panel
 
 . local opt : env opt
 
-. insheet using work/NPX-`opt'.csv, case clear delim(;)
-unexpected end of file
-r(612);
-
-end of do-file
-r(612);
+. 
