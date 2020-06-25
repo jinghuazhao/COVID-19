@@ -27,7 +27,8 @@ cat("NGS","Prot","r","\n",file=paste0(rt,".log"))
 for(i in overlaps) with(odd, {
   x <- odd[[paste0(i,".x")]]
   y <- odd[[paste0(i,".y")]]
-  cat(panel, i, cor(x,y,use="everything"), "\n",append=TRUE,file=paste0(rt,".log"))
-  plot(x,y,main=paste0(i),xlab="Old panel",ylab="NGS")
+  r <- cor(x,y,use="everything")
+  cat(panel, i, r, "\n",append=TRUE,file=paste0(rt,".log"))
+  plot(x,y,main=paste0(i,"(r=",r,")"),xlab="Old panel",ylab="NGS")
 })
 dev.off()
