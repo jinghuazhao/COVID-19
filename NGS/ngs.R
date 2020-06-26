@@ -1,4 +1,5 @@
 # NGS
+options(digits=5, scipen=20, width=500)
 opanel <- Sys.getenv("opanel")
 panel <- Sys.getenv("panel")
 qc_opanel <- Sys.getenv("qc_opanel")
@@ -30,8 +31,10 @@ for(i in overlaps) with(odd, {
   Prot <- ids[ids$UniProt==i,"Prot"]
   x <- odd[[paste0(i,".x")]]
   y <- odd[[paste0(i,".y")]]
-  r <- cor(x,y,use="everything")
+  r <- round(cor(x,y,use="pairwise.complete.obs"),2)
+  cat(i,r,"\n")
+  print(cbind(x,y))
   cat(panel, i, Prot, r, "\n",append=TRUE,file=paste0(rt,".dat"))
-  plot(x,y,main=paste0(i,"-",Prot,"(r=",r,")"),xlab="Old panel",ylab="NGS")
+  plot(x,y,main=paste0(i,"-",Prot," (r=",r,")"),xlab="Old panel",ylab="NGS")
 })
 dev.off()

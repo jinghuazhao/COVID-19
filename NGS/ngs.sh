@@ -13,7 +13,7 @@ function init()
     save(ids,file="work/ids.rda")
   END
   grep -v -e CSA ${src} | \
-  sed 's/NaN/./g' > work/NPX.csv
+  sed 's/NaN/NA/g' > work/NPX.csv
   ln -sf $HOME/rds/post_qc_data/interval/phenotype/olink_proteomics
   module load ceuadmin/stata
   stata <<\ \ END
@@ -48,11 +48,11 @@ do
       export opt=${opt}
       echo ${panel} - ${opanel} - ${opt}
       if [ ${opt} == "LOD" ]; then
-         awk -vFS=';' '$11 > $12 {$12="."};1' work/NPX.csv > work/NPX-${opt}.csv
+         awk -vFS=';' -vOFS=';' '$11 > $12 {$12="NA"};1' work/NPX.csv > work/NPX-${opt}.csv
       elif [ ${opt} == "QC" ]; then
-         grep -v -e WARN work/NPX.csv > work/NPX-${opt}.csv
+         awk -vFS=';' -vOFS=';' '$10 =="WARN" {$12="NA"};1'  work/NPX.csv > work/NPX-${opt}.csv
       else
-         grep -v -e '01;' work/NPX.csv > work/NPX-${opt}.csv
+         awk -vFS=';' -vOFS=';' '/01;/{$12="NA"};1' work/NPX.csv > work/NPX-${opt}.csv
       fi
       stata -b do ngs.do
       R --no-save -q < ngs.R
