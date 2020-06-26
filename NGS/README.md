@@ -7,4 +7,4 @@ as available from
 
 /rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/NGS/work
 
-Overall, the Olink NGS shows the highest correlation.
+Overall, the Olink NGS QC=PASS shows the highest correlation.
