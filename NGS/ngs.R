@@ -35,6 +35,6 @@ for(i in overlaps) with(odd, {
   cat(i,r,"\n")
   print(cbind(x,y))
   cat(panel, i, Prot, r, "\n",append=TRUE,file=paste0(rt,".dat"))
-  plot(x,y,main=paste0(i,"-",Prot," (r=",r,")"),xlab="Old panel",ylab="NGS")
+  plot(x,y,main=paste0(i,"-",Prot," (r=",r,")"),cex=0.8,pch=19,xlab="Old panel",ylab="NGS")
 })
 dev.off()

@@ -43,11 +43,13 @@ do
   export opanel=${opanels[$i]}
   export qc_opanel=${qc_opanels[$i]}
   export panel=${panels[$i]}
-  for opt in LOD QC col1
+  for opt in raw LOD QC col1
   do
       export opt=${opt}
       echo ${panel} - ${opanel} - ${opt}
-      if [ ${opt} == "LOD" ]; then
+      if [ ${opt} == "raw" ]; then
+         cat work/NPX.csv > work/NPX-${opt}.csv
+      elif [ ${opt} == "LOD" ]; then
          awk -vFS=';' -vOFS=';' '$11 > $12 {$12="NA"};1' work/NPX.csv > work/NPX-${opt}.csv
       elif [ ${opt} == "QC" ]; then
          awk -vFS=';' -vOFS=';' '$10 =="WARN" {$12="NA"};1'  work/NPX.csv > work/NPX-${opt}.csv
