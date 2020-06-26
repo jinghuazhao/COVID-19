@@ -1,5 +1,4 @@
 # NGS
-options(digits=5, scipen=20, width=500)
 opanel <- Sys.getenv("opanel")
 panel <- Sys.getenv("panel")
 qc_opanel <- Sys.getenv("qc_opanel")
