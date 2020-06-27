@@ -19,7 +19,7 @@
   * [Analysis plan](https://tinyurl.com/yalt3n28)
   * Phenotype definition: [v1.0](https://tinyurl.com/ybno3zgy), [v2.0](https://tinyurl.com/yd8hkvjk)
   * [Case severity code](https://tinyurl.com/y7nygjr3)
-  * [Results](https://www.covid19hg.org/results/), [full](gs://covid19-hg-analysis/20200619/results/full) and [release](gs://covid19-hg-analysis/20200619/results/release).
+  * [Results](https://www.covid19hg.org/results/), [full](gs://covid19-hg-analysis/20200619/results/full) and [release](gs://covid19-hg-analysis/20200619/results/release)
 * [zenodo](https://zenodo.org/)
 
 ## GISAID
