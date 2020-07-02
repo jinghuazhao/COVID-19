@@ -116,3 +116,35 @@ done
 }
 
 ngs
+
+R --no-save -q <<END
+# IL4, IL12B (INF), CD28 (ONC)
+correlogram <- function(opt)
+{
+  for (i in 1:4)
+  {
+    opanel <- opanels[i]
+    panel <- panels[i]
+    rt <- paste0(panel,"-",opanel,"-", opt)
+    f <- paste0("work/",rt,".dat")
+    print(f)
+    t <- subset(read.table(f,as.is=TRUE,header=TRUE),!is.na(r))
+    if(nrow(t)<=1) break
+    print(t)
+    N <- nrow(t)
+    d <- density(with(t,r))
+    if (i%%2==1) {
+      plot(d,axes=FALSE,main="",ylim=c(0,2))
+      axis(2)
+    } else plot(d,ann=FALSE,axes=FALSE,ylim=c(0,2))
+    title(rt)
+  }
+}
+opanels <- c("cvd2","cvd3","inf","neu")
+qc_opanels <- c("qc_cvd2","qc_cvd3","qc_inf","neu_qc")
+panels <- c("CARDIOMETABOLIC","CARDIOMETABOLIC","INFLAMMATION","NEUROLOGY")
+pdf("correlogram.pdf")
+par(mfrow=c(2,2))
+for (opt in c("LOD","QC","col1")) correlogram(opt)
+dev.off()
+END
