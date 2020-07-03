@@ -163,7 +163,7 @@ R --no-save -q <<END
   with(lod,cor(qc,NPX,method=method,use="everything"))
 # QC
   qc <- subset(raw,QC_Warning=="PASS")
-  with(lod,cor(qc,NPX,method=method,use="everything"))
+  with(qc,cor(qc,NPX,method=method,use="everything"))
 # col1
   col1 <- subset(raw,substr(SampleID,11,12)!="01")
   with(col1,cor(qc,NPX,method=method,use="everything"))
