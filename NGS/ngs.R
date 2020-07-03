@@ -30,7 +30,7 @@ for(i in overlaps) with(odd, {
   Prot <- ids[ids$UniProt==i,"Prot"]
   x <- odd[[paste0(i,".x")]]
   y <- odd[[paste0(i,".y")]]
-  r <- round(cor(x,y,use="pairwise.complete.obs"),2)
+  r <- round(cor(x,y,method="spearman",use="pairwise.complete.obs"),2)
   cat(i,r,"\n")
   print(cbind(x,y))
   cat(panel, i, Prot, r, "\n",append=TRUE,file=paste0(rt,".dat"))

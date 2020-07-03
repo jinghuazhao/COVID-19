@@ -4,6 +4,8 @@ export opanels=(cvd2 cvd3 inf neu)
 export qc_opanels=(qc_cvd2 qc_cvd3 qc_inf neu_qc)
 export panels=(CARDIOMETABOLIC CARDIOMETABOLIC INFLAMMATION NEUROLOGY)
 
+module load ceuadmin/stata
+
 function init()
 {
   export src=tmp_raw_data/20200292_Danesh_NPX_2020-06-03.csv
@@ -19,7 +21,6 @@ function init()
   grep -v -e CSA ${src} | \
   sed 's/NaN/NA/g' > work/NPX.csv
   ln -sf $HOME/rds/post_qc_data/interval/phenotype/olink_proteomics
-  module load ceuadmin/stata
   stata <<\ \ END
     insheet using INTERVALdata_19JUN2020.csv, case clear
     save work/data, replace
@@ -83,68 +84,88 @@ do
 done
 }
 
-function check()
-{
-for i in $(seq 0 3)
-do
-  export opanel=${opanels[$i]}
-  export qc_opanel=${qc_opanels[$i]}
-  export panel=${panels[$i]}
-  echo ${qc_opanel}
-  wc -l work/NPX-${opanel}.id
-  (
-    head -1 work/NPX.csv
-    grep -f work/NPX-${opanel}.id work/NPX.csv
-  ) > work/NPX-${opanel}.csv
-  for opt in raw LOD QC col1
-  do
-      export opt=${opt}
-      echo ${panel} - ${opanel} - ${opt}
-      if [ ${opt} == "raw" ]; then
-         cat work/NPX-${opanel}.csv > work/NPX-${opt}.csv
-      elif [ ${opt} == "LOD" ]; then
-         awk -vFS=';' -vOFS=';' '$11 > $12 {$12="NA"};1' work/NPX-${opanel}.csv > work/NPX-${opt}.csv
-      elif [ ${opt} == "QC" ]; then
-         awk -vFS=';' -vOFS=';' '$10 =="WARN" {$12="NA"};1' work/NPX-${opanel}.csv > work/NPX-${opt}.csv
-      else
-         awk -vFS=';' -vOFS=';' '/01;/{$12="NA"};1' work/NPX-${opanel}.csv > work/NPX-${opt}.csv
-      fi
-      stata -b do ngs.do
-      R --no-save -q < ngs.R
-  done
-done
-}
-
 ngs
 
+function correlogram()
+{
 R --no-save -q <<END
 # IL4, IL12B (INF), CD28 (ONC)
-correlogram <- function(opt)
-{
-  for (i in 1:4)
+  correlogram <- function(opt)
   {
-    opanel <- opanels[i]
-    panel <- panels[i]
-    rt <- paste0(panel,"-",opanel,"-", opt)
-    f <- paste0("work/",rt,".dat")
-    print(f)
-    t <- subset(read.table(f,as.is=TRUE,header=TRUE),!is.na(r))
-    if(nrow(t)<=1) break
-    print(t)
-    N <- nrow(t)
-    d <- density(with(t,r))
-    if (i%%2==1) {
-      plot(d,axes=FALSE,main="",ylim=c(0,2))
-      axis(2)
-    } else plot(d,ann=FALSE,axes=FALSE,ylim=c(0,2))
-    title(rt)
+    for (i in 1:4)
+    {
+      opanel <- opanels[i]
+      panel <- panels[i]
+      rt <- paste0(panel,"-",opanel,"-", opt)
+      f <- paste0("work/",rt,".dat")
+      print(f)
+      t <- subset(read.table(f,as.is=TRUE,header=TRUE),!is.na(r))
+      if(nrow(t)<=1) break
+      print(t)
+      N <- nrow(t)
+      d <- density(with(t,r))
+      if (i%%2==1) {
+        plot(d,axes=FALSE,main="",ylim=c(0,2))
+        axis(2)
+      } else plot(d,ann=FALSE,axes=FALSE,ylim=c(0,2))
+      if(i>2) axis(1)
+      title(rt)
+    }
   }
-}
-opanels <- c("cvd2","cvd3","inf","neu")
-qc_opanels <- c("qc_cvd2","qc_cvd3","qc_inf","neu_qc")
-panels <- c("CARDIOMETABOLIC","CARDIOMETABOLIC","INFLAMMATION","NEUROLOGY")
-pdf("work/correlogram.pdf")
-par(mfrow=c(2,2))
-for (opt in c("LOD","QC","col1")) correlogram(opt)
-dev.off()
+  opanels <- c("cvd2","cvd3","inf","neu")
+  qc_opanels <- c("qc_cvd2","qc_cvd3","qc_inf","neu_qc")
+  panels <- c("CARDIOMETABOLIC","CARDIOMETABOLIC","INFLAMMATION","NEUROLOGY")
+  pdf("work/correlogram.pdf")
+  par(mfrow=c(2,2))
+  for (opt in c("LOD","QC","col1")) correlogram(opt)
+  dev.off()
 END
+}
+
+# NPX.csv
+# OID20426;P05112;IL4;INFLAMMATION
+# OID20666;P29460;IL12B;INFLAMMATION
+# OID21265;P10747;CD28;ONCOLOCY
+
+dos2unix Olink_NGS.csv
+dos2unix work/NPX-QC.csv
+dos2unix INTERVAL_OmicsMap_20200619.csv
+
+function check()
+{
+  export f=olink_proteomics/qc/olink_qc_inf.csv
+  export col=$(awk 'BEGIN {RS = ","}/^p29460$/{print $0"\t"NR}' ${f} | cut -f2)
+
+  join  -12 -21 \
+       <(awk -v FS=',' 'NR>1{print $1 " " $2}' Olink_NGS.csv | sort -k2,2) \
+       <(awk -v FS=';' '/OID20666/{gsub(/;/," ");print}' work/NPX-QC.csv | sort -k1,1) | \
+  sort -k2,2 | \
+  join -22 <(cut -d, -f1,4,9 INTERVAL_OmicsMap_20200619.csv | sed '1d;s/,/\t/g' | sort -k1,1) - | \
+  sort -k3,3 | \
+  join -23 <(cut -d, -f1,${col} ${f} | sed '1d;s/,/ /g;s/\r//g' | sort -k1,1) -
+}
+
+function IL12B()
+{
+(
+  echo Olink_inf_QC_24m qc identifier Affymetrix_gwasQC_bl SampleID Index OlinkID UniProt Assay MissingFreq Panel Panel_Version PlateID QC_Warning LOD NPX
+  check
+) > work/IL12B.txt
+
+R --no-save -q <<END
+  check <- read.table("work/IL12B.txt",as.is=TRUE,header=TRUE)
+  method <- "spearman"
+# raw
+  raw <- subset(check,!is.na(NPX))
+  with(raw,cor(qc,NPX,method=method,use="everything"))
+# LOD
+  lod <- subset(raw,NPX>=LOD)
+  with(lod,cor(qc,NPX,method=method,use="everything"))
+# QC
+  qc <- subset(raw,QC_Warning=="PASS")
+  with(lod,cor(qc,NPX,method=method,use="everything"))
+# col1
+  col1 <- subset(raw,substr(SampleID,11,12)!="01")
+  with(col1,cor(qc,NPX,method=method,use="everything"))
+END
+}
