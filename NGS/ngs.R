@@ -31,7 +31,7 @@ for(i in overlaps) with(odd, {
   xy <- odd[paste0(i,c(".x",".y"))]
   sxy <- subset(xy,!is.na(xy[paste0(i,".x")])&!is.na(xy[paste0(i,".y")]))
   nxy <- nrow(sxy)
-  if (nxy>1) {
+  if (nxy>2) {
     r <- round(cor(sxy[,1],sxy[,2],method="spearman",use="pairwise.complete.obs"),2)
     cat(panel, i, Prot, r, "\n",append=TRUE,file=paste0(rt,".dat"))
     plot(xy,main=paste0(i,"-",Prot," (r=",r,")"),cex=0.8,pch=19,xlab="Old panel",ylab="NGS")
