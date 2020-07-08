@@ -1,4 +1,3 @@
-set maxvar 50000
 local opanel: env opanel
 local panel : env panel
 local opt : env opt
@@ -12,6 +11,7 @@ keep if npx==3
 merge m:1 SampleID using work/dataomics, gen(olink_ngs)
 keep Olink_`opanel'_QC_24m UniProt LOD NPX
 sort Olink_`opanel'_QC_24m UniProt
+drop if Olink_`opanel'_QC_24m==.
 by Olink_`opanel'_QC_24m: gen j=_n
 reshape wide UniProt LOD NPX, i(Olink_`opanel'_QC_24m) j(j)
 outsheet using work/`panel'-`opanel'-`opt', noquote replace

@@ -21,7 +21,7 @@ function init()
   grep -v -e CSA ${src} | \
   sed 's/NaN/NA/g' > work/NPX.csv
   ln -sf $HOME/rds/post_qc_data/interval/phenotype/olink_proteomics
-  stata-mp <<\ \ END
+  stata <<\ \ END
     insheet using INTERVALdata_19JUN2020.csv, case clear
     save work/data, replace
     insheet using INTERVAL_OmicsMap_20200619.csv, case clear
@@ -47,7 +47,7 @@ function init()
     cut -d';' -f4 | \
     sort | \
     uniq > work/NPX-${opanel}.id
-    stata-mp <<\ \ \ \ END
+    stata <<\ \ \ \ END
        local opanel: env opanel
        insheet UniProt using work/NPX-`opanel'.id, case
        sort UniProt
@@ -78,7 +78,7 @@ do
       else
          awk -vFS=';' -vOFS=';' '/01;/{$12="NA"};1' work/NPX.csv > work/NPX-${opt}.csv
       fi
-      stata-mp -b do ngs.do
+      stata -b do ngs.do
       R --no-save -q < ngs.R
   done
 done
@@ -138,7 +138,7 @@ function check()
 
   join  -12 -21 \
        <(awk -v FS=',' 'NR>1{print $1 " " $2}' Olink_NGS.csv | sort -k2,2) \
-       <(awk -v FS=';' '/OID20666/{gsub(/;/," ");print}' work/NPX-QC.csv | sort -k1,1) | \
+       <(awk -v FS=';' '/OID20666/{gsub(/;/," ");print}' work/NPX-raw.csv | sort -k1,1) | \
   sort -k2,2 | \
   join -22 <(cut -d, -f1,4,9 INTERVAL_OmicsMap_20200619.csv | sed '1d;s/,/\t/g' | sort -k1,1) - | \
   sort -k3,3 | \
