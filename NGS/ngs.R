@@ -19,21 +19,22 @@ Olink_id <- paste0("Olink_",opanel,"_QC_24m")
 omics <- read.csv("INTERVAL_OmicsMap_20200619.csv",as.is=TRUE)
 omics_id <- subset(omics,!is.na(omics[Olink_id]))[c(Olink_id,"Affymetrix_gwasQC_bl")]
 od <- merge(omics_id,od,by.x=Olink_id,by.y="ALIQUOT_ID")
-odd <- merge(d,od,by="Affymetrix_gwasQC_bl")
+odd <- merge(d,od,by=Olink_id)
 # correlations and scatter plots
-overlaps <- setdiff(intersect(names(d),names(od)),"Affymetrix_gwasQC_bl")
+overlaps <- setdiff(intersect(names(d),names(od)),Olink_id)
 load("work/ids.rda")
 ids <- subset(ids, UniProt%in%overlaps)
-pdf(paste0(rt,".pdf"))
 cat("NGS","UniProt","Prot","r","\n",file=paste0(rt,".dat"))
+pdf(paste0(rt,".pdf"))
 for(i in overlaps) with(odd, {
   Prot <- ids[ids$UniProt==i,"Prot"]
-  x <- odd[[paste0(i,".x")]]
-  y <- odd[[paste0(i,".y")]]
-  r <- round(cor(x,y,method="spearman",use="pairwise.complete.obs"),2)
-  cat(i,r,"\n")
-  print(cbind(x,y))
-  cat(panel, i, Prot, r, "\n",append=TRUE,file=paste0(rt,".dat"))
-  plot(x,y,main=paste0(i,"-",Prot," (r=",r,")"),cex=0.8,pch=19,xlab="Old panel",ylab="NGS")
+  xy <- odd[paste0(i,c(".x",".y"))]
+  sxy <- subset(xy,!is.na(xy[paste0(i,".x")])&!is.na(xy[paste0(i,".y")]))
+  nxy <- nrow(sxy)
+  if (nxy>1) {
+    r <- round(cor(sxy[,1],sxy[,2],method="spearman",use="pairwise.complete.obs"),2)
+    cat(panel, i, Prot, r, "\n",append=TRUE,file=paste0(rt,".dat"))
+    plot(xy,main=paste0(i,"-",Prot," (r=",r,")"),cex=0.8,pch=19,xlab="Old panel",ylab="NGS")
+  }
 })
 dev.off()
