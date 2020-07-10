@@ -28,8 +28,8 @@ R --no-save -q <<END
     d <- data.frame(miprop=as.numeric(miprop[-1]),plod=plod,cols="black")
     d[names(plod)%in%with(nosig,uniprot),"cols"] <- "red"
     plodcol <- merge(data.frame(uniprot=substr(rownames(d),1,6),d),inf1,by="uniprot")
-    xtick <- 1:92
-    with(plodcol,{
+    xtick <- 1:91
+    with(subset(plodcol,uniprot!="P23560"),{
       plot(miprop,plod,cex=0.8,col=cols,main=sheet,pch=19,xlab="MissingDataFreq(%)",ylab="pLOD")
       plot(xtick,plod,xaxt="n",cex=0.8,col=cols,main=sheet,pch=19,xlab="",ylab="pLOD")
       axis(side=1,at=xtick,labels=prot,las=2,xpd=TRUE,cex.axis=0.3)
