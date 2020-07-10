@@ -208,4 +208,4 @@ function upload()
 
 }
 
-# srun -A CARDIO-SL0-CPU -p cardio_intr --qos=cardio_intr -N1 -n1 -c4 --mem=28800 -t 12:0:0 --pty bash -i
+# srun -A CARDIO-SL0-CPU -p cardio_intr --qos=cardio_intr -N1 -n1 -c4 --mem=30G -t 12:0:0 --pty bash -i
