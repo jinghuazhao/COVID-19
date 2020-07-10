@@ -21,6 +21,7 @@
   * [Case severity code](https://tinyurl.com/y7nygjr3)
   * [Results](https://www.covid19hg.org/results/), [gs://covid19-hg-analysis/20200619/results/full](gs://covid19-hg-analysis/20200619/results/full) and [gs://covid19-hg-analysis/20200619/results/release](gs://covid19-hg-analysis/20200619/results/release)
   * [Webinar on 2nd July 2020](https://www.covid19hg.org/blog/2020-07-02-july-2-2020-meeting)
+* [The RSS task force](https://rss.org.uk/policy-campaigns/policy/covid-19-task-force/)
 * [zenodo](https://zenodo.org/)
 
 ## GISAID
