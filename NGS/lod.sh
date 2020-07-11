@@ -1,6 +1,6 @@
 function NPX_Inflammation()
 {
-  R --no-save <<\ \ END
+R --no-save <<END
   xlsx <- "high_dimensional_data/Olink_proteomics_inf/rawData/20161007_Danesh_NPX_Inflammation.xlsx"
   library(openxlsx)
   readNPX <- function(sheet)
@@ -51,13 +51,13 @@ function NPX_Inflammation()
   pdf("scallop-inf-NPX_Keep.pdf")
   NPX_Keep <- readNPX("NPX_Keep")
   dev.off()
-  END
+END
 }
 
 function INTERVAL.INF.below.LLOD()
 # INTERVAL.INF.below.LLOD.R from Jimmy
 {
-  R --no-save -q <<\ \ END
+R --no-save -q <<\ \ END
   rm(list=ls())
 
   require(Biobase)
@@ -162,7 +162,8 @@ function INTERVAL.INF.below.LLOD()
   axis(side=1, at = seq(from=0, to=nrow(annot), by=20))
   legend("topright", legend= c("no pQTL", "pQTL"), col= c("red","blue"), pch = 1)
   dev.off()
-  END
+END
 }
 
+NPX_Inflammation
 INTERVAL.INF.below.LLOD
