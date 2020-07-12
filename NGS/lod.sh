@@ -33,8 +33,6 @@ R --no-save <<END
     xtick <- 1:91
     with(subset(plodcol,uniprot!="P23560"),{
       print(wilcox.test(plod~as.factor(cols)))
-    })
-    with(subset(plodcol,uniprot!="P23560"),{
       plot(miprop,plod,cex=0.8,col=cols,main=sheet,pch=19,xlab="MissingDataFreq(%)",ylab="pLOD")
       plot(xtick,plod,xaxt="n",cex=0.8,col=cols,main=sheet,pch=19,xlab="",ylab="pLOD")
       axis(side=1,at=xtick,labels=prot,las=2,xpd=TRUE,cex.axis=0.3)
