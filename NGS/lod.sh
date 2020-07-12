@@ -32,6 +32,9 @@ R --no-save <<END
     plodcol <- merge(data.frame(uniprot=substr(rownames(d),1,6),d),inf1,by="uniprot")
     xtick <- 1:91
     with(subset(plodcol,uniprot!="P23560"),{
+      print(wilcox.test(plod~as.factor(cols)))
+    })
+    with(subset(plodcol,uniprot!="P23560"),{
       plot(miprop,plod,cex=0.8,col=cols,main=sheet,pch=19,xlab="MissingDataFreq(%)",ylab="pLOD")
       plot(xtick,plod,xaxt="n",cex=0.8,col=cols,main=sheet,pch=19,xlab="",ylab="pLOD")
       axis(side=1,at=xtick,labels=prot,las=2,xpd=TRUE,cex.axis=0.3)
@@ -162,7 +165,7 @@ R --no-save -q <<\ \ END
   axis(side=1, at = seq(from=0, to=nrow(annot), by=20))
   legend("topright", legend= c("no pQTL", "pQTL"), col= c("red","blue"), pch = 1)
   dev.off()
-END
+  END
 }
 
 NPX_Inflammation
