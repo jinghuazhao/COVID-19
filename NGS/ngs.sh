@@ -117,7 +117,7 @@ R --no-save -q <<END
   panels <- c("CARDIOMETABOLIC","CARDIOMETABOLIC","INFLAMMATION","NEUROLOGY")
   pdf("work/correlogram.pdf")
   par(mfrow=c(2,2))
-  for (opt in c("LOD","QC","col1")) correlogram(opt)
+  for (opt in c("raw","LOD","QC","col1")) correlogram(opt)
   dev.off()
 END
 }
