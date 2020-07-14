@@ -1,14 +1,14 @@
 #!/usr/bin/bash
 
-#SBATCH --account=PETERS-SL3-CPU
-#SBATCH --ntasks=1
-#SBATCH --job-name=plink2
+#SBATCH --job-name=_plink2
+#SBATCH --account CARDIO-SL0-CPU
+#SBATCH --partition cardio_short
+#SBATCH --qos=cardio_short
+#SBATCH --array=1-1472
+#SBATCH --mem=28800
 #SBATCH --time=12:00:00
-#SBATCH --cpus-per-task=1
-#SBATCH --mem=50000
-#SBATCH --array=1472
-#SBATCH --output=work/plink2_%A_%a.out
-#SBATCH --error=work/plink2_%A_%a.err
+#SBATCH --output=work/_plink2_%A_%a.out
+#SBATCH --error=work/_plink2_%A_%a.err
 #SBATCH --export ALL
 
 export TMPDIR=/rds/user/$USER/hpc-work/
