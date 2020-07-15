@@ -195,7 +195,7 @@ function bgen()
   bcftools query -f '%CHROM\t%POS\t%REF\t%ALT\t%QUAL\t%FILTER\t%INFO/INFO\n' | \
   awk -v OFS="\t" 'NR>1{print $1,$2,$1 ":" $2 "_" $3 "/" $4, $3, $4, $5, $6, $7}' | \
   awk '$8 >= 0.8 {print $1":"$2}' > work/chrX.incl-positions
-  paste affymetrix.id -d_ affymetrix.id > work/chrX.incl-samples
+  paste work/affymetrix.id -d_ work/affymetrix.id > work/chrX.incl-samples
   qctool -g ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz -og work/ngs-X.bgen -os work/ngs-X.samples \
          -incl-positions work/chrX.incl-positions -incl-samples work/chrX.incl-samples
   # MAF cutoff 0.05
