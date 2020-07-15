@@ -16,17 +16,15 @@ module load plink/2.00-alpha
 
 export uniprot=$(head -1 olink_ngs_proteomics/gwasqc/olink_ngs_gwasqc.txt | awk '{$1=""};1' | awk '{$1=$1};1')
 export col=$(echo ${uniprot} | awk -v f=${SLURM_ARRAY_TASK_ID} '{print $f}')
+cd work
 for chr in $(seq 1 22)
 do
     for v in ${col}
     do
-        plink2 \
-               --bgen work/chr${chr}.bgen --sample work/chr${chr}.samples \
-               --glm hide-covar --input-missing-phenotype -9 --covar-variance-standardize \
-               --pheno work/ngs.pheno --pheno-name ${col}
-               --out work/${v}-${chr}
-        grep -v NA work/${v}-${chr}.${col}.glm.linear | \
-        gzip -f > work/${v}-plink2-${chr}.gz
-        rm work/${v}-${chr}.${col}.glm.linear
+        plink2 --bgen chr${chr}.bgen --sample chr${chr}.samples --pheno ngs.pheno --pheno-name ${col} --out ${v}-chr${chr}
+        grep -v NA ${v}-chr${chr}.${col}.glm.linear | \
+        gzip -f > ${v}-plink2-chr${chr}.gz
+        rm ${v}-${chr}.${col}.glm.linear
     done
 done
+cd -
