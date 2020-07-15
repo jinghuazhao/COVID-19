@@ -15,7 +15,7 @@ export TMPDIR=/rds/user/$USER/hpc-work/
 module load plink/2.00-alpha
 
 export uniprot=$(head -1 olink_ngs_proteomics/gwasqc/olink_ngs_gwasqc.txt | awk '{$1=""};1' | awk '{$1=$1};1')
-export col=$(cut -d' ' -f ${SLURM_ARRAY_TASK_ID} ${uniprot})
+export col=$(echo ${uniprot} | awk -v f=${SLURM_ARRAY_TASK_ID} '{print $f}')
 for chr in $(seq 1 22)
 do
     for v in ${col}

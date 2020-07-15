@@ -195,12 +195,14 @@ function bgen()
   bcftools query -f '%CHROM\t%POS\t%REF\t%ALT\t%QUAL\t%FILTER\t%INFO/INFO\n' | \
   awk -v OFS="\t" 'NR>1{print $1,$2,$1 ":" $2 "_" $3 "/" $4, $3, $4, $5, $6, $7}' | \
   awk '$8 >= 0.8 {print $1":"$2}' > work/chrX.incl-positions
-  qctool -g ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz -ofiletype binary_ped -og work/ngs-X.bed -incl-positions work/chrX.incl-positions
+  paste affymetrix.id -d_ affymetrix.id > work/chrX.incl-samples
+  qctool -g ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz -og work/ngs-X.bgen -os work/ngs-X.samples \
+         -incl-positions work/chrX.incl-positions -incl-samples work/chrX.incl-samples
   # MAF cutoff 0.05
-  plink --bfile work/ngs-X --maf 0.05 --make-bed --out work/ngs-X.05
-  awk '{$1=$2};1' work/ngs-X.05.fam > work/ngs-X.fam
+  module load plink/2.00-alpha
+  plink2 --bgen work/ngs-X.bgen --sample work/ngs-X.samples --maf 0.05 --make-bed --out work/ngs-X.05
   cut -f2 work/ngs-X.05.bim > work/ngs-X.05.snpids
-  qctool -g work/ngs-X.bed -og work/ngs-X.05.bgen -bgen-bits 8 -incl-snpids work/ngs-X.05.snpids
+  qctool -g work/ngs-X.bgen -og work/ngs-X.05.bgen -bgen-bits 8 -incl-snpids work/ngs-X.05.snpids
   bgenix -g work/ngs-X.05.bgen -index -clobber
   seq 22 | \
   parallel -j5 --env interval --env ref -C' ' '
