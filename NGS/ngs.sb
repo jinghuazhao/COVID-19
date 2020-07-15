@@ -21,7 +21,7 @@ do
     for v in ${col}
     do
         plink2 \
-               --bgen work/chr${chr}.bgen --sample work/chr{chr}.samples \
+               --bgen work/chr${chr}.bgen --sample work/chr${chr}.samples \
                --glm hide-covar --input-missing-phenotype -9 --covar-variance-standardize \
                --pheno work/ngs.pheno --pheno-name ${col}
                --out work/${v}-${chr}
