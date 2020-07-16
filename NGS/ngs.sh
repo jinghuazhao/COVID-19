@@ -202,8 +202,9 @@ function bgen()
   module load plink/2.00-alpha
   plink2 --bgen work/ngs-X.bgen --sample work/ngs-X.samples --maf 0.05 --make-bed --out work/ngs-X.05
   cut -f2 work/ngs-X.05.bim > work/ngs-X.05.snpids
-  qctool -g work/ngs-X.bgen -og work/ngs-X.05.bgen -bgen-bits 8 -incl-snpids work/ngs-X.05.snpids
-  bgenix -g work/ngs-X.05.bgen -index -clobber
+  awk '{if(NR<=2) print; else {split($1,a,"_"); print a[1],a[2],$3}}' work/ngs-X.samples > work/chrX.samples
+  qctool -g work/ngs-X.bgen -og work/chrX.bgen -bgen-bits 8 -incl-snpids work/ngs-X.05.snpids
+  bgenix -g work/chrX.bgen -index -clobber
   seq 22 | \
   parallel -j5 --env interval --env ref -C' ' '
     sed "1d" ${ref}/impute_{}_interval.snpstats | \
