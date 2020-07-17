@@ -12,6 +12,8 @@
 * GSE106118
   * Cui Y, et al. Single-cell transcriptome analysis maps the developmental track of the human heart. *Cell Rep*. 2019;26(7):1934–1950.e5. doi:10.1016/j.celrep.2019.01.079
   * Zou X, et al. Single-cell RNA-seq data analysis on the receptor ACE2 expression reveals the potential risk of different human organs vulnerable to 2019-nCoV infection. *Front Med*. 2020;10.1007/s11684-020-0754-0. doi:10.1007/s11684-020-0754-0
+* [GSE149689](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE149689)
+  * Lee JS, et al. (2020). Immunophenotyping of COVID-19 and influenza highlights the role of type I interferons in development of severe COVID-19. *Science Immunology* 5(49): eabd1554.
 
 ## Seurat
 * https://satijalab.org/seurat/v3.1/pbmc3k_tutorial.html
