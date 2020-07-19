@@ -172,15 +172,15 @@ END
 
 function bgen()
 {
-  # -f7-10 ==> 24m
+  # -f7-10 ${ids} ==> 24m, when 24m==110003567640, NEUROLOGY_O95994=. (line 177, column 782 of ${dat})
   export dat=olink_ngs_proteomics/gwasqc/olink_ngs_gwasqc.txt
   export ids=INTERVAL_OmicsMap_20200619.csv
   export sam=olink_ngs_proteomics/gwasqc/sample_info.txt
-
   (
     head -1 ${dat} | \
     awk -v OFS='\t' '{$1="FID\tIID";print}'
-    join -12 -21 <(cut -d, -f4,7 ${ids} | tr ',' '\t'| sort -k2,2) <(sed '1d' ${dat} | sort -k1,1) | \
+    join -12 -21 <(cut -d, -f4,7 ${ids} | tr ',' '\t'| sort -k2,2) \
+                 <(sed '1d' ${dat} | awk -vFS='\t' -vOFS='\t' '{if(NR=176) $782=-9};1') | sort -k1,1 | \
     awk -v OFS='\t' '{$1=$2};1'
   ) > work/ngs.pheno
   cut -f2 work/ngs.pheno | \
