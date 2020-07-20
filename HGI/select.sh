@@ -15,11 +15,11 @@ function hg19()
 function hg19Tohg38()
 {
   awk 'NR>1{print "chr" $2,$3-1,$3,$2":"$3"_"toupper($4)"/"toupper($5)"-"$1}' OFS='\t' ${variants}.txt > ${variants}.bed
-  liftOver ${variants}.bed ${HPC_WORK}/bin/hg19ToHg38.over.chain.gz ${variants}.liftover ${variants}.unMapped
-  export chr=($(awk '{sub(/chr/,"") $1;print $1}' $variants.liftover))
-  export pos=($(awk '{print $3}' $variants.liftover))
-  export a1=($(awk '{gsub("_|/|-"," ",$4);split($4,a);print a[2]}' $variants.liftover))
-  export a2=($(awk '{gsub("_|/|-"," ",$4);split($4,a);print a[3]}' $variants.liftover))
+  liftOver ${variants}.bed ${HPC_WORK}/bin/hg19ToHg38.over.chain.gz ${variants}.hg38 ${variants}.unMapped
+  export chr=($(awk '{sub(/chr/,"") $1;print $1}' $variants.hg38))
+  export pos=($(awk '{print $3}' $variants.hg38))
+  export a1=($(awk '{gsub("_|/|-"," ",$4);split($4,a);print a[2]}' $variants.hg38))
+  export a2=($(awk '{gsub("_|/|-"," ",$4);split($4,a);print a[3]}' $variants.hg38))
 }
 
 hg19Tohg38
@@ -64,3 +64,5 @@ function viaLoop()
 }
 
 # viaLoop
+# export loc=hgi/covid19-hg-analysis/20200619/L10RB_IFNAR2_variants
+# pandoc ${loc}/README.md -o ${loc}/README.pdf
