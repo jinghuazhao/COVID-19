@@ -27,7 +27,7 @@ hg19Tohg38
 if [ ! -d MR ]; then mkdir MR; fi
 
 ls $harmonized/*gz | \
-parallel -j10 -C' ' '
+parallel --env chr --env pos --env a1 --env a2 -j10 -C' ' '
   export f=$(basename -s .gz {})
   (
     zcat {} | \
