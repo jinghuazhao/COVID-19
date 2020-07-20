@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
-export results=${HOME}/rds/results/public/gwas/covid19/hgi/covid19-hg-analysis/20200619/results
 export harmonized=/home/jhz22/rds/results/public/gwas/covid19/hgi/covid19-hg-analysis/20200619/harmonized
+export results=${HOME}/rds/results/public/gwas/covid19/hgi/covid19-hg-analysis/20200619/results
 export variants=L10RB_IFNAR2_variants
 
 function hg19()
