@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-export harmonized=/home/jhz22/rds/results/public/gwas/covid19/hgi/covid19-hg-analysis/20200619/harmonized
+export harmonized=/home/jhz22/rds/results/public/gwas/covid19/hgi/covid19-hg-analysis/20200619/harmonized_n
 export results=${HOME}/rds/results/public/gwas/covid19/hgi/covid19-hg-analysis/20200619/results
 export variants=L10RB_IFNAR2_variants
 
@@ -46,7 +46,7 @@ function viaParallel()
 
 function viaLoop()
 {
-  export outdir=selected
+  export outdir=selected_n
   if [ ! -d ${outdir} ]; then mkdir ${outdir}; fi
   for f in $(ls $harmonized/*gz)
   do
