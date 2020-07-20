@@ -14,7 +14,7 @@ function hg19()
 
 function hg19Tohg38()
 {
-  awk 'NR>1{print "chr" $2,$3-1,$3,$2":"$3"_"$4"/"$5"-"$1}' OFS='\t' ${variants}.txt > ${variants}.bed
+  awk 'NR>1{print "chr" $2,$3-1,$3,$2":"$3"_"toupper($4)"/"toupper($5)"-"$1}' OFS='\t' ${variants}.txt > ${variants}.bed
   liftOver ${variants}.bed ${HPC_WORK}/bin/hg19ToHg38.over.chain.gz ${variants}.liftover ${variants}.unMapped
   export chr=($(awk '{sub(/chr/,"") $1;print $1}' $variants.liftover))
   export pos=($(awk '{print $3}' $variants.liftover))
@@ -24,19 +24,42 @@ function hg19Tohg38()
 
 hg19Tohg38
 
-if [ ! -d MR ]; then mkdir MR; fi
-
-ls $harmonized/*gz | \
-parallel --env chr --env pos --env a1 --env a2 -j10 -C' ' '
+function viaParallel()
+{
+  if [ ! -d MR ]; then mkdir MR; fi
+  ls $harmonized/*gz | \
+  parallel --env chr --env pos --env a1 --env a2 -j10 -C' ' '
   export f=$(basename -s .gz {})
+  echo ${f}
   (
     zcat {} | \
     head -1
     for i in $(seq 0 5)
     do
       zcat {} | \
-      awk -vOFS="\t" -vchr=${chr[$i]} -vpos=${pos[$i]} -va1=${a1[$i]} -va2=${a2[$i]} \
+      awk -vchr=${chr[$i]} -vpos=${pos[$i]} -va1=${a1[$i]} -va2=${a2[$i]} \
           "\$1==chr && \$2==pos && (\$3==a1 && \$4==a2 || \$3==a2 && \$4==a1)"
     done
   ) > MR/${f}.txt
-'
+  '
+}
+
+function viaLoop()
+{
+  if [ ! -d L10RB_IFNAR2 ]; then mkdir L10RB_IFNAR2; fi
+  for f in $(ls $harmonized/*gz)
+  do
+  export r=$(basename -s .gz ${f})
+  (
+    zcat ${f} | \
+    head -1
+    for i in $(seq 0 5)
+    do
+      zcat ${f} | \
+      awk -vchr=${chr[$i]} -vpos=${pos[$i]} -va1=${a1[$i]} -va2=${a2[$i]} '$1==chr && $2==pos && ($3==a1 && $4==a2 || $3==a2 && $4==a1)'
+    done
+  ) > L10RB_IFNAR2/${r}.dat
+  done
+}
+
+# viaLoop
