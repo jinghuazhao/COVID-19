@@ -172,7 +172,15 @@ END
 
 function bgen()
 {
-  # -f7-10 ${ids} ==> 24m, when 24m==110003567640, NEUROLOGY_O95994=. (line 177, column 782 of ${dat})
+  awk 'NF<1473{print $1,NF}' $dat | \
+  parallel --env dat -C' ' '
+    awk -vFS="\t" -vid={1} "{if(\$1==id)for(i=1;i<=NF;++i) if(\$i==\"\") print \$1,NR,i}" ${dat}' | \
+    parallel -C' ' 'head -1 $dat | awk -vid={1} -vline={2} -vcol={3} "{print id,line,col,\$col}"'
+  # -f7-10 ${ids} ==> 24m, line, column, ID:
+  # 110003567640 177 782 NEUROLOGY_O95994
+  # 110004126595 186 595 INFLAMMATION_Q13291
+  # 110014074648 357 441 INFLAMMATION_P05112
+
   export dat=olink_ngs_proteomics/gwasqc/olink_ngs_gwasqc.txt
   export ids=INTERVAL_OmicsMap_20200619.csv
   export sam=olink_ngs_proteomics/gwasqc/sample_info.txt
@@ -180,7 +188,9 @@ function bgen()
     head -1 ${dat} | \
     awk -v OFS='\t' '{$1="FID\tIID";print}'
     join -12 -21 <(cut -d, -f4,7 ${ids} | tr ',' '\t'| sort -k2,2) \
-                 <(sed '1d' ${dat} | awk -vFS='\t' -vOFS='\t' '{if(NR=176) $782=-9};1') | sort -k1,1 | \
+                 <(sed '1d' ${dat} | \
+                   awk -vFS='\t' -vOFS='\t' '{if(NR==176) $782=-9; else if(NR==185) $595=-9; else if(NR==356) $441=-9};1') | \
+    sort -k1,1 | \
     awk -v OFS='\t' '{$1=$2};1'
   ) > work/ngs.pheno
   cut -f2 work/ngs.pheno | \

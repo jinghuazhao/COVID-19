@@ -29,7 +29,7 @@ done
   for chr in $(seq 1 22) X
   do
       export f=${v}-chr${chr}.${v}.glm.linear
-      if [ ${chr} -eq 1 ]; then
+      if [ "${chr}" == "1" ]; then
          grep -v -e NA ${f}
       else
          grep -v -e NA -e CHROM ${f}
