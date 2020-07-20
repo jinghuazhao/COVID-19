@@ -28,7 +28,7 @@ function viaParallel()
 {
   if [ ! -d MR ]; then mkdir MR; fi
   ls $harmonized/*gz | \
-  parallel --env chr --env pos --env a1 --env a2 -j10 -C' ' '
+  env_parallel --env chr --env pos --env a1 --env a2 -j10 -C' ' '
   export f=$(basename -s .gz {})
   echo ${f}
   (
