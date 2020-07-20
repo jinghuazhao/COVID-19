@@ -46,7 +46,8 @@ function viaParallel()
 
 function viaLoop()
 {
-  if [ ! -d L10RB_IFNAR2 ]; then mkdir L10RB_IFNAR2; fi
+  export outdir=selected
+  if [ ! -d ${outdir} ]; then mkdir ${outdir}; fi
   for f in $(ls $harmonized/*gz)
   do
   export r=$(basename -s .gz ${f})
@@ -58,7 +59,7 @@ function viaLoop()
       zcat ${f} | \
       awk -vchr=${chr[$i]} -vpos=${pos[$i]} -va1=${a1[$i]} -va2=${a2[$i]} '$1==chr && $2==pos && ($3==a1 && $4==a2 || $3==a2 && $4==a1)'
     done
-  ) > L10RB_IFNAR2/${r}.dat
+  ) > ${outdir}/${r}.dat
   done
 }
 
