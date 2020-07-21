@@ -51,6 +51,7 @@ function viaLoop()
   for f in $(ls $harmonized/*gz)
   do
   export r=$(basename -s .gz ${f})
+  echo ${f}
   (
     zcat ${f} | \
     head -1
