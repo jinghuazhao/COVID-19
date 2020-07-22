@@ -37,7 +37,7 @@ plink2/ contains genotype-protein association results for MAF>=0.05, INFO>0.8.
 NGS.merge is contained for each of the following p value thresholds,
 
 Directory | Description | sentinels
-----------|-------------|----------
+----------|-------------|---------:
 1e-5/ | sentinel identification at p=1e-5 | 23,034
 1e-6/ | sentinel identification at p=1e-6 |  2,836
 1e-7/ | sentinel identification at p 1e-7 |    598
