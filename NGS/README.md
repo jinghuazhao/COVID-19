@@ -11,25 +11,23 @@ Restuls at work/ is according to
 
 correlogram.pdf shows NGS -- Olink correlation
 
-NGS-Olink-QC combination
-------------------------
-CARDIOMETABOLIC-cvd2-col1.pdf
-CARDIOMETABOLIC-cvd2-LOD.pdf
-CARDIOMETABOLIC-cvd2-QC.pdf
-CARDIOMETABOLIC-cvd2-raw.pdf
-CARDIOMETABOLIC-cvd3-col1.pdf
-CARDIOMETABOLIC-cvd3-LOD.pdf
-CARDIOMETABOLIC-cvd3-QC.pdf
-CARDIOMETABOLIC-cvd3-raw.pdf
-INFLAMMATION-inf-col1.pdf
-INFLAMMATION-inf-LOD.pdf
-INFLAMMATION-inf-QC.pdf
-INFLAMMATION-inf-raw.pdf
-NEUROLOGY-neu-col1.pdf
-NEUROLOGY-neu-LOD.pdf
-NEUROLOGY-neu-QC.pdf
-NEUROLOGY-neu-raw.pdf
----------------------
+There are following NGS-Olink-QC combinations
+* CARDIOMETABOLIC-cvd2-col1.pdf
+* CARDIOMETABOLIC-cvd2-LOD.pdf
+* CARDIOMETABOLIC-cvd2-QC.pdf
+* CARDIOMETABOLIC-cvd2-raw.pdf
+* CARDIOMETABOLIC-cvd3-col1.pdf
+* CARDIOMETABOLIC-cvd3-LOD.pdf
+* CARDIOMETABOLIC-cvd3-QC.pdf
+* CARDIOMETABOLIC-cvd3-raw.pdf
+* INFLAMMATION-inf-col1.pdf
+* INFLAMMATION-inf-LOD.pdf
+* INFLAMMATION-inf-QC.pdf
+* INFLAMMATION-inf-raw.pdf
+* NEUROLOGY-neu-col1.pdf
+* NEUROLOGY-neu-LOD.pdf
+* NEUROLOGY-neu-QC.pdf
+* NEUROLOGY-neu-raw.pdf
 
 The Olink NGS QC=PASS appears to have the highest correlation.
 
