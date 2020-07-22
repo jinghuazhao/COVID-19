@@ -2,15 +2,15 @@
 
 /rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/NGS 
 
-## Phenotype information
+1. Phenotype information
 
-Results at work/ are according to
+Results at work/ are according to the combination of,
 
-* NGS (CARDIOMETABOLIC, INFLAMMATION, NEUROLOGY)
-* Olink (cvd2, cvd3, inf, neu) panels
-* QC (raw, QC, LOD, col1 for raw measurements, Olink NGS QC=PASS, LOD (set to be NA when < LOD), and column 1 (set to NA when 01).
+* NGS panels -- CARDIOMETABOLIC, INFLAMMATION, NEUROLOGY.
+* Olink panels -- cvd2, cvd3, inf, neu.
+* QC types -- raw: raw measurements, QC: NGS QC=PASS, LOD: set to be NA when < LOD, and col1: set to NA when 01.
 
-There are 16 NGS-Olink-QC combinations shown in correlogram.pdf for density, for correlation (.dat) and scatter plots (.pdf).
+for a total of 16 NGS-Olink-QC combinations, with suffexes .dat for correlation and .pdf for scatter plots.
 
 Group | Combinations
 --------|-------------
@@ -20,6 +20,8 @@ Group | Combinations
 13-16 | NEUROLOGY-neu-col1, NEUROLOGY-neu-LOD, NEUROLOGY-neu-QC, NEUROLOGY-neu-raw
 
 The Olink NGS QC=PASS appears to have the highest correlation.
+
+The corresponding density plots are shown in correlogram.pdf. 
 
 2. Genotype-trait association
 
