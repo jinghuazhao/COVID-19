@@ -8,7 +8,11 @@ Results at work/ are according to the combination of,
 
 * NGS panels -- CARDIOMETABOLIC, INFLAMMATION, NEUROLOGY.
 * qPCR panels -- cvd2, cvd3, inf, neu.
-* QC types -- raw: raw measurements, QC: NGS QC=PASS, LOD: set to be NA when < LOD, and col1: set to NA when 01.
+* QC types:
+  * raw -- raw measurements
+  * QC -- NGS QC=PASS
+  * LOD -- set to be NA when < LOD
+  * col1 -- set to NA when 01
 
 for a total of 16 NGS-Olink-QC combinations, with suffexes .dat for correlation and .pdf for scatter plots.
 
