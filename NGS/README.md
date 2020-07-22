@@ -2,7 +2,7 @@
 
 /rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/NGS 
 
-1. Phenotype information
+### Phenotype information
 
 Results at work/ are according to the combination of,
 
@@ -23,7 +23,7 @@ The Olink NGS QC=PASS appears to have the highest correlation.
 
 The corresponding density plots are shown in correlogram.pdf. 
 
-2. Genotype-trait association
+### Genotype-trait association
 
 **plink2/** contains genotype-protein association results for MAF>=0.05, INFO>0.8.
 
