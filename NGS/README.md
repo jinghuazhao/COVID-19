@@ -12,10 +12,12 @@ Results at work/ are according to
 
 There are 16 NGS-Olink-QC combinations shown in correlogram.pdf for density, for correlation (.dat) and scatter plots (.pdf).
 
-* 1-4: CARDIOMETABOLIC-cvd2-col1, CARDIOMETABOLIC-cvd2-LOD, CARDIOMETABOLIC-cvd2-QC, CARDIOMETABOLIC-cvd2-raw
-* 5-8: CARDIOMETABOLIC-cvd3-col1, CARDIOMETABOLIC-cvd3-LOD, CARDIOMETABOLIC-cvd3-QC, CARDIOMETABOLIC-cvd3-raw
-* 9-12: INFLAMMATION-inf-col1, INFLAMMATION-inf-LOD, INFLAMMATION-inf-QC, INFLAMMATION-inf-raw
-* 13-16: NEUROLOGY-neu-col1, NEUROLOGY-neu-LOD, NEUROLOGY-neu-QC, NEUROLOGY-neu-raw
+Cluster | combinations
+--------|-------------
+1-4 | CARDIOMETABOLIC-cvd2-col1, CARDIOMETABOLIC-cvd2-LOD, CARDIOMETABOLIC-cvd2-QC, CARDIOMETABOLIC-cvd2-raw
+5-8 | CARDIOMETABOLIC-cvd3-col1, CARDIOMETABOLIC-cvd3-LOD, CARDIOMETABOLIC-cvd3-QC, CARDIOMETABOLIC-cvd3-raw
+9-12 | INFLAMMATION-inf-col1, INFLAMMATION-inf-LOD, INFLAMMATION-inf-QC, INFLAMMATION-inf-raw
+13-16 | NEUROLOGY-neu-col1, NEUROLOGY-neu-LOD, NEUROLOGY-neu-QC, NEUROLOGY-neu-raw
 
 The Olink NGS QC=PASS appears to have the highest correlation.
 
