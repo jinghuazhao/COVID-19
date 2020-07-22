@@ -33,7 +33,7 @@ function pQTL()
 
 function Sun()
 {
-  awk 'NR>1{gsub(/_invn/,"");print $5,$6}' NGS.merge | \
+  awk 'NR>1{gsub(/_invn/,"");print $5,$6}' ${prefix}/NGS.merge | \
   parallel -C' ' '
     echo {1} {2}
     grep -w {1} pQTL.Sun-B_pQTL_EUR_2017 | grep {2}
@@ -48,7 +48,7 @@ function Olink()
   export OLINK=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/jp549/olink-merged-output
   ls $OLINK > olink.list
   join -11 -22 \
-       <(awk 'NR>1{gsub(/_invn/,"");print $5,$6}' NGS.merge | sort -k1,1) \
+       <(awk 'NR>1{gsub(/_invn/,"");print $5,$6}' ${prefix}/NGS.merge | sort -k1,1) \
        <(ls $OLINK/*gz  | sed 's/___/ /g;s/_chr_merged.gz\*//g;s///g;s///g;s///g' | sort -k2,2) | \
   awk '{
      gsub(/chr/,"",$2);
