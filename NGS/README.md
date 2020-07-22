@@ -4,16 +4,18 @@
 
 ## Phenotype information
 
-Results at work/ is according to
+Results at work/ are according to
 
-NGS (CARDIOMETABOLIC, INFLAMMATION, NEUROLOGY) -- Olink (cvd2, cvd3, inf, neu) panels -- QC (raw, QC, LOD, col1 for raw measurements, Olink NGS QC=PASS, LOD (set to be NA when < LOD), and column 1 (set to NA when 01;).
+* NGS (CARDIOMETABOLIC, INFLAMMATION, NEUROLOGY)
+* Olink (cvd2, cvd3, inf, neu) panels
+* QC (raw, QC, LOD, col1 for raw measurements, Olink NGS QC=PASS, LOD (set to be NA when < LOD), and column 1 (set to NA when 01).
 
-There are 16 NGS - Olink - QC combinations shown in correlogram.pdf for NGS -- Olink correlation (.dat) and scatter plots (.pdf),
+There are 16 NGS-Olink-QC combinations shown in correlogram.pdf for density, for correlation (.dat) and scatter plots (.pdf).
 
-* CARDIOMETABOLIC-cvd2-col1, CARDIOMETABOLIC-cvd2-LOD, CARDIOMETABOLIC-cvd2-QC, CARDIOMETABOLIC-cvd2-raw
-* CARDIOMETABOLIC-cvd3-col1, CARDIOMETABOLIC-cvd3-LOD, CARDIOMETABOLIC-cvd3-QC, CARDIOMETABOLIC-cvd3-raw
-* INFLAMMATION-inf-col1, INFLAMMATION-inf-LOD, INFLAMMATION-inf-QC, INFLAMMATION-inf-raw
-* NEUROLOGY-neu-col1, NEUROLOGY-neu-LOD, NEUROLOGY-neu-QC, NEUROLOGY-neu-raw
+* 1-4: CARDIOMETABOLIC-cvd2-col1, CARDIOMETABOLIC-cvd2-LOD, CARDIOMETABOLIC-cvd2-QC, CARDIOMETABOLIC-cvd2-raw
+* 5-8: CARDIOMETABOLIC-cvd3-col1, CARDIOMETABOLIC-cvd3-LOD, CARDIOMETABOLIC-cvd3-QC, CARDIOMETABOLIC-cvd3-raw
+* 9-12: INFLAMMATION-inf-col1, INFLAMMATION-inf-LOD, INFLAMMATION-inf-QC, INFLAMMATION-inf-raw
+* 13-16: NEUROLOGY-neu-col1, NEUROLOGY-neu-LOD, NEUROLOGY-neu-QC, NEUROLOGY-neu-raw
 
 The Olink NGS QC=PASS appears to have the highest correlation.
 
