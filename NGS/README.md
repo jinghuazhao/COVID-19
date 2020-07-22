@@ -13,7 +13,7 @@ Results at work/ are according to the combination of,
 for a total of 16 NGS-Olink-QC combinations, with suffexes .dat for correlation and .pdf for scatter plots.
 
 qPCR panel | Combinations
---------|----------------
+--------|---------------:
 cvd2 | CARDIOMETABOLIC-cvd2-col1[-LOD, -QC, -raw]
 cvd3 | CARDIOMETABOLIC-cvd3-col1[-LOD, -QC, -raw]
 inf | INFLAMMATION-inf-col1[-LOD, -QC, -raw]
