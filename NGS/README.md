@@ -33,7 +33,7 @@ The corresponding density plots are shown in correlogram.pdf.
 
 NGS.merge is contained for each of the following p value thresholds,
 
-Directory | Description | sentinels | Proteins
+Directory | Description | Sentinels | Proteins
 ----------|-------------|----------:|--------------------:
 1e-5/ | sentinel identification at p=1e-5 | 23,034 | 1,472
 1e-6/ | sentinel identification at p=1e-6 |  2,836 | 1,241
