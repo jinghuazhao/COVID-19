@@ -1,13 +1,15 @@
 #!/usr/bin/bash
 
+export prefix=1e-6
+
 function check()
 {
-  export prot=$(grep -w $1 swath-ms.merge | cut -f5 | sed 's/_invn//g')
+  export prot=$(grep -w $1 ${prefix}/NGS.merge | cut -f5 | sed 's/_invn//g')
   if [ "${prot}" == "" ]; then
     echo Empty
   else
     grep -H -w ${prot} $INF/doc/hgTables.tsv
-    grep -H -w INTERVAL-box.tsv
+    grep -H -w utils/INTERVAL-box.tsv
   fi
 }
 
@@ -31,7 +33,7 @@ function pQTL()
 
 function Sun()
 {
-  awk 'NR>1{gsub(/_invn/,"");print $5,$6}' swath-ms.merge | \
+  awk 'NR>1{gsub(/_invn/,"");print $5,$6}' NGS.merge | \
   parallel -C' ' '
     echo {1} {2}
     grep -w {1} pQTL.Sun-B_pQTL_EUR_2017 | grep {2}
@@ -46,7 +48,7 @@ function Olink()
   export OLINK=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/jp549/olink-merged-output
   ls $OLINK > olink.list
   join -11 -22 \
-       <(awk 'NR>1{gsub(/_invn/,"");print $5,$6}' swath-ms.merge | sort -k1,1) \
+       <(awk 'NR>1{gsub(/_invn/,"");print $5,$6}' NGS.merge | sort -k1,1) \
        <(ls $OLINK/*gz  | sed 's/___/ /g;s/_chr_merged.gz\*//g;s///g;s///g;s///g' | sort -k2,2) | \
   awk '{
      gsub(/chr/,"",$2);

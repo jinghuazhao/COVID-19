@@ -172,6 +172,9 @@ END
 
 function bgen()
 {
+  export dat=olink_ngs_proteomics/gwasqc/olink_ngs_gwasqc.txt
+  export ids=INTERVAL_OmicsMap_20200619.csv
+  export sam=olink_ngs_proteomics/gwasqc/sample_info.txt
   awk 'NF<1473{print $1,NF}' $dat | \
   parallel --env dat -C' ' '
     awk -vFS="\t" -vid={1} "{if(\$1==id)for(i=1;i<=NF;++i) if(\$i==\"\") print \$1,NR,i}" ${dat}' | \
@@ -180,10 +183,6 @@ function bgen()
   # 110003567640 177 782 NEUROLOGY_O95994
   # 110004126595 186 595 INFLAMMATION_Q13291
   # 110014074648 357 441 INFLAMMATION_P05112
-
-  export dat=olink_ngs_proteomics/gwasqc/olink_ngs_gwasqc.txt
-  export ids=INTERVAL_OmicsMap_20200619.csv
-  export sam=olink_ngs_proteomics/gwasqc/sample_info.txt
   (
     head -1 ${dat} | \
     awk -v OFS='\t' '{$1="FID\tIID";print}'
