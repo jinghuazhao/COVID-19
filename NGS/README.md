@@ -6,12 +6,11 @@
 
 Restuls at work/ is according to
 
-* NGS -- Olink (cvd2, cvd3, inf, neu) panels
+* NGS (CARDIOMETABOLIC, INFLAMMATION, NEUROLOGY) -- Olink (cvd2, cvd3, inf, neu) panels.
 * raw, QC, LOD, col1 for raw measurements, Olink NGS QC=PASS, LOD (set to be NA when < LOD), and column 1 (set to NA when 01;).
 
-correlogram.pdf shows NGS -- Olink correlation
+There are 16 NGS - Olink - QC combinations shown in correlogram.pdf for NGS -- Olink correlation and scatter plots,
 
-There are following NGS-Olink-QC combinations
 * CARDIOMETABOLIC-cvd2-col1.pdf
 * CARDIOMETABOLIC-cvd2-LOD.pdf
 * CARDIOMETABOLIC-cvd2-QC.pdf
@@ -39,6 +38,6 @@ NGS.merge is contained for each of the following p value thresholds,
 
 Directory | Description
 ----------|------------
-1e-5 | sentinel identification at p=1e-5
-1e-6 | sentinel identification at p=1e-6
-1e-7 | sentinel identification at p 1e-7
+1e-5/ | sentinel identification at p=1e-5
+1e-6/ | sentinel identification at p=1e-6
+1e-7/ | sentinel identification at p 1e-7
