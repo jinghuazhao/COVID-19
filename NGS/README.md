@@ -12,7 +12,7 @@ Results at work/ are according to
 
 There are 16 NGS-Olink-QC combinations shown in correlogram.pdf for density, for correlation (.dat) and scatter plots (.pdf).
 
-Cluster | combinations
+Group | Combinations
 --------|-------------
 1-4 | CARDIOMETABOLIC-cvd2-col1, CARDIOMETABOLIC-cvd2-LOD, CARDIOMETABOLIC-cvd2-QC, CARDIOMETABOLIC-cvd2-raw
 5-8 | CARDIOMETABOLIC-cvd3-col1, CARDIOMETABOLIC-cvd3-LOD, CARDIOMETABOLIC-cvd3-QC, CARDIOMETABOLIC-cvd3-raw
