@@ -40,9 +40,9 @@ Directory | Description | Sentinels | Proteins
 1e-7/ | sentinel identification at p=1e-7 |    598 |   479
 
 Note that the following three proteins appear on all four panels and should be treated specifically,
-
-> P01375   TNF
-> P05231   IL6
-> P10145 CXCL8
-
-see the Venn diagram. <img src="ngs.png" width="300" height="300" align="right">
+```
+P01375   TNF
+P05231   IL6
+P10145 CXCL8
+```
+see the Venn diagram. <img src="ngs.png" width="300" height="300" align="center">
