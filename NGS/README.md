@@ -45,4 +45,4 @@ Note that the following three proteins appear on all four panels and should be t
 > P05231   IL6
 > P10145 CXCL8
 
-see the [Venn diagram](ngs.png).
+see the Venn diagram. <img src="ngs.png" width="300" height="300" align="right">
