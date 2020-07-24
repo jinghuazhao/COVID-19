@@ -38,3 +38,11 @@ Directory | Description | Sentinels | Proteins
 1e-5/ | sentinel identification at p=1e-5 | 23,034 | 1,472
 1e-6/ | sentinel identification at p=1e-6 |  2,836 | 1,241
 1e-7/ | sentinel identification at p=1e-7 |    598 |   479
+
+Note that the following three proteins appear on all four panels and should be treated specifically,
+
+> P01375   TNF
+> P05231   IL6
+> P10145 CXCL8
+
+see the [Venn diagram](ngs.png).

@@ -13,31 +13,13 @@ function check()
   fi
 }
 
-function Folkersen()
-{
-  grep $1 -H -w pQTL.Folkersen-L_Proteins_EUR_2017
-  check $1
-}
-
-function Suhre()
-{
-  grep $1 -H -w pQTL.Suhre-K_pQTL_EUR_2017
-  check $1
-}
-
-function pQTL()
-{
-  grep $1 -H -w pQTL.pQTL_2017
-  check $1
-}
-
 function Sun()
 {
-  awk 'NR>1{gsub(/_invn/,"");print $5,$6}' ${prefix}/NGS.merge | \
+  awk 'NR>1{sub(/_/," ");print $5,$6,$7}' ${prefix}/NGS.merge | \
   parallel -C' ' '
-    echo {1} {2}
-    grep -w {1} pQTL.Sun-B_pQTL_EUR_2017 | grep {2}
-    grep -H -w {1} INTERVAL_box.tsv
+    echo {1} {2} {3}
+    grep -w {2} ${INF}/pQTL.Sun-B_pQTL_EUR_2017 | grep {3}
+    grep -H -w {2} ${INF}/INTERVAL_box.tsv
   '
 }
 
@@ -46,16 +28,17 @@ Sun
 function Olink()
 {
   export OLINK=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/jp549/olink-merged-output
-  ls $OLINK > olink.list
-  join -11 -22 \
-       <(awk 'NR>1{gsub(/_invn/,"");print $5,$6}' ${prefix}/NGS.merge | sort -k1,1) \
-       <(ls $OLINK/*gz  | sed 's/___/ /g;s/_chr_merged.gz\*//g;s///g;s///g;s///g' | sort -k2,2) | \
+  ls $OLINK | \
+  grep -v check > olink.list
+  join -j2 \
+       <(awk 'NR>1{sub(/_/," ");print $5,$6,$7}' ${prefix}/NGS.merge | sort -k2,2) \
+       <(ls $OLINK/*gz  | sed 's/___/ /g;s/_chr_merged.gz//g' | sort -k2,2) | \
   awk '{
-     gsub(/chr/,"",$2);
-     split($2,a,":");
+     gsub(/chr/,"",$3);
+     split($3,a,":");
      chr=a[1];
      pos=a[2];
-     print $1,pos,$3,chr
+     print $1,pos,$4,chr
   }' | \
   parallel -C' ' '
     echo {1} {2}
