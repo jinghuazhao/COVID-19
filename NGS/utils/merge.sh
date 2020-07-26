@@ -37,7 +37,20 @@ done
 (
   cat ${prefix}/work/*sentinels | head -1
   for p in $(ls ${prefix}/*${tag}.p | sed 's|'"$prefix"'/||g;s|'"$tag"'.p||g'); do awk 'NR>1' ${prefix}/work/${p}.sentinels; done
-) > ${prefix}/NGS.merge
+) > ${prefix}/NGS.tmp
+R --no-save -q <<END
+  prefix <- Sys.getenv("prefix")
+  f <- paste(prefix,"NGS.tmp",sep="/")
+  ngs <- read.table(f,header=TRUE,as.is=TRUE)
+  dim(ngs)
+  head(ngs)
+  library(dplyr)
+  t <- ngs %>% group_by(prot,Chrom,Start,End) %>% slice(which.min(P))
+  t
+  p <- table(ngs$P)[table(ngs$P)>1]
+  write.table(t,file=paste(prefix,"NGS.merge",sep="/"),quote=FALSE,row.names=FALSE,sep='\t')
+  print(p)
+END
 cut -f5 ${prefix}/NGS.merge | sed '1d' | sort | uniq > ${prefix}/NGS.merge.prot
 
 R --no-save -q <<END

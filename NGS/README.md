@@ -35,9 +35,9 @@ NGS.merge is contained for each of the following p value thresholds,
 
 Directory | Description | Sentinels | Proteins
 ----------|-------------|----------:|--------------------:
-1e-5/ | sentinel identification at p=1e-5 | 23,034 | 1,472
-1e-6/ | sentinel identification at p=1e-6 |  2,836 | 1,241
-1e-7/ | sentinel identification at p=1e-7 |    598 |   479
+1e-5/ | sentinel identification at p=1e-5 | 22,876 | 1,472
+1e-6/ | sentinel identification at p=1e-6 |  2,788 | 1,241
+1e-7/ | sentinel identification at p=1e-7 |    565 |   479
 
 Note that the following three proteins appear on all four panels and should be treated specifically,
 ```
