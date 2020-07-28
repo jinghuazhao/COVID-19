@@ -89,9 +89,11 @@ gene <- ngs[c("gene","chr","start","end")]
 gene.type <- eqtlClassifier(pqtl, snp, gene, 1000000)
 gene.table <- with(gene.type,table(gene,Type))
 sink(paste(pval,"cis.vs.trans.out",sep="/"))
+UniProt.type
 UniProt.table
 cat("Total",sum(UniProt.table[,1]),sum(UniProt.table[,2]),sum(UniProt.table[,3]),"\n")
 sum(UniProt.table)
+gene.type
 gene.table
 cat("Total",sum(gene.table[,1]),sum(gene.table[,2]),"\n")
 sum(gene.table)
