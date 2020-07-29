@@ -33,11 +33,12 @@ The corresponding density plots are shown in correlogram.pdf.
 
 NGS.merge is contained for each of the following p value thresholds,
 
-Directory | Description | Sentinels | Proteins
-----------|-------------|----------:|--------------------:
+Directory | Description | Sentinels | Proteins | cis/trans
+----------|-------------|----------:|---------------------:|----
 1e-5/ | sentinel identification at p=1e-5 | 22,876 | 1,472
 1e-6/ | sentinel identification at p=1e-6 |  2,788 | 1,241
-1e-7/ | sentinel identification at p=1e-7 |    561 |   479
+1e-7/ | sentinel identification at p=1e-7 |    561 |   479 | 222/339
+5e-8/ | sentinel identification at p=5e-8 |    427 |   380 | 221/216
 
 Note that the following three proteins appear on all four panels and should be treated specifically,
 ```
@@ -46,5 +47,3 @@ P05231   IL6
 P10145 CXCL8
 ```
 see the Venn diagram. <img src="ngs.png" width="300" height="300" align="center">
-
-The case of p=1e-7 has 220 cis, 332 trans and 9 NAs based on UniProt IDs but 220 cis and 334 trans based on genes.

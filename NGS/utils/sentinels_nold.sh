@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 export tag=_nold
-export pval=1e-6
+export pval=5e-8
 export src=plink2
 
 if [ ! -d ${pval} ]; then mkdir ${pval}; fi

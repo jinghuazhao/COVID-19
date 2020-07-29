@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 export TMPDIR=$HPC_WORK/work
-export prefix=1e-6
+export prefix=5e-8
 export tag=_nold
 
 if [ ! -d ${prefix}/work ]; then mkdir ${prefix}/work; fi
@@ -39,6 +39,7 @@ done
   for p in $(ls ${prefix}/*${tag}.p | sed 's|'"$prefix"'/||g;s|'"$tag"'.p||g'); do awk 'NR>1' ${prefix}/work/${p}.sentinels; done
 ) > ${prefix}/NGS.tmp
 R --no-save -q <<END
+# Somehow this code needs to be run inside R
   prefix <- Sys.getenv("prefix")
   f <- paste(prefix,"NGS.tmp",sep="/")
   ngs <- read.table(f,header=TRUE,as.is=TRUE)

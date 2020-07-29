@@ -69,6 +69,8 @@ VennDiagram::venn.diagram(x = p, category.names=cnames, filename='ngs.png', imag
 
 pval <- Sys.getenv("pval")
 f <- paste0("NGS.",pval)
+cmd <- paste("grep -v -e P01375 -e P05231 -e P10145",paste(pval,"NGS.merge",sep="/"),paste0(") > NGS.",pval))
+system(cmd)
 sentinels <- within(read.table(f,as.is=TRUE,header=TRUE),
 {
 # Chrom Start End P prot MarkerName
@@ -98,5 +100,5 @@ gene.table
 cat("Total",sum(gene.table[,1]),sum(gene.table[,2]),"\n")
 sum(gene.table)
 sink()
-cvt <- cis.vs.trans.classification(hits=hits[c("Chr","bp","gene","prot")], panel=ngs[c("chr","start","end","gene","prot")], id="prot")
+cvt <- cis.vs.trans.classification(hits=hits[c("Chr","bp","gene","prot","SNP")], panel=ngs[c("chr","start","end","gene","prot")], id="prot")
 cvt
