@@ -103,8 +103,10 @@ sink()
 hg <- biomaRt[c("chromosome_name","start_position","end_position","hgnc_symbol","uniprotswissprot")]
 names(hg) <- c("chr","start","end","geneName","UniProt")
 hg <- hg[!duplicated(hg),]
-missing <- c("P54317","Q15517","P16284","P39900","Q6UX82","Q8WXI7")
-subset(hg,UniProt%in%missing)
 ngs <- within(merge(hg,Olink_NGS,by="UniProt"),{prot <- paste0(Panel,"_",UniProt)})
 cvt <- cis.vs.trans.classification(hits=hits[c("Chr","bp","gene","prot","SNP")], panel=ngs[c("chr","start","end","gene","prot")], id="prot")
 cvt
+head(ngs)
+missing <- c("P54317","Q15517","P16284","P39900","Q6UX82","Q8WXI7")
+subset(hg,UniProt %in% missing)
+subset(Olink_NGS,UniProt %in% missing)
