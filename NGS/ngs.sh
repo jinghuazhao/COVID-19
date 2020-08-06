@@ -225,3 +225,37 @@ function bgen()
            -og work/chr{}.bgen -os work/chr{}.samples
   '
 }
+
+function qPCR()
+{
+  export OLINK=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/jp549/olink-merged-output
+  ls $OLINK/*gz | \
+  xargs -l basename -s _chr_merged.gz | \
+  awk '{gsub(/INTERVAL_/,"");sub(/_/," ");gsub(/___/," ")};1'> qPCR.list
+  (
+    gunzip -c ${OLINK}/INTERVAL_cvd3_SELP___P16109_chr_merged.gz | \
+    awk 'NR==1{print "UniProt","prot","chr","pos",$2,$5,$6,$24,$25,$22,"NGS"}'
+    join -a1 -12 -23 <(awk 'NR>1{split($5,a,"_");print a[1],a[2],$6}' ${pval}/NGS.sentinels | sort -k2,2) \
+                 <(sort -k3,3 qPCR.list) | \
+    awk 'NF==5{
+       gsub(/chr/,"",$3);
+       split($3,a,":");
+       chr=a[1];
+       pos=a[2];
+       print $0,chr,pos
+    }' | \
+    parallel --env OLINK -C' ' '
+      zgrep -H -w {7} ${OLINK}/INTERVAL_{4}_{5}___{1}_chr_merged.gz | \
+      awk -vchr={6} "chr==\$3+0" | \
+      awk -vuniprot={1} -v prot={5} -v chr={6} -v pos={7} -vpanel={2}-{4} "
+         {print uniprot, prot, chr, pos, \$2,\$5,\$6,\$24,\$25,\$22,panel}"
+    '
+  ) > qPCR-${pval}.lookup
+}
+
+export pval=1e-5
+qPCR
+export pval=1e-6
+qPCR
+export pval=1e-7
+qPCR

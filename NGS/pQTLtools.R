@@ -1,8 +1,7 @@
 bioc <- function()
 {
   library(GenomicRanges)
-  gr <- with(subset(hgTables,!grepl("hap",X.chrom)&!grepl("Un",X.chrom)&!grepl("random",X.chrom)&!grepl(";",geneName)&geneName!=""),
-             GRanges(seqnames=X.chrom,ranges=IRanges(chromStart,chromEnd),strand=strand,gene=geneName,UniProt))
+  gr <- with(hg10Tables,GRanges(seqnames=X.chrom,ranges=IRanges(chromStart,chromEnd),strand=strand,gene=geneName,UniProt=acc))
   rgr <- reduce(gr)
   m <- mergeByOverlaps(rgr,gr,type="within")
   ngs <- within(merge(Olink_NGS,as.data.frame(m),by.x=c("UniProt","gene"),by.y=c("UniProt","gene")),
@@ -27,11 +26,12 @@ library(pQTLtools)
 library(iBMQ)
 options(width=220)
 
-hg <- within(hgTables,
+hg <- within(hg19Tables,
 {
   chr <- sub("chr","",X.chrom)
   start <- chromStart
   end  <- chromEnd
+  UniProt <- acc
 })[c("chr","start","end","geneName","UniProt")]
 subset(hg,grepl("Q14213",UniProt))
 subset(hg,grepl("Q29980",UniProt))
