@@ -259,3 +259,40 @@ export pval=1e-6
 qPCR
 export pval=1e-7
 qPCR
+
+function cvt()
+{
+R --no-save <<END
+  require(gap)
+  require(pQTLtools)
+  SCALLOP <- Sys.getenv("SCALLOP")
+  pval <- Sys.getenv("pval")
+  f <- file.path(SCALLOP,"NGS",paste0("qPCR-",pval,".lookup"))
+  clumped <- read.table(f,as.is=TRUE,header=TRUE)[c("chr","pos","rsid","prot","UniProt")]
+  names(clumped) <- c("Chr","bp","SNP","prot","UniProt")
+  hg19 <- within(hg19Tables[c("X.chrom", "chromStart", "chromEnd","hgncSym","uniprotName","acc")],
+          {chr <- sub("chr","",X.chrom);prot <- sub("_HUMAN","",uniprotName);uniprot <- acc})
+  names(hg19) <- c("chrom","start","end","gene","uniprotName","UniProt","uniprot","prot","chr")
+  hits <- merge(clumped,hg19,by="UniProt")
+  cistrans <- cis.vs.trans.classification(hits[c("Chr","bp","SNP","UniProt")],hg19[c("chr","start","end","gene","prot","UniProt")],"UniProt")
+  cis.vs.trans <- with(cistrans,data)
+  write.table(cis.vs.trans,file=file.path(SCALLOP,"NGS",paste0("qPCR-",pval,".cis.vs.trans")),
+              quote=FALSE,row.names=FALSE)
+  sink(file.path(SCALLOP,"NGS",paste0("qPCR-",pval,".table")))
+  with(cistrans,table)
+  sink()
+  names(clumped) <- c("CHR","BP","SNP","prot","UniProt")
+  write.table(clumped,file=file.path(SCALLOP,"NGS",paste0("qPCR-",pval,".hits")),row.names=FALSE,quote=FALSE)
+  pdf(file.path(SCALLOP,"NGS",paste0("qPCR",pval,".circos.pdf")))
+  circos.cis.vs.trans.plot(hits=file.path(SCALLOP,"NGS",paste0("qPCR-",pval,".hits")),subset(hg19,prot %in% with(clumped,prot)),"uniprot")
+  dev.off()
+END
+}
+# UniProt prot chr pos rsid alleleA alleleB frequentist_add_beta_1 frequentist_add_se_1 frequentist_add_pvalue NGS
+
+export pval=1e-5
+cvt
+export pval=1e-6
+cvt
+export pval=1e-7
+cvt
