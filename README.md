@@ -16,7 +16,7 @@
   * [Registration](https://www.covid19hg.org/register/)
   * [GitHub repositories](https://github.com/covid19-hg/)
   * [Slack channel](https://icdaworkspace.slack.com) (icda-office@icda.bio)
-  * [Analysis plan](https://tinyurl.com/yalt3n28) ([1.1](https://docs.google.com/document/d/16ethjgi4MzlQeO0KAW_yDYyUHdB9kKbtfuGW4XYVKQg/edit), [WGS/WES](https://docs.google.com/document/d/1X_qjplH8T4BJXSeMQ_sBfQUTiu_kAisicOqGb6B8hcM/edit#heading=h.55nt5tzax7cw))
+  * [Analysis plan](https://tinyurl.com/yalt3n28) ([1.1](https://docs.google.com/document/d/16ethjgi4MzlQeO0KAW_yDYyUHdB9kKbtfuGW4XYVKQg/edit), [WES/WGS](https://docs.google.com/document/d/1X_qjplH8T4BJXSeMQ_sBfQUTiu_kAisicOqGb6B8hcM/edit#heading=h.55nt5tzax7cw))
   * Phenotype definition: [v1.0](https://tinyurl.com/ybno3zgy), [v2.0](https://tinyurl.com/yd8hkvjk)
   * [Case severity code](https://tinyurl.com/y7nygjr3)
   * [Results](https://www.covid19hg.org/results/), [gs://covid19-hg-analysis/20200619/results/full](gs://covid19-hg-analysis/20200619/results/full) and [gs://covid19-hg-analysis/20200619/results/release](gs://covid19-hg-analysis/20200619/results/release)
