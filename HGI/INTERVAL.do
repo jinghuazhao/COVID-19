@@ -125,13 +125,13 @@ CxV2 1 20200731-ANA_C1_V2 `covlist'
 CxV2 2 20200731-ANA_C2_V2 `covlist'
 
 program sexCxV2
-  // 1=1/2 for C1/C2; 2=working directory; 3=covlist; 4=sex
+  // 1=1/2 for C1/C2; 2=working directory; 3=sex 4=covlist
   gzuse work/INTERVAL-omics-covid,clear
   outsheet ID if sex==. | age==. using `2'/work/INTERVAL.excl-samples, noname replace
   drop if sex==. | age==.
   replace SARS_CoV=0 if SARS_CoV==. & `1'==2
-  drop if SARS_CoV==. & sex!=`4'
-  outsheet ID SARS_CoV `3' PC_1-PC_20 using `2'/work/INTERVAL-covid.txt, delim(" ") noquote replace
+  drop if SARS_CoV==. | sex!=`3'
+  outsheet ID SARS_CoV `4' PC_1-PC_20 using `2'/work/INTERVAL-covid.txt, delim(" ") noquote replace
   tostring ID,gen(IDS) format(%15.0g)
   gen str31 ID2=IDS + "_" + IDS
   label define sexFM 1 "M" 2 "F"
@@ -145,18 +145,18 @@ program sexCxV2
 end
 
 local covlist age age2
-sexCxV2 1 20200731-male-ANA_C1_V2 `covlist' 1
-sexCxV2 2 20200731-male-ANA_C2_V2 `covlist' 1
-sexCxV2 1 20200731-female-ANA_C1_V2 `covlist' 2
-sexCxV2 2 20200731-female-ANA_C2_V2 `covlist' 2
+sexCxV2 1 20200731-male-ANA_C1_V2 1 `covlist'
+sexCxV2 2 20200731-male-ANA_C2_V2 1 `covlist'
+sexCxV2 1 20200731-female-ANA_C1_V2 2 `covlist'
+sexCxV2 2 20200731-female-ANA_C2_V2 2 `covlist'
 
 program sex60CxV2
-  // 1=1/2 for C1/C2; 2=working directory
+  // 1=1/2 for C1/C2; 2=working directory; 3=sex
   gzuse work/INTERVAL-omics-covid, clear
   outsheet ID if sex==. | age==. using `2'/work/INTERVAL.excl-samples, noname replace
   drop if sex==. | age==.
   replace SARS_CoV=0 if SARS_CoV==. & `1'==2
-  drop if SARS_CoV==. & age>60
+  drop if SARS_CoV==. | sex!=`3' | age>60
   outsheet ID SARS_CoV PC_1-PC_20 using `2'/work/INTERVAL-covid.txt, delim(" ") noquote replace
   tostring ID,gen(IDS) format(%15.0g)
   gen str31 ID2=IDS + "_" + IDS
@@ -170,7 +170,7 @@ program sex60CxV2
   outsheet ID2 sex using `2'/work/INTERVAL-X.FM if idx!=., noname noquote replace
 end
 
-sex60CxV2 1 20200731-male-60-ANA_C1_V2
-sex60CxV2 2 20200731-male-60-ANA_C2_V2
-sex60CxV2 1 20200731-female-60-ANA_C1_V2
-sex60CxV2 2 20200731-female-60-ANA_C2_V2
+sex60CxV2 1 20200731-male-60-ANA_C1_V2 1
+sex60CxV2 2 20200731-male-60-ANA_C2_V2 1
+sex60CxV2 1 20200731-female-60-ANA_C1_V2 2
+sex60CxV2 2 20200731-female-60-ANA_C2_V2 2
