@@ -10,22 +10,29 @@ export dir=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/HGI
 function phenotype()
 # step 1. SARS_CoV, age, sex, PCs
 {
-  export ref=/home/jhz22/rds/post_qc_data/interval/reference_files/genetic/interval
+  export ref=/home/jhz22/rds/post_qc_data/interval/reference_files/genetic/reference_files_genotyped_imputed/
   export ev=$ref/annot_INT_50PCs_pcs.txt
   sed '1,2d' $autosomes/interval.samples | \
   cut -d' ' -f1 > work/INTERVAL.samples
   awk '{print $1 "_" $1}' work/INTERVAL.samples > work/INTERVAL-X.samples
   stata -b do INTERVAL.do
-  sed '1d' work/INTERVAL-covid.txt | \
-  cut -d' ' -f1 > work/INTERVAL-covid.samples
-  awk '{print $1, $1}' work/INTERVAL-covid.samples > work/INTERVAL-covid.samples2
-  bcftools query -l ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz | \
-  join - <(awk '{print $1"_"$1}' work/INTERVAL-covid.samples) -v2 > work/INTERVAL-covid-X.excl-samples
-  awk '{if (NR>1) $1=$1 "_" $1};1' work/INTERVAL-covid.txt | \
-  grep -v -f work/INTERVAL-covid-X.excl-samples > work/INTERVAL-covid-X.txt
-  awk 'NR>1{print $1}' work/INTERVAL-covid-X.txt > work/INTERVAL-covid-X.samples
-  awk '{print $1,$1}' work/INTERVAL-covid-X.samples > work/INTERVAL-covid-X.samples2
-  grep -v -f work/INTERVAL-covid-X.excl-samples work/INTERVAL-X.FM > work/INTERVAL-covid-X.FM
+  export d=20200731
+  for dir in ${d}-ANA_C1_V2 ${d}-ANA_C2_V2 ${d}-male-ANA_C1_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C1_V2 ${d}-female-ANA_C2_V2 \
+             ${d}-male-60-ANA_C1_V2 ${d}-male-60-ANA_C2_V2 ${d}-female-60-ANA_C1_V2 ${d}-female-60-ANA_C2_V2
+  do
+    cd ${dir}
+    sed '1d' work/INTERVAL-covid.txt | \
+    cut -d' ' -f1 > work/INTERVAL-covid.samples
+    awk '{print $1, $1}' work/INTERVAL-covid.samples > work/INTERVAL-covid.samples2
+    bcftools query -l ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz | \
+    join - <(awk '{print $1"_"$1}' work/INTERVAL-covid.samples) -v2 > work/INTERVAL-covid-X.excl-samples
+    awk '{if (NR>1) $1=$1 "_" $1};1' work/INTERVAL-covid.txt | \
+    grep -v -f work/INTERVAL-covid-X.excl-samples > work/INTERVAL-covid-X.txt
+    awk 'NR>1{print $1}' work/INTERVAL-covid-X.txt > work/INTERVAL-covid-X.samples
+    awk '{print $1,$1}' work/INTERVAL-covid-X.samples > work/INTERVAL-covid-X.samples2
+    grep -v -f work/INTERVAL-covid-X.excl-samples work/INTERVAL-X.FM > work/INTERVAL-covid-X.FM
+    cd -
+  done
 }
 
 function autosomes_sbatch()
