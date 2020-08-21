@@ -64,17 +64,29 @@ bgenix -g output/INTERVAL-${job}.bgen -index -clobber
 function X()
 {
 # Chromosome X, 58 samples do not exist in INTERVAL_X_imp_ann_filt_v2.vcf.gz
-  bcftools query -l ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz | \
-  tr '_' ' ' | \
-  awk '{print $1"_"$1, $2}' | \
-  bcftools reheader -s - ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz -o work/INTERVAL-X-src.vcf.gz --threads 12
-  bcftools annotate --set-id '%CHROM:%POS\_%REF\/%FIRST_ALT' work/INTERVAL-X-src.vcf.gz -O z -o output/INTERVAL-X-src.vcf.gz
-  bcftools index -tf output/INTERVAL-X-src.vcf.gz
-  grep -v -f work/INTERVAL-covid-X.excl-samples work/INTERVAL-covid-X.samples | \
-  bcftools view -S - output/INTERVAL-X-src.vcf.gz -O v | \
-  vcf-fix-ploidy -s output/INTERVAL-covid-X.FM | \
-  bgzip -cf > output/INTERVAL-X-ploidy.vcf.gz
-  bcftools index -tf output/INTERVAL-X-ploidy.vcf.gz
+# Change of sample IDs
+# bcftools query -l ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz | \
+# tr '_' ' ' | \
+# awk '{print $1"_"$1, $2}' | \
+# bcftools reheader -s - ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz -o work/INTERVAL-X-src.vcf.gz --threads 12
+# bcftools annotate --set-id '%CHROM:%POS\_%REF\/%FIRST_ALT' work/INTERVAL-X-src.vcf.gz -O z -o output/INTERVAL-X-src.vcf.gz
+# bcftools index -tf output/INTERVAL-X-src.vcf.gz
+  bcftools annotate --set-id '%CHROM:%POS\_%REF\/%FIRST_ALT' ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz -O z -o work/INTERVAL-X-src.vcf.gz
+  bcftools index -tf work/INTERVAL-X-src.vcf.gz
+  export d=20200731
+  for dir in ${d}-ANA_C1_V2 ${d}-ANA_C2_V2 ${d}-male-ANA_C1_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C1_V2 ${d}-female-ANA_C2_V2 \
+             ${d}-male-60-ANA_C1_V2 ${d}-male-60-ANA_C2_V2 ${d}-female-60-ANA_C1_V2 ${d}-female-60-ANA_C2_V2
+  do
+    cd ${dir}
+    grep -v -f work/INTERVAL-covid-X.excl-samples work/INTERVAL-covid-X.samples | \
+    tr '_' '\t' | \
+    cut -f1 | \
+    bcftools view -S - ${SCALLOP}/HGI/work/INTERVAL-X-src.vcf.gz -O v | \
+    vcf-fix-ploidy -s work/INTERVAL-covid-X.FM | \
+    bgzip -cf > output/INTERVAL-X-ploidy.vcf.gz
+    bcftools index -tf output/INTERVAL-X-ploidy.vcf.gz
+    cd -
+  done
 }
 # step 4. single variant association tests + gene annodation/association analysis
 # INTERVAL.sh + glist_hg19.sh/INTERVAL-X.sh
