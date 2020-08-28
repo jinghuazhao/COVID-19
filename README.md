@@ -35,8 +35,6 @@
 * UK biobank COVID-19 [data](http://biobank.ndph.ox.ac.uk/ukb/exinfo.cgi?src=COVID19), [format](http://biobank.ndph.ox.ac.uk/ukb/exinfo.cgi?src=COVID19_tests) and [field](http://biobank.ctsu.ox.ac.uk/ukb/field.cgi?id=40100).
 
 ## Statistics
-* [Daily tests and proportions of positives](https://pfryz.shinyapps.io/covid-19/).
-* [Reported hospital deaths among positives](https://pfryz.shinyapps.io/covid-19-deaths/).
 * [COVID-19 tracker](https://shiny.rstudio.com/gallery/covid19-tracker.html).
 * [nCov2019](https://github.com/GuangchuangYu/nCov2019).
 * [CSSEGISandData](https://github.com/CSSEGISandData).
