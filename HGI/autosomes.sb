@@ -13,21 +13,21 @@
 
 export autosomes=/home/jhz22/rds/post_qc_data/interval/imputed/uk10k_1000g_b37
 export X=/rds/project/jmmh2/rds-jmmh2-projects/covid/ace2/interval_genetic_data/interval_imputed_data
-export dir=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/HGI
+export HGI=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/HGI
 export TMPDIR=/rds/user/jhz22/hpc-work/work
 export job=$SLURM_ARRAY_TASK_ID
 
 step2_SPAtests.R \
-   --bgenFile=output/INTERVAL-${job}.bgen \
-   --bgenFileIndex=output/INTERVAL-${job}.bgen.bgi \
+   --bgenFile=${dir}/output/INTERVAL-${job}.bgen \
+   --bgenFileIndex=${dir}/output/INTERVAL-${job}.bgen.bgi \
    --chrom=${job} \
    --minMAF=0.0001 \
    --minMAC=1 \
-   --sampleFile=work/INTERVAL-covid.samples \
-   --GMMATmodelFile=output/INTERVAL-covid.rda \
-   --varianceRatioFile=output/INTERVAL-covid.varianceRatio.txt \
-   --SAIGEOutputFile=output/INTERVAL-${job}.txt \
+   --sampleFile=${dir}/work/INTERVAL-covid.samples \
+   --GMMATmodelFile=${dir}/output/INTERVAL-covid.rda \
+   --varianceRatioFile=${dir}/output/INTERVAL-covid.varianceRatio.txt \
+   --SAIGEOutputFile=${dir}/output/INTERVAL-${job}.txt \
    --IsOutputNinCaseCtrl=TRUE \
    --IsOutputHetHomCountsinCaseCtrl=TRUE \
    --IsOutputAFinCaseCtrl=TRUE
-gzip -f output/INTERVAL-${job}.txt
+gzip -f ${dir}/output/INTERVAL-${job}.txt
