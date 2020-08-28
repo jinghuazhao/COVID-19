@@ -2,7 +2,7 @@
 
 # step 4. susceptibility association
 
-# source INTERVAL.inc
+module load gcc/6
 
 function Cx_V2_step1()
 {
@@ -10,7 +10,7 @@ function Cx_V2_step1()
      --plinkFile=work/INTERVAL-covid \
      --phenoFile=work/INTERVAL-covid.txt \
      --phenoCol=SARS_CoV \
-     --covarColList=${covlist}
+     --covarColList=${covlist} \
      --sampleIDColinphenoFile=ID \
      --traitType=binary \
      --outputPrefix=output/INTERVAL-covid \
@@ -21,29 +21,29 @@ function Cx_V2_step1()
 function Cx_V2_X()
 {
   step1_fitNULLGLMM.R \
-   --plinkFile=work/INTERVAL-covid-X \
-   --phenoFile=work/INTERVAL-covid-X.txt \
-   --phenoCol=SARS_CoV \
-   --covarColList=${covlist}
-   --sampleIDColinphenoFile=ID \
-   --traitType=binary \
-   --outputPrefix=output/INTERVAL-covid-X \
-   --nThreads=8 \
-   --IsOverwriteVarianceRatioFile=TRUE 
+    --plinkFile=work/INTERVAL-covid-X \
+    --phenoFile=work/INTERVAL-covid-X.txt \
+    --phenoCol=SARS_CoV \
+    --covarColList=${covlist}
+    --sampleIDColinphenoFile=ID \
+    --traitType=binary \
+    --outputPrefix=output/INTERVAL-covid-X \
+    --nThreads=8 \
+    --IsOverwriteVarianceRatioFile=TRUE 
 
   step2_SPAtests.R \
-   --vcfFile=work/INTERVAL-X-ploidy.vcf.gz \
-   --vcfFileIndex=work/INTERVAL-X-ploidy.vcf.gz.tbi \
-   --chrom=X \
-   --minMAF=0.0001 \
-   --minMAC=1 \
-   --sampleFile=work/INTERVAL-X.samples \
-   --GMMATmodelFile=output/INTERVAL-covid-X.rda \
-   --varianceRatioFile=output/INTERVAL-covid-X.varianceRatio.txt \
-   --SAIGEOutputFile=output/INTERVAL-X.txt \
-   --IsOutputNinCaseCtrl=TRUE \
-   --IsOutputHetHomCountsinCaseCtrl=TRUE \
-   --IsOutputAFinCaseCtrl=TRUE
+    --vcfFile=work/INTERVAL-X-ploidy.vcf.gz \
+    --vcfFileIndex=work/INTERVAL-X-ploidy.vcf.gz.tbi \
+    --chrom=X \
+    --minMAF=0.0001 \
+    --minMAC=1 \
+    --sampleFile=work/INTERVAL-X.samples \
+    --GMMATmodelFile=output/INTERVAL-covid-X.rda \
+    --varianceRatioFile=output/INTERVAL-covid-X.varianceRatio.txt \
+    --SAIGEOutputFile=output/INTERVAL-X.txt \
+    --IsOutputNinCaseCtrl=TRUE \
+    --IsOutputHetHomCountsinCaseCtrl=TRUE \
+    --IsOutputAFinCaseCtrl=TRUE
   gzip -f output/INTERVAL-X.txt
 }
 
@@ -53,7 +53,7 @@ for dir in ${d}-ANA_C1_V2 ${d}-ANA_C2_V2
 do
   cd ${dir}
      Cx_V2_step1
-     sbatch --wait autosomes.sb
+     sbatch --wait ${SCALLOP}/HGI/autosomes.sb
      Cx_V2_X
   cd -
 done
@@ -63,7 +63,7 @@ for dir in ${d}-male-ANA_C1_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C1_V2 ${d}-fe
 do
   cd ${dir}
      Cx_V2_step1
-     sbatch --wait autosomes.sb
+     sbatch --wait ${SCALLOP}/HGI/autosomes.sb
      Cx_V2_X
   cd -
 done
@@ -73,7 +73,7 @@ for dir in ${d}-male-60-ANA_C1_V2 ${d}-male-60-ANA_C2_V2 ${d}-female-60-ANA_C1_V
 do
   cd ${dir}
      Cx_V2_step1
-     sbatch --wait autosomes.sb
+     sbatch --wait  ${SCALLOP}/HGI/autosomes.sb
      Cx_V2_X
   cd -
 done

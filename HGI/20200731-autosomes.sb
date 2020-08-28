@@ -62,7 +62,7 @@ function association()
      --IsOverwriteVarianceRatioFile=TRUE
 
     seq 22 -1 1 | \
-    xargs -I {} bashc -c "autosomes {}" \
+    xargs -I {} bashc -c "autosomes {}"
     cd -
   done
 }
