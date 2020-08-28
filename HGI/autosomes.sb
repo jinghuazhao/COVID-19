@@ -1,0 +1,33 @@
+#!/usr/bin/bash
+
+#SBATCH --job-name=_step2
+#SBATCH --account CARDIO-SL0-CPU
+#SBATCH --partition cardio
+#SBATCH --qos=cardio
+#SBATCH --array=1-22
+#SBATCH --mem=28800
+#SBATCH --time=5-00:00:00
+#SBATCH --output=/rds/user/jhz22/hpc-work/work/_step2_%A_%a.out
+#SBATCH --error=/rds/user/jhz22/hpc-work/work/_step2_%A_%a.err
+#SBATCH --export ALL
+
+export autosomes=/home/jhz22/rds/post_qc_data/interval/imputed/uk10k_1000g_b37
+export X=/rds/project/jmmh2/rds-jmmh2-projects/covid/ace2/interval_genetic_data/interval_imputed_data
+export dir=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/HGI
+export TMPDIR=/rds/user/jhz22/hpc-work/work
+export job=$SLURM_ARRAY_TASK_ID
+
+step2_SPAtests.R \
+   --bgenFile=output/INTERVAL-${job}.bgen \
+   --bgenFileIndex=output/INTERVAL-${job}.bgen.bgi \
+   --chrom=${job} \
+   --minMAF=0.0001 \
+   --minMAC=1 \
+   --sampleFile=work/INTERVAL-covid.samples \
+   --GMMATmodelFile=output/INTERVAL-covid.rda \
+   --varianceRatioFile=output/INTERVAL-covid.varianceRatio.txt \
+   --SAIGEOutputFile=output/INTERVAL-${job}.txt \
+   --IsOutputNinCaseCtrl=TRUE \
+   --IsOutputHetHomCountsinCaseCtrl=TRUE \
+   --IsOutputAFinCaseCtrl=TRUE
+gzip -f output/INTERVAL-${job}.txt

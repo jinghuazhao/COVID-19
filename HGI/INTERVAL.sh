@@ -1,85 +1,79 @@
 #!/usr/bin/bash
 
-# step 4. susceptibility (ANA5, ANA_C1_V2) on autosomes
+# step 4. susceptibility association
 
-source INTERVAL.inc
+# source INTERVAL.inc
 
-# Single-variant association tests
+function Cx_V2_step1()
+{
+  step1_fitNULLGLMM.R \
+     --plinkFile=work/INTERVAL-covid \
+     --phenoFile=work/INTERVAL-covid.txt \
+     --phenoCol=SARS_CoV \
+     --covarColList=${covlist}
+     --sampleIDColinphenoFile=ID \
+     --traitType=binary \
+     --outputPrefix=output/INTERVAL-covid \
+     --nThreads=8 \
+     --IsOverwriteVarianceRatioFile=TRUE
+}
 
-step1_fitNULLGLMM.R \
-   --plinkFile=work/INTERVAL-covid \
-   --phenoFile=work/INTERVAL-covid.txt \
+function Cx_V2_X()
+{
+  step1_fitNULLGLMM.R \
+   --plinkFile=work/INTERVAL-covid-X \
+   --phenoFile=work/INTERVAL-covid-X.txt \
    --phenoCol=SARS_CoV \
-   --covarColList=sex,age,age2,sexage,PC_1,PC_2,PC_3,PC_4,PC_5,PC_6,PC_7,PC_8,PC_9,PC_10,PC_11,PC_12,PC_13,PC_14,PC_15,PC_16,PC_17,PC_18,PC_19,PC_20 \
+   --covarColList=${covlist}
    --sampleIDColinphenoFile=ID \
    --traitType=binary \
-   --outputPrefix=output/INTERVAL-covid \
+   --outputPrefix=output/INTERVAL-covid-X \
    --nThreads=8 \
-   --IsOverwriteVarianceRatioFile=TRUE
+   --IsOverwriteVarianceRatioFile=TRUE 
 
-seq 22 -1 1 | \
-parallel -j1 -C' ' '
-step2_SPAtests.R \
-   --bgenFile=output/INTERVAL-{}.bgen \
-   --bgenFileIndex=output/INTERVAL-{}.bgen.bgi \
-   --chrom={} \
+  step2_SPAtests.R \
+   --vcfFile=work/INTERVAL-X-ploidy.vcf.gz \
+   --vcfFileIndex=work/INTERVAL-X-ploidy.vcf.gz.tbi \
+   --chrom=X \
    --minMAF=0.0001 \
    --minMAC=1 \
-   --sampleFile=work/INTERVAL-covid.samples \
-   --GMMATmodelFile=output/INTERVAL-covid.rda \
-   --varianceRatioFile=output/INTERVAL-covid.varianceRatio.txt \
-   --SAIGEOutputFile=output/INTERVAL-{}.txt \
+   --sampleFile=work/INTERVAL-X.samples \
+   --GMMATmodelFile=output/INTERVAL-covid-X.rda \
+   --varianceRatioFile=output/INTERVAL-covid-X.varianceRatio.txt \
+   --SAIGEOutputFile=output/INTERVAL-X.txt \
    --IsOutputNinCaseCtrl=TRUE \
    --IsOutputHetHomCountsinCaseCtrl=TRUE \
    --IsOutputAFinCaseCtrl=TRUE
-gzip -f output/INTERVAL-{}.txt
-'
+  gzip -f output/INTERVAL-X.txt
+}
 
-# Gene-based association tests
+export d=20200731
+export covlist=sex,age,age2,sexage,PC_1,PC_2,PC_3,PC_4,PC_5,PC_6,PC_7,PC_8,PC_9,PC_10,PC_11,PC_12,PC_13,PC_14,PC_15,PC_16,PC_17,PC_18,PC_19,PC_20
+for dir in ${d}-ANA_C1_V2 ${d}-ANA_C2_V2
+do
+  cd ${dir}
+     Cx_V2_step1
+     sbatch --wait autosomes.sb
+     Cx_V2_X
+  cd -
+done
 
-createSparseGRM.R \
-   --plinkFile=work/INTERVAL-covid \
-   --minMAF=0.0001 \
-   --nThreads=8 \
-   --outputPrefix=output/INTERVAL-covid.sparseGRM \
-   --numRandomMarkerforSparseKin=2000 \
-   --relatednessCutoff=0.125
+export covlist=sex,PC_1,PC_2,PC_3,PC_4,PC_5,PC_6,PC_7,PC_8,PC_9,PC_10,PC_11,PC_12,PC_13,PC_14,PC_15,PC_16,PC_17,PC_18,PC_19,PC_20
+for dir in ${d}-male-ANA_C1_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C1_V2 ${d}-female-ANA_C2_V2
+do
+  cd ${dir}
+     Cx_V2_step1
+     sbatch --wait autosomes.sb
+     Cx_V2_X
+  cd -
+done
 
-step1_fitNULLGLMM.R \
-   --plinkFile=work/INTERVAL-covid \
-   --phenoFile=work/INTERVAL-covid.txt \
-   --phenoCol=SARS_CoV \
-   --covarColList=age,age2,sex,PC_1,PC_2,PC_3,PC_4,PC_5,PC_6,PC_7,PC_8,PC_9,PC_10,PC_11,PC_12,PC_13,PC_14,PC_15,PC_16,PC_17,PC_18,PC_19,PC_20 \
-   --sampleIDColinphenoFile=ID \
-   --traitType=binary \
-   --outputPrefix=output/INTERVAL-covid \
-   --outputPrefix_varRatio=output/INTERVAL-covid \
-   --nThreads=8 \
-   --LOCO=FALSE \
-   --skipModelFitting=FALSE \
-   --IsSparseKin=TRUE \
-   --isCateVarianceRatio=TRUE \
-   --IsOverwriteVarianceRatioFile=TRUE
-
-seq 22 | \
-parallel -j1 --env autosomes -C' ' '
-step2_SPAtests.R \
-   --bgenFile=output/INTERVAL-{}.bgen \
-   --bgenFileIndex=output/INTERVAL-{}.bgen.bgi \
-   --chrom={} \
-   --minMAF=0 \
-   --minMAC=1 \
-   --maxMAFforGroupTest=0.001 \
-   --sampleFile=work/INTERVAL-covid.samples \
-   --GMMATmodelFile=output/INTERVAL-covid.rda \
-   --varianceRatioFile=output/INTERVAL-covid.varianceRatio.txt \
-   --SAIGEOutputFile=output/INTERVAL-{}.gene \
-   --numLinesOutput=1 \
-   --sparseSigmaFile=output/INTERVAL-covid.sparseGRM_relatednessCutoff_0.125_2000_randomMarkersUsed.sparseGRM.mtx \
-   --idstoIncludeFile=work/INTERVAL-{}.incl \
-   --groupFile=work/INTERVAL-{}.gene \
-   --IsOutputAFinCaseCtrl=TRUE \
-   --IsSingleVarinGroupTest=TRUE \
-   --IsOutputPvalueNAinGroupTestforBinary=TRUE \
-   --IsAccountforCasecontrolImbalanceinGroupTest=TRUE
-'
+export covlist=PC_1,PC_2,PC_3,PC_4,PC_5,PC_6,PC_7,PC_8,PC_9,PC_10,PC_11,PC_12,PC_13,PC_14,PC_15,PC_16,PC_17,PC_18,PC_19,PC_20
+for dir in ${d}-male-60-ANA_C1_V2 ${d}-male-60-ANA_C2_V2 ${d}-female-60-ANA_C1_V2 ${d}-female-60-ANA_C2_V2
+do
+  cd ${dir}
+     Cx_V2_step1
+     sbatch --wait autosomes.sb
+     Cx_V2_X
+  cd -
+done

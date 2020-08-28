@@ -79,8 +79,8 @@ function X()
   do
     cd ${dir}
     grep -v -f work/INTERVAL-covid-X.excl-samples work/INTERVAL-covid-X.samples | \
-    tr '_' '\t' | \
-    cut -f1 | \
+#   tr '_' '\t' | \
+#   cut -f1 | \
     bcftools view -S - ${SCALLOP}/HGI/work/INTERVAL-X-src.vcf.gz -O v | \
     vcf-fix-ploidy -s work/INTERVAL-covid-X.FM | \
     bgzip -cf > output/INTERVAL-X-ploidy.vcf.gz
@@ -97,11 +97,19 @@ function GRM()
 # GRM
   module load plink/2.00-alpha
   export merged_imputation=/home/jhz22/rds/post_qc_data/interval/genotype/affy_ukbiobank_array/genotyped/merged_imputation
-  plink2 --bfile ${merged_imputation} --indep-pairwise 1000kb 1 0.1 --out work/INTERVAL-covid
-  plink2 --bfile ${merged_imputation} --make-bed --extract work/INTERVAL-covid.prune.in -keep work/INTERVAL-covid.samples2 --out work/INTERVAL-covid
-  awk '{$1=$1 "_"_ $1; $2=$2 "_" $2;};1' work/INTERVAL-covid.fam > work/INTERVAL-covid.fam2
-  plink --bed work/INTERVAL-covid.bed --bim work/INTERVAL-covid.bim --fam work/INTERVAL-covid.fam2 \
-        --make-bed -keep work/INTERVAL-covid-X.samples2 --out work/INTERVAL-covid-X
+  plink2 --bfile ${merged_imputation} --indep-pairwise 1000kb 1 0.1 --out ${SCALLOP}/HGI/work/INTERVAL-covid
+  export d=20200731
+  for dir in ${d}-ANA_C1_V2 ${d}-ANA_C2_V2 ${d}-male-ANA_C1_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C1_V2 ${d}-female-ANA_C2_V2 \
+             ${d}-male-60-ANA_C1_V2 ${d}-male-60-ANA_C2_V2 ${d}-female-60-ANA_C1_V2 ${d}-female-60-ANA_C2_V2
+  do
+    cd ${dir}
+    plink2 --bfile ${merged_imputation} --make-bed --extract ${SCALLOP}/HGI/work/INTERVAL-covid.prune.in \
+           --keep work/INTERVAL-covid.samples2 --out work/INTERVAL-covid
+    awk '{$1=$1 "_"_ $1; $2=$2 "_" $2;};1' work/INTERVAL-covid.fam > work/INTERVAL-covid.fam2
+    plink --bed work/INTERVAL-covid.bed --bim work/INTERVAL-covid.bim --fam work/INTERVAL-covid.fam2 \
+          --make-bed -keep work/INTERVAL-covid-X.samples2 --out work/INTERVAL-covid-X
+    cd -
+  done
 }
 
 function aggregate()

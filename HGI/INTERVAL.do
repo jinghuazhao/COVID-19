@@ -121,8 +121,8 @@ end
 
 // setup
 local covlist sex age age2 sexage
-CxV2 1 20200731-ANA_C1_V2 `covlist'
-CxV2 2 20200731-ANA_C2_V2 `covlist'
+CxV2 1 20200731-ANA_C1_V2 "`covlist'"
+CxV2 2 20200731-ANA_C2_V2 "`covlist'"
 
 program sexCxV2
   // 1=1/2 for C1/C2; 2=working directory; 3=sex 4=covlist
@@ -145,10 +145,10 @@ program sexCxV2
 end
 
 local covlist age age2
-sexCxV2 1 20200731-male-ANA_C1_V2 1 `covlist'
-sexCxV2 2 20200731-male-ANA_C2_V2 1 `covlist'
-sexCxV2 1 20200731-female-ANA_C1_V2 2 `covlist'
-sexCxV2 2 20200731-female-ANA_C2_V2 2 `covlist'
+sexCxV2 1 20200731-male-ANA_C1_V2 1 "`covlist'"
+sexCxV2 2 20200731-male-ANA_C2_V2 1 "`covlist'"
+sexCxV2 1 20200731-female-ANA_C1_V2 2 "`covlist'"
+sexCxV2 2 20200731-female-ANA_C2_V2 2 "`covlist'"
 
 program sex60CxV2
   // 1=1/2 for C1/C2; 2=working directory; 3=sex
