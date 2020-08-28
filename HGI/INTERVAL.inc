@@ -88,8 +88,9 @@ function X()
     cd -
   done
 }
+
 # step 4. single variant association tests + gene annodation/association analysis
-# INTERVAL.sh + glist_hg19.sh/INTERVAL-X.sh
+# INTERVAL.sh + glist_hg19.sh
 
 function GRM()
 # step 2. inference from directly genotyped variants 
@@ -111,6 +112,42 @@ function GRM()
     cd -
   done
 }
+
+function Cx_V2_step1()
+{
+  step1_fitNULLGLMM.R \
+     --plinkFile=${dir}/work/INTERVAL-covid \
+     --phenoFile=${dir}/work/INTERVAL-covid.txt \
+     --phenoCol=SARS_CoV \
+     --covarColList=${covlist} \
+     --sampleIDColinphenoFile=ID \
+     --traitType=binary \
+     --outputPrefix=${dir}/output/INTERVAL-covid \
+     --nThreads=4 \
+     --IsOverwriteVarianceRatioFile=TRUE
+}
+
+export d=20200731
+export covlist=sex,age,age2,sexage,PC_1,PC_2,PC_3,PC_4,PC_5,PC_6,PC_7,PC_8,PC_9,PC_10,PC_11,PC_12,PC_13,PC_14,PC_15,PC_16,PC_17,PC_18,PC_19,PC_20
+for dir in ${d}-ANA_C1_V2 ${d}-ANA_C2_V2
+do
+  export dir=${dir}
+  Cx_V2_step1
+done
+
+export covlist=sex,PC_1,PC_2,PC_3,PC_4,PC_5,PC_6,PC_7,PC_8,PC_9,PC_10,PC_11,PC_12,PC_13,PC_14,PC_15,PC_16,PC_17,PC_18,PC_19,PC_20
+for dir in ${d}-male-ANA_C1_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C1_V2 ${d}-female-ANA_C2_V2
+do
+  export dir=${dir}
+  Cx_V2_step1
+done
+
+export covlist=PC_1,PC_2,PC_3,PC_4,PC_5,PC_6,PC_7,PC_8,PC_9,PC_10,PC_11,PC_12,PC_13,PC_14,PC_15,PC_16,PC_17,PC_18,PC_19,PC_20
+for dir in ${d}-male-60-ANA_C1_V2 ${d}-male-60-ANA_C2_V2 ${d}-female-60-ANA_C1_V2 ${d}-female-60-ANA_C2_V2
+do
+  export dir=${dir}
+  Cx_V2_step1
+done
 
 function aggregate()
 # step 5. summary of results
@@ -235,4 +272,4 @@ function upload()
 
 }
 
-# srun -A CARDIO-SL0-CPU -p cardio_intr --qos=cardio_intr -N1 -n1 -c4 --mem=30G -t 12:0:0 --pty bash -i
+# srun -A CARDIO-SL0-CPU -p cardio_intr --qos=cardio_intr -N1 -n1 -c4 --mem=50G -t 12:0:0 --pty bash -i
