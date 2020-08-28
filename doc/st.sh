@@ -13,7 +13,7 @@ git commit -m "SomaLogic"
 git add GEO/GEO.R GEO/GEO2R.R GEO/test.ini GEO/test.R GEO/test.sh GEO/README.md
 git commit -m "GEO test"
 git add HGI/INTERVAL.do HGI/INTERVAL.inc HGI/INTERVAL.rec HGI/INTERVAL.sh HGI/autosomes.sb HGI/glist-hg19.sb HGI/glist-hg19.sh HGI/select.sh
-git add HGI/20200731.sh HGI/20200731-autosomes.sb
+git add HGI/20200731.sh
 git commit -m "HGI analysis"
 git add NGS/README.* NGS/ngs.png NGS/ngs.do NGS/ngs.R NGS/ngs.sb NGS/ngs.sh NGS/lod.sh NGS/pQTLtools.R NGS/utils
 git commit -m "Olink/NGS pilot"
