@@ -14,7 +14,7 @@ program single_imputation
    replace sexage=sex*age
 end
 
-local dir : env dir
+local dir : env HGI
 local ev : env ev
 
 // 1. PCA
