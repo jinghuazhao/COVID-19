@@ -7,8 +7,8 @@
 #SBATCH --array=1
 #SBATCH --mem=28800
 #SBATCH --time=5-00:00:00
-#SBATCH --output=/rds/user/jhz22/hpc-work/work/_bgen_%A_%a.out
-#SBATCH --error=/rds/user/jhz22/hpc-work/work/_bgen_%A_%a.err
+#SBATCH --output=/rds/user/jhz22/hpc-work/work/_X_%A_%a.out
+#SBATCH --error=/rds/user/jhz22/hpc-work/work/_X_%A_%a.err
 #SBATCH --export ALL
 
 export autosomes=/home/jhz22/rds/post_qc_data/interval/imputed/uk10k_1000g_b37
@@ -19,17 +19,6 @@ export d=20200731
 
 function Cx_V2_X()
 {
-  step1_fitNULLGLMM.R \
-     --plinkFile=${dir}/work/INTERVAL-covid-X \
-     --phenoFile=${dir}/work/INTERVAL-covid-X.txt \
-     --phenoCol=SARS_CoV \
-     --covarColList=${covlist}
-     --sampleIDColinphenoFile=ID \
-     --traitType=binary \
-     --outputPrefix=${dir}/output/INTERVAL-covid-X \
-     --nThreads=8 \
-     --IsOverwriteVarianceRatioFile=TRUE 
-
   step2_SPAtests.R \
      --vcfFile=${dir}/work/INTERVAL-X-ploidy.vcf.gz \
      --vcfFileIndex=${dir}/work/INTERVAL-X-ploidy.vcf.gz.tbi \
