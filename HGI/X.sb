@@ -1,0 +1,69 @@
+#!/usr/bin/bash
+
+#SBATCH --job-name=X
+#SBATCH --account CARDIO-SL0-CPU
+#SBATCH --partition cardio
+#SBATCH --qos=cardio
+#SBATCH --array=1
+#SBATCH --mem=28800
+#SBATCH --time=5-00:00:00
+#SBATCH --output=/rds/user/jhz22/hpc-work/work/_bgen_%A_%a.out
+#SBATCH --error=/rds/user/jhz22/hpc-work/work/_bgen_%A_%a.err
+#SBATCH --export ALL
+
+export autosomes=/home/jhz22/rds/post_qc_data/interval/imputed/uk10k_1000g_b37
+export X=/rds/project/jmmh2/rds-jmmh2-projects/covid/ace2/interval_genetic_data/interval_imputed_data
+export HGI=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/HGI
+export TMPDIR=/rds/user/jhz22/hpc-work/work
+export d=20200731
+
+function Cx_V2_X()
+{
+  step1_fitNULLGLMM.R \
+     --plinkFile=${dir}/work/INTERVAL-covid-X \
+     --phenoFile=${dir}/work/INTERVAL-covid-X.txt \
+     --phenoCol=SARS_CoV \
+     --covarColList=${covlist}
+     --sampleIDColinphenoFile=ID \
+     --traitType=binary \
+     --outputPrefix=${dir}/output/INTERVAL-covid-X \
+     --nThreads=8 \
+     --IsOverwriteVarianceRatioFile=TRUE 
+
+  step2_SPAtests.R \
+     --vcfFile=${dir}/work/INTERVAL-X-ploidy.vcf.gz \
+     --vcfFileIndex=${dir}/work/INTERVAL-X-ploidy.vcf.gz.tbi \
+     --chrom=X \
+     --minMAF=0.0001 \
+     --minMAC=1 \
+     --sampleFile=${dir}/work/INTERVAL-X.samples \
+     --GMMATmodelFile=${dir}/output/INTERVAL-covid-X.rda \
+     --varianceRatioFile=${dir}/output/INTERVAL-covid-X.varianceRatio.txt \
+     --SAIGEOutputFile=${dir}/output/INTERVAL-X.txt \
+     --IsOutputNinCaseCtrl=TRUE \
+     --IsOutputHetHomCountsinCaseCtrl=TRUE \
+     --IsOutputAFinCaseCtrl=TRUE
+  gzip -f ${dir}/output/INTERVAL-X.txt
+
+  step2_SPAtests.R \
+     --vcfFile=${dir}/work/INTERVAL-X-ploidy.vcf.gz \
+     --vcfFileIndex=${dir}/work/INTERVAL-X-ploidy.vcf.gz.tbi \
+     --vcfField=GT \
+     --chrom=chrX \
+     --minMAF=0.0001 \
+     --minMAC=1 \
+     --GMMATmodelFile=${dir}/output/INTERVAL-covid-X.rda \
+     --varianceRatioFile=${dir}/output/INTERVAL-covid-X.varianceRatio.txt \
+     --SAIGEOutputFile=${dir}/output/INTERVAL-X.out \
+     --numLinesOutput=2 \
+     --IsOutputAFinCaseCtrl=TRUE \
+     --is_rewrite_XnonPAR_forMales=TRUE \
+     --X_PARregion=60001-2699520,154931044-155260560 \
+     --sampleFile_male=${dir}/work/INTERVAL-covid-X.FM
+  gzip -f ${dir}/output/INTERVAL-X.out
+}
+# GRCh38/hg38
+# --X_PARregion=10001-2781479,154931044-155260560
+# https://en.wikipedia.org/wiki/Pseudoautosomal_region
+
+Cx_V2_X
