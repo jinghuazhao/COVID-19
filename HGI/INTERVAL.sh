@@ -166,7 +166,15 @@ function aggregate()
 # [dataset].[last name].[analysis_name].[freeze_number].[sex].[ancestry].[n_cases].[n_controls].[gwas software].[YYYYMMDD].txt.gz
 # [dataset].[last name].[analysis_name].[freeze_number].[sex].[ancestry].[gwas software].[YYYYMMDD].txt.gz
 # sex=M/MALE, F/FEMALE, ALL
-  export snvResults=output/INTERVAL.Zhao.ANA_C2_V2.5.ALL.EUR.144.612.SAIGE.20200617.txt.gz
+# [dataset].[last name].[analysis_name].[freeze_number].[age].[sex].[ancestry].[n_cases].[n_controls].[gwas software].[YYYYMMDD].txt.gz
+# export snvResults=output/INTERVAL.Zhao.ANA_C2_V2.5.ALL.EUR.144.612.SAIGE.20200617.txt.gz
+  for dir in ${d}-ANA_C1_V2 ${d}-ANA_C2_V2 \
+             ${d}-male-ANA_C1_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C1_V2 ${d}-female-ANA_C2_V2 \
+             ${d}-male-60-ANA_C1_V2 ${d}-male-60-ANA_C2_V2 ${d}-female-60-ANA_C1_V2 ${d}-female-60-ANA_C2_V2
+  do
+  export dir=${dir}
+  cd ${dir}
+  export snvResults=${SCALLOP}/HGI/${dir}.txt.gz
   (
     gunzip -c output/INTERVAL-*.txt.gz | \
     cut -d' ' -f1-3,5-9,11-14,17,21-26 | \
@@ -188,6 +196,8 @@ function aggregate()
   ) | \
   awk '{if(NR>1){$1=$1+0;$3=$1+0 ":" $2 "_" $4 "/" $5}};1' | \
   gzip -f > ${snvResults}
+  cd -
+  done
   export geneResults=output/INTERVAL.Zhao.ANA_C2_V2.6.ALL.EUR.144.612.SAIGE.gene.20200617.txt.gz
   (
     cut -d' ' -f1,2,11-14 output/INTERVAL-*.gene.txt | head -1
