@@ -12,19 +12,21 @@
 #SBATCH --export ALL
 
 export TMPDIR=/rds/user/jhz22/hpc-work/work
-export job=$SLURM_ARRAY_TASK_ID
+export chr=$SLURM_ARRAY_TASK_ID
+
+module load gcc/6
 
 step2_SPAtests.R \
-   --bgenFile=${dir}/output/INTERVAL-${job}.bgen \
-   --bgenFileIndex=${dir}/output/INTERVAL-${job}.bgen.bgi \
-   --chrom=${job} \
+   --bgenFile=${dir}/output/INTERVAL-${chr}.bgen \
+   --bgenFileIndex=${dir}/output/INTERVAL-${chr}.bgen.bgi \
+   --chrom=${chr} \
    --minMAF=0.0001 \
    --minMAC=1 \
    --sampleFile=${dir}/work/INTERVAL-covid.samples \
    --GMMATmodelFile=${dir}/output/INTERVAL-covid.rda \
    --varianceRatioFile=${dir}/output/INTERVAL-covid.varianceRatio.txt \
-   --SAIGEOutputFile=${dir}/output/INTERVAL-${job}.txt \
+   --SAIGEOutputFile=${dir}/output/INTERVAL-${chr}.txt \
    --IsOutputNinCaseCtrl=TRUE \
    --IsOutputHetHomCountsinCaseCtrl=TRUE \
    --IsOutputAFinCaseCtrl=TRUE
-gzip -f ${dir}/output/INTERVAL-${job}.txt
+gzip -f ${dir}/output/INTERVAL-${chr}.txt
