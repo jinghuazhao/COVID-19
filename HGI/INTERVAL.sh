@@ -44,7 +44,8 @@ function make_bed()
   export merged_imputation=/home/jhz22/rds/post_qc_data/interval/genotype/affy_ukbiobank_array/genotyped/merged_imputation
   plink2 --bfile ${merged_imputation} --indep-pairwise 1000kb 1 0.1 --out ${SCALLOP}/HGI/work/INTERVAL-covid
   export d=20200731
-  for dir in ${d}-ANA_C1_V2 ${d}-ANA_C2_V2 ${d}-male-ANA_C1_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C1_V2 ${d}-female-ANA_C2_V2 \
+  for dir in ${d}-ANA_C1_V2 ${d}-ANA_C2_V2 \
+             ${d}-male-ANA_C1_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C1_V2 ${d}-female-ANA_C2_V2 \
              ${d}-male-60-ANA_C1_V2 ${d}-male-60-ANA_C2_V2 ${d}-female-60-ANA_C1_V2 ${d}-female-60-ANA_C2_V2
   do
     cd ${dir}
@@ -97,7 +98,8 @@ function X()
   bcftools annotate --set-id '%CHROM:%POS\_%REF\/%FIRST_ALT' ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz -O z -o work/INTERVAL-X-src.vcf.gz
   bcftools index -tf work/INTERVAL-X-src.vcf.gz
   export d=20200731
-  for dir in ${d}-ANA_C1_V2 ${d}-ANA_C2_V2 ${d}-male-ANA_C1_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C1_V2 ${d}-female-ANA_C2_V2 \
+  for dir in ${d}-ANA_C1_V2 ${d}-ANA_C2_V2 \
+             ${d}-male-ANA_C1_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C1_V2 ${d}-female-ANA_C2_V2 \
              ${d}-male-60-ANA_C1_V2 ${d}-male-60-ANA_C2_V2 ${d}-female-60-ANA_C1_V2 ${d}-female-60-ANA_C2_V2
   do
     cd ${dir}
@@ -264,7 +266,7 @@ function upload()
   cd ${dir}/py37/bin
   ./gsutil ls
   cd HGI/output
-# gsutil cp $1 gs::/covid19-hg-upload-bugbank
+# gsutil cp $1 gs://covid19-hg-upload-bugbank
   gsutil cp $1 gs://covid19-hg-upload-uk--blood-donors-cohort 
 # web: https://console.cloud.google.com/storage/browser/covid19-hg-upload-uk--blood-donors-cohort?project=covid-19-hg
 # Fill the form here,
