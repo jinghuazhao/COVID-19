@@ -20,12 +20,12 @@ export d=20200731
 function Cx_V2_X()
 {
   step2_SPAtests.R \
-     --vcfFile=${dir}/work/INTERVAL-X-ploidy.vcf.gz \
-     --vcfFileIndex=${dir}/work/INTERVAL-X-ploidy.vcf.gz.tbi \
+     --vcfFile=${dir}/output/INTERVAL-X-ploidy.vcf.gz \
+     --vcfFileIndex=${dir}/output/INTERVAL-X-ploidy.vcf.gz.tbi \
      --chrom=X \
      --minMAF=0.0001 \
      --minMAC=1 \
-     --sampleFile=${dir}/work/INTERVAL-X.samples \
+     --sampleFile=${dir}/work/INTERVAL-covid-X.samples \
      --GMMATmodelFile=${dir}/output/INTERVAL-covid-X.rda \
      --varianceRatioFile=${dir}/output/INTERVAL-covid-X.varianceRatio.txt \
      --SAIGEOutputFile=${dir}/output/INTERVAL-X.txt \
@@ -35,8 +35,8 @@ function Cx_V2_X()
   gzip -f ${dir}/output/INTERVAL-X.txt
 
   step2_SPAtests.R \
-     --vcfFile=${dir}/work/INTERVAL-X-ploidy.vcf.gz \
-     --vcfFileIndex=${dir}/work/INTERVAL-X-ploidy.vcf.gz.tbi \
+     --vcfFile=${dir}/output/INTERVAL-X-ploidy.vcf.gz \
+     --vcfFileIndex=${dir}/output/INTERVAL-X-ploidy.vcf.gz.tbi \
      --vcfField=GT \
      --chrom=chrX \
      --minMAF=0.0001 \
@@ -54,5 +54,7 @@ function Cx_V2_X()
 # GRCh38/hg38
 # --X_PARregion=10001-2781479,154931044-155260560
 # https://en.wikipedia.org/wiki/Pseudoautosomal_region
+
+module load gcc/6
 
 Cx_V2_X
