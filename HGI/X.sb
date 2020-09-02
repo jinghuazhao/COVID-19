@@ -11,11 +11,7 @@
 #SBATCH --error=/rds/user/jhz22/hpc-work/work/_X_%A_%a.err
 #SBATCH --export ALL
 
-export autosomes=/home/jhz22/rds/post_qc_data/interval/imputed/uk10k_1000g_b37
-export X=/rds/project/jmmh2/rds-jmmh2-projects/covid/ace2/interval_genetic_data/interval_imputed_data
-export HGI=/rds/project/jmmh2/rds-jmmh2-projects/olink_proteomics/scallop/HGI
 export TMPDIR=/rds/user/jhz22/hpc-work/work
-export d=20200731
 
 function Cx_V2_X()
 {
@@ -38,7 +34,7 @@ function Cx_V2_X()
      --vcfFile=${dir}/output/INTERVAL-X-ploidy.vcf.gz \
      --vcfFileIndex=${dir}/output/INTERVAL-X-ploidy.vcf.gz.tbi \
      --vcfField=GT \
-     --chrom=chrX \
+     --chrom=X \
      --minMAF=0.0001 \
      --minMAC=1 \
      --GMMATmodelFile=${dir}/output/INTERVAL-covid-X.rda \
