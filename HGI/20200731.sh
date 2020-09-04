@@ -28,7 +28,7 @@ function rename()
   export lastname=Zhao
   export analysisname=ANA_${2}
   export freezenumber=5
-  export age=${3]
+  export age=${3}
   export sex=${4}
   export ancestry=EUR
   export ncases=${5}
