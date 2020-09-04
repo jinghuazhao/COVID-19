@@ -257,16 +257,17 @@ function upload()
 # https://docs.google.com/forms/d/1eAaf-4XNYkplBo5Appbf8LHl2KHJyks9R4t0E3h0jII/viewform?edit_requested=true
 # https://console.cloud.google.com/storage/browser/covid19-hg-upload-bugbank
 
-  cd ${dir}
+  cd ${HGI}
   module load python/3.7
   virtualenv py37
   source py37/bin/activate
   pip install gsutil==4.50
-  cd ${dir}/py37/bin
+  cd ${HGI}/py37/bin
   ./gsutil ls
-  cd HGI/output
+  cd ${HGI}
 # gsutil cp $1 gs://covid19-hg-upload-bugbank
   gsutil cp $1 gs://covid19-hg-upload-uk--blood-donors-cohort 
+  gsutil cp 20200731*/output/INTERVAL.Zhao* gs://covid19-hg-upload-uk--blood-donors-cohort
 # web: https://console.cloud.google.com/storage/browser/covid19-hg-upload-uk--blood-donors-cohort?project=covid-19-hg
 # Fill the form here,
 # https://airtable.com/shrdJDwSHRZKXv45H
