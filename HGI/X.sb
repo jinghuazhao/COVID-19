@@ -46,6 +46,7 @@ function Cx_V2_X()
      --sampleFile_male=${dir}/work/INTERVAL-covid-X.FM
   gzip -f ${dir}/output/INTERVAL-X.out
 }
+# https://github.com/weizhouUMICH/SAIGE/tree/0.39.2
 # GRCh38/hg38
 # --X_PARregion=10001-2781479,154931044-155260560
 # https://en.wikipedia.org/wiki/Pseudoautosomal_region

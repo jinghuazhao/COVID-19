@@ -170,7 +170,6 @@ do
   Cx_V2_step1_X
 done
 
-export d=20200731
 for dir in ${d}-ANA_C1_V2 ${d}-ANA_C2_V2 \
            ${d}-male-ANA_C1_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C1_V2 ${d}-female-ANA_C2_V2 \
            ${d}-male-60-ANA_C1_V2 ${d}-male-60-ANA_C2_V2 ${d}-female-60-ANA_C1_V2 ${d}-female-60-ANA_C2_V2
