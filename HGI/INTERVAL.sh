@@ -256,18 +256,16 @@ function upload()
 # Request an account
 # https://docs.google.com/forms/d/1eAaf-4XNYkplBo5Appbf8LHl2KHJyks9R4t0E3h0jII/viewform?edit_requested=true
 # https://console.cloud.google.com/storage/browser/covid19-hg-upload-bugbank
-
   cd ${HGI}
   module load python/3.7
   virtualenv py37
   source py37/bin/activate
   pip install gsutil==4.50
   gsutil ls
-# gsutil cp $1 gs://covid19-hg-upload-bugbank
   gsutil cp $1 gs://covid19-hg-upload-uk--blood-donors-cohort 
   gsutil cp 20200731*/output/INTERVAL.Zhao* gs://covid19-hg-upload-uk--blood-donors-cohort
-# Copy to the HGI spreadsheet
-# ls 20200731*/output/INTERVAL.Zhao* | xargs -l basename | xsel -i
+# HGI spreadsheet
+  ls 20200731*/output/INTERVAL.Zhao* | xargs -l basename | xsel -i
 # web: https://console.cloud.google.com/storage/browser/covid19-hg-upload-uk--blood-donors-cohort?project=covid-19-hg
 # Fill the form (now uses tab in the spreadsheet),
 # https://airtable.com/shrdJDwSHRZKXv45H
@@ -276,41 +274,7 @@ function upload()
 # HGI results
 # gs://covid19-hg-analysis/20200619/results/full
 # gs://covid19-hg-analysis/20200619/results
-#
-# build 38:
-# https://storage.googleapis.com/covid19-hg-public/20200619/results/leave_ukbb/COVID19_HGI_ANA_A2_V2_leave_UKBB_20200630.txt.gz
-# https://storage.googleapis.com/covid19-hg-public/20200619/results/leave_ukbb/COVID19_HGI_ANA_A2_V2_leave_UKBB_20200630.txt.gz.tbi
-# https://storage.googleapis.com/covid19-hg-public/20200619/results/leave_ukbb/COVID19_HGI_ANA_A2_V2_leave_UKBB_20200630.txt.gz_1.0E-5.txt
-# https://storage.googleapis.com/covid19-hg-public/20200619/results/leave_ukbb/COVID19_HGI_ANA_B1_V2_leave_UKBB_20200630.txt.gz
-# https://storage.googleapis.com/covid19-hg-public/20200619/results/leave_ukbb/COVID19_HGI_ANA_B1_V2_leave_UKBB_20200630.txt.gz.tbi
-# https://storage.googleapis.com/covid19-hg-public/20200619/results/leave_ukbb/COVID19_HGI_ANA_B1_V2_leave_UKBB_20200630.txt.gz_1.0E-5.txt
-# https://storage.googleapis.com/covid19-hg-public/20200619/results/leave_ukbb/COVID19_HGI_ANA_B2_V2_leave_UKBB_20200630.txt.gz
-# https://storage.googleapis.com/covid19-hg-public/20200619/results/leave_ukbb/COVID19_HGI_ANA_B2_V2_leave_UKBB_20200630.txt.gz.tbi
-# https://storage.googleapis.com/covid19-hg-public/20200619/results/leave_ukbb/COVID19_HGI_ANA_B2_V2_leave_UKBB_20200630.txt.gz_1.0E-5.txt
-# https://storage.googleapis.com/covid19-hg-public/20200619/results/leave_ukbb/COVID19_HGI_ANA_C1_V2_leave_UKBB_20200630.txt.gz
-# https://storage.googleapis.com/covid19-hg-public/20200619/results/leave_ukbb/COVID19_HGI_ANA_C1_V2_leave_UKBB_20200630.txt.gz.tbi
-# https://storage.googleapis.com/covid19-hg-public/20200619/results/leave_ukbb/COVID19_HGI_ANA_C1_V2_leave_UKBB_20200630.txt.gz_1.0E-5.txt
-# https://storage.googleapis.com/covid19-hg-public/20200619/results/leave_ukbb/COVID19_HGI_ANA_C2_V2_leave_UKBB_20200630.txt.gz
-# https://storage.googleapis.com/covid19-hg-public/20200619/results/leave_ukbb/COVID19_HGI_ANA_C2_V2_leave_UKBB_20200630.txt.gz.tbi
-# https://storage.googleapis.com/covid19-hg-public/20200619/results/leave_ukbb/COVID19_HGI_ANA_C2_V2_leave_UKBB_20200630.txt.gz_1.0E-5.txt
-
-# build 37:
-# https://storage.googleapis.com/covid19-hg-public/20200619/results/leave_ukbb/build_37/COVID19_HGI_ANA_A2_V2_leave_UKBB_20200630.txt.gz.b37.txt.gz
-# https://storage.googleapis.com/covid19-hg-public/20200619/results/leave_ukbb/build_37/COVID19_HGI_ANA_A2_V2_leave_UKBB_20200630.txt.gz.b37.txt.gz.tbi
-# https://storage.googleapis.com/covid19-hg-public/20200619/results/leave_ukbb/build_37/COVID19_HGI_ANA_A2_V2_leave_UKBB_20200630.txt.gz.b37_1.0E-5.txt
-# https://storage.googleapis.com/covid19-hg-public/20200619/results/leave_ukbb/build_37/COVID19_HGI_ANA_B1_V2_leave_UKBB_20200630.txt.gz.b37.txt.gz
-# https://storage.googleapis.com/covid19-hg-public/20200619/results/leave_ukbb/build_37/COVID19_HGI_ANA_B1_V2_leave_UKBB_20200630.txt.gz.b37.txt.gz.tbi
-# https://storage.googleapis.com/covid19-hg-public/20200619/results/leave_ukbb/build_37/COVID19_HGI_ANA_B1_V2_leave_UKBB_20200630.txt.gz.b37_1.0E-5.txt
-# https://storage.googleapis.com/covid19-hg-public/20200619/results/leave_ukbb/build_37/COVID19_HGI_ANA_B2_V2_leave_UKBB_20200630.txt.gz.b37.txt.gz
-# https://storage.googleapis.com/covid19-hg-public/20200619/results/leave_ukbb/build_37/COVID19_HGI_ANA_B2_V2_leave_UKBB_20200630.txt.gz.b37.txt.gz.tbi
-# https://storage.googleapis.com/covid19-hg-public/20200619/results/leave_ukbb/build_37/COVID19_HGI_ANA_B2_V2_leave_UKBB_20200630.txt.gz.b37_1.0E-5.txt
-# https://storage.googleapis.com/covid19-hg-public/20200619/results/leave_ukbb/build_37/COVID19_HGI_ANA_C1_V2_leave_UKBB_20200630.txt.gz.b37.txt.gz
-# https://storage.googleapis.com/covid19-hg-public/20200619/results/leave_ukbb/build_37/COVID19_HGI_ANA_C1_V2_leave_UKBB_20200630.txt.gz.b37.txt.gz.tbi
-# https://storage.googleapis.com/covid19-hg-public/20200619/results/leave_ukbb/build_37/COVID19_HGI_ANA_C1_V2_leave_UKBB_20200630.txt.gz.b37_1.0E-5.txt
-# https://storage.googleapis.com/covid19-hg-public/20200619/results/leave_ukbb/build_37/COVID19_HGI_ANA_C2_V2_leave_UKBB_20200630.txt.gz.b37.txt.gz
-# https://storage.googleapis.com/covid19-hg-public/20200619/results/leave_ukbb/build_37/COVID19_HGI_ANA_C2_V2_leave_UKBB_20200630.txt.gz.b37.txt.gz.tbi
-# https://storage.googleapis.com/covid19-hg-public/20200619/results/leave_ukbb/build_37/COVID19_HGI_ANA_C2_V2_leave_UKBB_20200630.txt.gz.b37_1.0E-5.txt
-
+# gsutil cp $1 gs://covid19-hg-upload-bugbank
 }
 
 # srun -A CARDIO-SL0-CPU -p cardio_intr --qos=cardio_intr -N1 -n1 -c4 --mem=50G -t 12:0:0 --pty bash -i
