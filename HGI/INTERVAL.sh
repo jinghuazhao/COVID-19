@@ -269,9 +269,9 @@ function upload()
 # Copy to the HGI spreadsheet
 # ls 20200731*/output/INTERVAL.Zhao* | xargs -l basename | xsel -i
 # web: https://console.cloud.google.com/storage/browser/covid19-hg-upload-uk--blood-donors-cohort?project=covid-19-hg
-# Fill the form here,
+# Fill the form (now uses tab in the spreadsheet),
 # https://airtable.com/shrdJDwSHRZKXv45H
-# Download the data from here,
+# Download data
 # https://console.cloud.google.com/storage/browser/covid19-hg-analysis
 # HGI results
 # gs://covid19-hg-analysis/20200619/results/full
