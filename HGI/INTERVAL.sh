@@ -262,12 +262,12 @@ function upload()
   virtualenv py37
   source py37/bin/activate
   pip install gsutil==4.50
-  cd ${HGI}/py37/bin
-  ./gsutil ls
-  cd ${HGI}
+  gsutil ls
 # gsutil cp $1 gs://covid19-hg-upload-bugbank
   gsutil cp $1 gs://covid19-hg-upload-uk--blood-donors-cohort 
   gsutil cp 20200731*/output/INTERVAL.Zhao* gs://covid19-hg-upload-uk--blood-donors-cohort
+# Copy to the HGI spreadsheet
+# ls 20200731*/output/INTERVAL.Zhao* | xargs -l basename | xsel -i
 # web: https://console.cloud.google.com/storage/browser/covid19-hg-upload-uk--blood-donors-cohort?project=covid-19-hg
 # Fill the form here,
 # https://airtable.com/shrdJDwSHRZKXv45H
