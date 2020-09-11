@@ -10,12 +10,12 @@ function init()
 {
   export src=tmp_raw_data/20200292_Danesh_NPX_2020-06-03.csv
   sed '1d' ${src} | \
-  cut -d';' -f4,5 | \
+  cut -d';' -f4,5,7 | \
   sort | \
   uniq | \
   tr ';' ' ' > work/ids.dat
   R --no-save -q <<\ \ END
-    ids <- read.table("work/ids.dat",col.names=c("UniProt","Prot"),as.is=TRUE)
+    ids <- read.table("work/ids.dat",col.names=c("UniProt","Prot","Panel"),as.is=TRUE)
     save(ids,file="work/ids.rda")
   END
   grep -v -e CSA ${src} | \
@@ -235,9 +235,9 @@ function qPCR()
   (
     gunzip -c ${OLINK}/INTERVAL_cvd3_SELP___P16109_chr_merged.gz | \
     awk 'NR==1{print "UniProt","prot","chr","pos",$2,$5,$6,$24,$25,$22,"NGS"}'
-    join -a1 -12 -23 <(awk 'NR>1{split($5,a,"_");print a[1],a[2],$6}' ${pval}/NGS.sentinels | sort -k2,2) \
+    join -12 -23 <(awk 'NR>1&&!/NEUROLOGY/&&!/ONCOLOGY/{split($5,a,"_");print a[1],a[2],$6}' ${pval}/NGS.sentinels | sort -k2,2) \
                  <(sort -k3,3 qPCR.list) | \
-    awk 'NF==5{
+    awk '{
        gsub(/chr/,"",$3);
        split($3,a,":");
        chr=a[1];
@@ -296,3 +296,48 @@ export pval=1e-6
 cvt
 export pval=1e-7
 cvt
+
+function qPCR_ngs()
+{
+  cd work; ln -sf INFLAMMATION-inf-QC.dat INFLAMMATION-inf1-QC.dat; cd -
+  export lookup=qPCR-${pval}.lookup
+  (
+    head -1 ${lookup} | \
+    awk '{print $0,"P","r"}'
+    cat ${lookup} | \
+    parallel -C' ' '
+      export MarkerName="chr{3}:{4}"
+      export all="{1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11}"
+      export panel=$(echo {11} | cut -d"-" -f1)
+      grep -e ${panel}_{1} ${pval}/NGS.sentinels | \
+      grep -e ${MarkerName} | \
+      awk -vall="${all}" "!/NEUROLOGY/&&!/ONCOLOGY/{sub(/_/,\" \",\$5);print all,\$4,\$5}"
+    ' | \
+    parallel -C' ' '
+      export all="{1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11} {12}"
+      if [ -f work/{11}-QC.dat ]; then
+         grep -e {13} work/{11}-QC.dat | \
+         grep -e {14} | \
+         awk -vall="${all}" "{print all,\$4}"
+      else
+         echo ${all} NA
+      fi
+    '
+  ) > qPCR-${pval}.Pr
+# .lookup
+# UniProt prot chr pos rsid alleleA alleleB frequentist_add_beta_1 frequentist_add_se_1 frequentist_add_pvalue NGS
+# .sentinels
+# Chrom Start End P prot MarkerName
+# .dat
+# NGS UniProt Prot r
+# benchmarks
+# P27930 - INFLAMMATION, cvd3
+# P13500 - NEUROLOGY, cvd3/inf1
+}
+
+export pval=1e-5
+qPCR_ngs
+export pval=1e-6
+qPCR_ngs
+export pval=1e-7
+qPCR_ngs
