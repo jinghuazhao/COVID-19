@@ -14,7 +14,7 @@
 * [CUH clinical update](https://cuhstaffportal.co.uk/operational/clinical-updates/) and [testing](https://www.cam.ac.uk/coronavirus/general-staff-advice/health-and-wellbeing#testing).
 * [Genetics Of Mortality In Critical Care](https://genomicc.org/)
 * [HDRUK/covid-19](https://github.com/HDRUK/covid-19).
-* [SARS-CoV-2 Research Grade Test Material](https://www.nist.gov/programs-projects/sars-cov-2-research-grade-test-material)([GitHub](https://github.com/usnistgov/RGTM10169)).
+* [SARS-CoV-2 Research Grade Test Material](https://www.nist.gov/programs-projects/sars-cov-2-research-grade-test-material) ([GitHub](https://github.com/usnistgov/RGTM10169)).
 * [The COVID-19 Host Genetics Initiative](https://covid19hg.netlify.com/)
   * [Registration](https://www.covid19hg.org/register/)
   * [GitHub repositories](https://github.com/covid19-hg/)
