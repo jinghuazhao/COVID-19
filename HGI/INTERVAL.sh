@@ -32,6 +32,8 @@ function phenotype()
     awk 'NR>1{print $1}' work/INTERVAL-covid-X.txt > work/INTERVAL-covid-X.samples
     awk '{print $1,$1}' work/INTERVAL-covid-X.samples > work/INTERVAL-covid-X.samples2
     grep -v -f work/INTERVAL-covid-X.excl-samples work/INTERVAL-X.FM > work/INTERVAL-covid-X.FM
+    awk '$2=="M"' work/INTERVAL-covid-X.FM | \
+    cut -f1 > work/INTERVAL-covid-X.samples-male
     cd -
   done
 }
@@ -176,7 +178,12 @@ for dir in ${d}-ANA_C1_V2 ${d}-ANA_C2_V2 \
 do
   export dir=${dir}
   sbatch --wait ${SCALLOP}/HGI/autosomes.sb
-  sbatch ${SCALLOP}/HGI/X.sb
+  export check=$(echo ${dir} | grep female)
+  if [ "${check}" == "" ]; then
+     sbatch ${SCALLOP}/HGI/X.sb
+  else
+     sbatch ${SCALLOP}/HGI/X-female.sb
+  fi
 done
 
 function aggregate()

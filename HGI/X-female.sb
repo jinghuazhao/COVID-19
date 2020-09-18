@@ -26,9 +26,6 @@ function Cx_V2_X()
      --SAIGEOutputFile=${dir}/output/INTERVAL-X.txt \
      --numLinesOutput=2 \
      --IsOutputAFinCaseCtrl=TRUE \
-     --is_rewrite_XnonPAR_forMales=TRUE \
-     --X_PARregion=60001-2699520,154931044-155260560 \
-     --sampleFile_male=${dir}/work/INTERVAL-covid-X.samples-male
   gzip -f ${dir}/output/INTERVAL-X.txt
 }
 # https://github.com/weizhouUMICH/SAIGE/tree/0.39.2
