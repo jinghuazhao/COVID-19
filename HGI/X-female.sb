@@ -25,7 +25,7 @@ function Cx_V2_X()
      --varianceRatioFile=${dir}/output/INTERVAL-covid-X.varianceRatio.txt \
      --SAIGEOutputFile=${dir}/output/INTERVAL-X.txt \
      --numLinesOutput=2 \
-     --IsOutputAFinCaseCtrl=TRUE \
+     --IsOutputAFinCaseCtrl=TRUE
   gzip -f ${dir}/output/INTERVAL-X.txt
 }
 # https://github.com/weizhouUMICH/SAIGE/tree/0.39.2

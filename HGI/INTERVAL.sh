@@ -210,13 +210,13 @@ function aggregate()
     parallel -j1 -C' ' '
       gunzip -c output/INTERVAL-{}.txt.gz | \
       sed "1d" | \
-      cut -d" " -f1-3,5-9,11-14,17,21-26
+      cut -d" " -f1-3,5-9,11-14,17,21-28
     '
     echo X | \
     parallel -j1 -C' ' '
       gunzip -c output/INTERVAL-{}.txt.gz | \
       sed "1d" | \
-      cut -d" " -f1-3,4-8,10-13,16,20-25 | \
+      cut -d" " -f1-3,4-8,10-13,16,20-27 | \
       sed "s/X/23/"
     '
   ) | \
