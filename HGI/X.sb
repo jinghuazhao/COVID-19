@@ -17,21 +17,6 @@ function Cx_V2_X()
   step2_SPAtests.R \
      --vcfFile=${dir}/output/INTERVAL-X-ploidy.vcf.gz \
      --vcfFileIndex=${dir}/output/INTERVAL-X-ploidy.vcf.gz.tbi \
-     --chrom=X \
-     --minMAF=0.0001 \
-     --minMAC=1 \
-     --sampleFile=${dir}/work/INTERVAL-covid-X.samples \
-     --GMMATmodelFile=${dir}/output/INTERVAL-covid-X.rda \
-     --varianceRatioFile=${dir}/output/INTERVAL-covid-X.varianceRatio.txt \
-     --SAIGEOutputFile=${dir}/output/INTERVAL-X.txt \
-     --IsOutputNinCaseCtrl=TRUE \
-     --IsOutputHetHomCountsinCaseCtrl=TRUE \
-     --IsOutputAFinCaseCtrl=TRUE
-  gzip -f ${dir}/output/INTERVAL-X.txt
-
-  step2_SPAtests.R \
-     --vcfFile=${dir}/output/INTERVAL-X-ploidy.vcf.gz \
-     --vcfFileIndex=${dir}/output/INTERVAL-X-ploidy.vcf.gz.tbi \
      --vcfField=GT \
      --chrom=X \
      --minMAF=0.0001 \
@@ -44,7 +29,7 @@ function Cx_V2_X()
      --is_rewrite_XnonPAR_forMales=TRUE \
      --X_PARregion=60001-2699520,154931044-155260560 \
      --sampleFile_male=${dir}/work/INTERVAL-covid-X.FM
-  gzip -f ${dir}/output/INTERVAL-X.out
+  gzip -f ${dir}/output/INTERVAL-X.txt
 }
 # https://github.com/weizhouUMICH/SAIGE/tree/0.39.2
 # GRCh38/hg38

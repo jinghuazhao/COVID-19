@@ -104,15 +104,15 @@ function X()
   do
     cd ${dir}
     grep -v -f work/INTERVAL-covid-X.excl-samples work/INTERVAL-covid-X.samples | \
-#   tr '_' '\t' | \
-#   cut -f1 | \
     bcftools view -S - ${SCALLOP}/HGI/work/INTERVAL-X-src.vcf.gz -O v | \
-    vcf-fix-ploidy -s work/INTERVAL-covid-X.FM | \
     bgzip -cf > output/INTERVAL-X-ploidy.vcf.gz
     bcftools index -tf output/INTERVAL-X-ploidy.vcf.gz
     cd -
   done
 }
+#   tr '_' '\t' | \
+#   cut -f1 | \
+#   vcf-fix-ploidy -s work/INTERVAL-covid-X.FM | \
 
 # step 4. single variant association tests + gene annodation/association analysis
 # INTERVAL.sh + glist_hg19.sh

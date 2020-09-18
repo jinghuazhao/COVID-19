@@ -388,6 +388,25 @@ function vcf()
   cd -
 }
 
+function Cx_V2_X()
+# SAIGE (< 0.39.2)
+{
+  step2_SPAtests.R \
+     --vcfFile=${dir}/output/INTERVAL-X-ploidy.vcf.gz \
+     --vcfFileIndex=${dir}/output/INTERVAL-X-ploidy.vcf.gz.tbi \
+     --chrom=X \
+     --minMAF=0.0001 \
+     --minMAC=1 \
+     --sampleFile=${dir}/work/INTERVAL-covid-X.samples \
+     --GMMATmodelFile=${dir}/output/INTERVAL-covid-X.rda \
+     --varianceRatioFile=${dir}/output/INTERVAL-covid-X.varianceRatio.txt \
+     --SAIGEOutputFile=${dir}/output/INTERVAL-X.txt \
+     --IsOutputNinCaseCtrl=TRUE \
+     --IsOutputHetHomCountsinCaseCtrl=TRUE \
+     --IsOutputAFinCaseCtrl=TRUE
+  gzip -f ${dir}/output/INTERVAL-X.txt
+}
+
 function autosome_gene_based_test()
 {
 # Gene-based association tests
