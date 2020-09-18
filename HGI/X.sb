@@ -23,7 +23,7 @@ function Cx_V2_X()
      --minMAC=1 \
      --GMMATmodelFile=${dir}/output/INTERVAL-covid-X.rda \
      --varianceRatioFile=${dir}/output/INTERVAL-covid-X.varianceRatio.txt \
-     --SAIGEOutputFile=${dir}/output/INTERVAL-X.out \
+     --SAIGEOutputFile=${dir}/output/INTERVAL-X.txt \
      --numLinesOutput=2 \
      --IsOutputAFinCaseCtrl=TRUE \
      --is_rewrite_XnonPAR_forMales=TRUE \
