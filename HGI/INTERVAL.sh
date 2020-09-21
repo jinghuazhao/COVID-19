@@ -268,7 +268,7 @@ function upload()
   virtualenv py37
   source py37/bin/activate
   pip install gsutil==4.50
-  gsutil ls
+  gsutil ls gs://covid19-hg-upload-uk--blood-donors-cohort
   gsutil cp $1 gs://covid19-hg-upload-uk--blood-donors-cohort 
   gsutil cp 20200731*/output/INTERVAL.Zhao* gs://covid19-hg-upload-uk--blood-donors-cohort
 # HGI spreadsheet
