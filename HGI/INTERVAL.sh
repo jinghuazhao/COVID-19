@@ -203,24 +203,21 @@ function aggregate()
   export snvResults=${SCALLOP}/HGI/${dir}.txt.gz
   (
     gunzip -c output/INTERVAL-*.txt.gz | \
-    cut -d' ' -f1-3,5-9,11-14,17,21-26 | \
+    cut -d' ' -f1-2,4-9,11-14,17,19-20 | \
     head -1
     seq 22 | \
     tr ' ' '\n' | \
     parallel -j1 -C' ' '
       gunzip -c output/INTERVAL-{}.txt.gz | \
       sed "1d" | \
-      cut -d" " -f1-3,5-9,11-14,17,21-28
+      cut -d" " -f1-2,4-9,11-14,17,19-20
+      awk "{if(NR>1){\$1=\$1+0;\$3=\$1+0 \":\" \$2 \"_\" \$4 \"/\" \$5}};1"
     '
-    echo X | \
-    parallel -j1 -C' ' '
-      gunzip -c output/INTERVAL-{}.txt.gz | \
-      sed "1d" | \
-      cut -d" " -f1-3,4-8,10-13,16,20-27 | \
-      sed "s/X/23/"
-    '
+    gunzip -c output/INTERVAL-X.txt.gz | \
+    sed '1d' | \
+    cut -d' ' -f1-8,10-13,16,18-19 | \
+    sed 's/X/23/'
   ) | \
-  awk '{if(NR>1){$1=$1+0;$3=$1+0 ":" $2 "_" $4 "/" $5}};1' | \
   gzip -f > ${snvResults}
   cd -
   done

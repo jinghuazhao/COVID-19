@@ -27,14 +27,14 @@ function rename()
   export dataset=INTERVAL
   export lastname=Zhao
   export analysisname=ANA_${2}
-  export freezenumber=6
+  export freezenumber=7
   export age=${3}
   export sex=${4}
   export ancestry=EUR
   export ncases=${5}
   export ncontrols=${6}
   export gwassoftware=SAIGE
-  export YYYYMMDD=20200918
+  export YYYYMMDD=20200921
   export filename=${dataset}.${lastname}.${analysisname}.${freezenumber}.${age}.${sex}.${ancestry}.${ncases}.${ncontrols}.${gwassoftware}.${YYYYMMDD}
   mv ${SCALLOP}/HGI/${d}.txt.gz ${SCALLOP}/HGI/${d}/output/${filename}.txt.gz
 }
