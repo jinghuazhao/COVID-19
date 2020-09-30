@@ -15,3 +15,6 @@
 
 # <olink_protein>_<cohort>_<date_of_analysis>_<analyst_initials>.txt.bgz
 # ACE2_pooled_MANOLIS_28102019_GP.txt.bgz
+
+bcftools query -l wes/WES_QCed_Info_updated_4006_FINAL.vcf.gz | wc -l
+bcftools query -l wgs/chr22/chr22.intervalwgs_v1_all_info.vcf.bgz | wc -l
