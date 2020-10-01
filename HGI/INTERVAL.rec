@@ -524,7 +524,6 @@ step2_SPAtests.R \
 # https://storage.googleapis.com/covid19-hg-public/20200619/results/leave_ukbb/COVID19_HGI_ANA_C2_V2_leave_UKBB_20200630.txt.gz
 # https://storage.googleapis.com/covid19-hg-public/20200619/results/leave_ukbb/COVID19_HGI_ANA_C2_V2_leave_UKBB_20200630.txt.gz.tbi
 # https://storage.googleapis.com/covid19-hg-public/20200619/results/leave_ukbb/COVID19_HGI_ANA_C2_V2_leave_UKBB_20200630.txt.gz_1.0E-5.txt
-
 # build 37:
 # https://storage.googleapis.com/covid19-hg-public/20200619/results/leave_ukbb/build_37/COVID19_HGI_ANA_A2_V2_leave_UKBB_20200630.txt.gz.b37.txt.gz
 # https://storage.googleapis.com/covid19-hg-public/20200619/results/leave_ukbb/build_37/COVID19_HGI_ANA_A2_V2_leave_UKBB_20200630.txt.gz.b37.txt.gz.tbi
@@ -541,7 +540,7 @@ step2_SPAtests.R \
 # https://storage.googleapis.com/covid19-hg-public/20200619/results/leave_ukbb/build_37/COVID19_HGI_ANA_C2_V2_leave_UKBB_20200630.txt.gz.b37.txt.gz
 # https://storage.googleapis.com/covid19-hg-public/20200619/results/leave_ukbb/build_37/COVID19_HGI_ANA_C2_V2_leave_UKBB_20200630.txt.gz.b37.txt.gz.tbi
 # https://storage.googleapis.com/covid19-hg-public/20200619/results/leave_ukbb/build_37/COVID19_HGI_ANA_C2_V2_leave_UKBB_20200630.txt.gz.b37_1.0E-5.txt
-
+# release
 # https://storage.googleapis.com/covid19-hg-public/20200619/results/COVID19_HGI_ANA_A2_V2_20200626.txt.gz
 # https://storage.googleapis.com/covid19-hg-public/20200619/results/COVID19_HGI_ANA_A2_V2_20200626.txt.gz.tbi
 # https://storage.googleapis.com/covid19-hg-public/20200619/results/COVID19_HGI_ANA_B1_V2_20200626.txt.gz
@@ -554,7 +553,7 @@ step2_SPAtests.R \
 # https://storage.googleapis.com/covid19-hg-public/20200619/results/COVID19_HGI_ANA_C2_V2_20200626.txt.gz.tbi
 # https://storage.googleapis.com/covid19-hg-public/20200619/results/COVID19_HGI_ANA_D1_V2_20200626.txt.gz
 # https://storage.googleapis.com/covid19-hg-public/20200619/results/COVID19_HGI_ANA_D1_V2_20200626.txt.gz.tbi
-
+# fourth round
 # https://storage.googleapis.com/covid19-hg-public/20200915/results/20200930/COVID19_HGI_A2_ALL_20200930.b37.txt.gz
 # https://storage.googleapis.com/covid19-hg-public/20200915/results/20200930/COVID19_HGI_A2_ALL_20200930.b37.txt.gz.tbi
 # https://storage.googleapis.com/covid19-hg-public/20200915/results/20200930/COVID19_HGI_A2_ALL_20200930.txt.gz

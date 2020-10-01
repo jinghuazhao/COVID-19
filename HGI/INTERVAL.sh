@@ -257,28 +257,30 @@ function aggregate()
 
 function upload()
 {
+# setup
 # Request an account
 # https://docs.google.com/forms/d/1eAaf-4XNYkplBo5Appbf8LHl2KHJyks9R4t0E3h0jII/viewform?edit_requested=true
-# https://console.cloud.google.com/storage/browser/covid19-hg-upload-bugbank
   cd ${HGI}
   module load python/3.7
   virtualenv py37
   source py37/bin/activate
   pip install gsutil==4.50
+# upload
   gsutil ls gs://covid19-hg-upload-uk--blood-donors-cohort
   gsutil cp $1 gs://covid19-hg-upload-uk--blood-donors-cohort 
   gsutil cp 20200731*/output/INTERVAL.Zhao* gs://covid19-hg-upload-uk--blood-donors-cohort
+# web: https://console.cloud.google.com/storage/browser/covid19-hg-upload-uk--blood-donors-cohort?project=covid-19-hg
 # HGI spreadsheet
   ls 20200731*/output/INTERVAL.Zhao* | xargs -l basename | xsel -i
-# web: https://console.cloud.google.com/storage/browser/covid19-hg-upload-uk--blood-donors-cohort?project=covid-19-hg
 # Fill the form (now uses tab in the spreadsheet),
 # https://airtable.com/shrdJDwSHRZKXv45H
-# Download data
-# https://console.cloud.google.com/storage/browser/covid19-hg-analysis
 # HGI results
-# gs://covid19-hg-analysis/20200619/results/full
-# gs://covid19-hg-analysis/20200619/results
+# gs://covid19-hg-analysis
+# gs://covid19-hg-public
+# https://console.cloud.google.com/storage/browser/covid19-hg-analysis
+# Bugbank
 # gsutil cp $1 gs://covid19-hg-upload-bugbank
+# https://console.cloud.google.com/storage/browser/covid19-hg-upload-bugbank
 }
 
 # srun -A CARDIO-SL0-CPU -p cardio_intr --qos=cardio_intr -N1 -n1 -c4 --mem=50G -t 12:0:0 --pty bash -i
