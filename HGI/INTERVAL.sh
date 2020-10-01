@@ -278,6 +278,7 @@ function upload()
 # gs://covid19-hg-analysis
 # gs://covid19-hg-public
 # https://console.cloud.google.com/storage/browser/covid19-hg-analysis
+# https://www.covid19hg.org/results/
 # Bugbank
 # gsutil cp $1 gs://covid19-hg-upload-bugbank
 # https://console.cloud.google.com/storage/browser/covid19-hg-upload-bugbank
