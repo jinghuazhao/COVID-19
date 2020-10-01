@@ -10,10 +10,10 @@
 ## COVID-19
 * [CITIID](https://covid19.medschl.cam.ac.uk/)
 * [COG-UK](https://www.cogconsortium.uk/)
-* [COVID-19 Data Portal](https://www.covid19dataportal.org/) ([false positives](https://www.hdruk.ac.uk/projects/false-positives/), [hospital activity](http://hospitalactivity.com/), [tracking excess deaths](http://www.trackingexcessdeaths.com/)).
+* [COVID-19 Data Portal](https://www.covid19dataportal.org/)
 * [CUH clinical update](https://cuhstaffportal.co.uk/operational/clinical-updates/) and [testing](https://www.cam.ac.uk/coronavirus/general-staff-advice/health-and-wellbeing#testing).
 * [Genetics Of Mortality In Critical Care](https://genomicc.org/)
-* [HDRUK/covid-19](https://github.com/HDRUK/covid-19).
+* [HDRUK/covid-19](https://github.com/HDRUK/covid-19) ([false positives](https://www.hdruk.ac.uk/projects/false-positives/), [hospital activity](http://hospitalactivity.com/), [tracking excess deaths](http://www.trackingexcessdeaths.com/))
 * [SARS-CoV-2 Research Grade Test Material](https://www.nist.gov/programs-projects/sars-cov-2-research-grade-test-material) ([GitHub](https://github.com/usnistgov/RGTM10169)).
 * [The COVID-19 Host Genetics Initiative](https://covid19hg.netlify.com/)
   * [Registration](https://www.covid19hg.org/register/)
