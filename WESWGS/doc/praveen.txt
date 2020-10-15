@@ -1,0 +1,70 @@
+
+
+From: Praveen Surendran <ps629@medschl.cam.ac.uk> 
+Sent: 13 October 2020 11:39
+To: Jing Zhao <jhz22@medschl.cam.ac.uk>
+Cc: Adam Butterworth <asb38@medschl.cam.ac.uk>
+Subject: Re: SCALLOP sequence-based meta-analysis
+
+Hi Jing Hua,
+
+Here's the omicsMap file and the INTERVAL data released for flagship.
+
+/rds/user/ps629/rds-jmmh2-projects/interval_flagship/data_management_files/batch4_updated/omicsMap.csv
+/rds/user/ps629/rds-jmmh2-projects/interval_flagship/data_management_files/batch4_updated/INTERVALdata_28FEB2020.csv
+
+Please note that the omicsMap file should be used with the INTERVAL data from the same release since the order of individuals change between releases.
+
+And the WES and WGS data released by Sanger are here -
+
+~/rds/rds-jmmh2-post_qc_data/interval/genotype/wgs/chr[1:22]/chr[1:22]_intervalwgs_v2_GT_only.vcf.bgz
+~/rds/rds-jmmh2-post_qc_data/interval/genotype/wes/WES_QCed_Info_updated_4006_FINAL.vcf.gz
+
+Please let me know if you don't have access to any of these files or if you have any questions.
+
+Best wishes,
+Praveen.
+
+---
+
+Dr. Praveen Surendran
+Senior Research Associate | Rutherford Fellow at HDR-UK
+Cardiovascular Epidemiology Unit | Department of Public Health and Primary Care
+University of Cambridge
+2 Worts Causeway, Cambridge - CB1 8RN
+
+Tel: 01223 748672
+Email: ps629@medschl.cam.ac.uk
+________________________________________
+From: Jing Zhao
+Sent: Saturday, October 10, 2020 9:41 AM
+To: Praveen Surendran
+Cc: Adam Butterworth
+Subject: RE: SCALLOP sequence-based meta-analysis 
+ 
+Hi both,
+ 
+Ele’s group has circulated another Doodle poll for meeting about the details and deadlines-- I am wondering shall we get from the data management team the sample ID linkage between Olink proteomics data and WES/WGS so I could at least do the analysis casually (with the SCALLOP analysis here) and in line with other teams and if I miss out anything about the genetic data Praveen can point it out.
+ 
+Thanks and good weekend,
+ 
+ 
+Jing Hua
+ 
+From: Jing Zhao 
+Sent: 06 October 2020 14:46
+To: Praveen Surendran <ps629@medschl.cam.ac.uk>
+Cc: Adam Butterworth <asb38@medschl.cam.ac.uk>
+Subject: FW: SCALLOP sequence-based meta-analysis
+ 
+Dear Praveen,
+ 
+This is a follow-up of the conversation regarding the consortium effort above in attachments recently received (possibly ~/rds/post_qc_data/interval/genotype/wes/|wgs?) and record linkage with Olink panels. It appears you have already deposited the first group at wgs/wgs_exonic/. Any advice to proceed will be greatly appreciated.
+ 
+Also related to the SCALLOP/INF work, we made attempts to pair pQTLs/proxies with immune related diseases through PhenoScanner/literature and are keen to formal colocalisation using available summary statistics and you are recommended as an invaluable resource so hopefully can be in touch as well.
+ 
+Best wishes,
+ 
+ 
+Jing Hua
+
