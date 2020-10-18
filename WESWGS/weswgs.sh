@@ -4,21 +4,33 @@ module load ceuadmin/stata
 
 stata -b do weswgs.do
 
-(
-for panel in cvd2 cvd3 inf neurology
+panels="cvd2 cvd3 inf neurology"
+export c=1
+for i in $(for panel in ${panels}; do export dir=high_dimensional_data/Olink_proteomics_${panel}/qc;export f=$(ls ${dir});echo ${dir}/$f;done)
 do
-  echo ${panel} | \
-  tr '\n' '\t'
-  export f=$(ls high_dimensional_data/Olink_proteomics_${panel}/qc)
-  sed '1d' high_dimensional_data/Olink_proteomics_${panel}/qc/${f} | \
-  cut -d, -f1 | \
-  grep -f - work/weswgs.txt | \
-  wc -l
+  export panel=$(basename ${i} | awk '{gsub(/olink|_|qc|.csv/,"");print}')
+  echo ${i} ${panel}
+  (
+    awk -vFS="," 'NR==1{$1="";$2="";$(NF)=$(NF) "WES WGS sex age"; print}' ${i} | awk '{$1=$1};1'
+    awk -vFS="," 'NR>1{$2="";print}' ${i} | sort -k1,1 | join - <(sed '1d' work/weswgs.txt | cut -f${c},5-8 | tr '\t' ' ' | sort -k1,1) | \
+    awk '{$1=""};1' | \
+    awk '$1=$1'
+  ) > work/${panel}.txt
+  export c=$(($c+1))
 done
-) | xsel -i
 
-# cvd2	1297
-# cvd3	1305
-# inf	1290
-# neurology	1264
+bcftools query -l wes/WES_QCed_Info_updated_4006_FINAL.vcf.gz | wc -l
+bcftools query -l wgs/chr22/chr22.intervalwgs_v1_all_info.vcf.bgz | wc -l
 
+(
+  head -1 work/weswgs.txt
+  bcftools query -l wes/WES_QCed_Info_updated_4006_FINAL.vcf.gz | \
+  grep -f - work/weswgs.txt
+) > work/wes.txt
+
+
+(
+  head -1 work/weswgs.txt
+  bcftools query -l wgs/chr22/chr22.intervalwgs_v1_all_info.vcf.bgz | \
+  grep -f - work/weswgs.txt
+) > work/wgs.txt
