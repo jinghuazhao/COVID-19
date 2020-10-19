@@ -27,7 +27,7 @@ merge 1:m Olink_`2'_QC_24m using work/weswgs
 drop plate* Olink_*_QC_24m Olink_*_gwasQC_24m
 keep if _merge==3 & ethnicPulse!="Arab"
 tab centre, gen(centre)
-drop identifier Affymetrix_QC_bl _merge ethnicPulse centre
+drop identifier Affymetrix_QC_bl _merge ethnicPulse centre centre25
 save work/`2', replace
 outsheet using work/`2'.txt, comma noquote replace
 outsheet Wes_gwasQC_bl Wgs_QC_bl Wgs_gwasQC_bl sexPulse agePulse ht_bl wt_bl centre* using work/`2'-covariates.txt,comma noquote replace
