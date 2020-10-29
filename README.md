@@ -11,6 +11,7 @@
 * [CITIID](https://covid19.medschl.cam.ac.uk/)
 * [COG-UK](https://www.cogconsortium.uk/)
 * [COVID-19 Data Portal](https://www.covid19dataportal.org/)
+* [DockCov2](https://covirus.cc/drugs/)
 * [CUH clinical update](https://cuhstaffportal.co.uk/operational/clinical-updates/) and [testing](https://www.cam.ac.uk/coronavirus/general-staff-advice/health-and-wellbeing#testing).
 * [Genetics Of Mortality In Critical Care](https://genomicc.org/)
 * [HDRUK/covid-19](https://github.com/HDRUK/covid-19) ([false positives](https://www.hdruk.ac.uk/projects/false-positives/), [hospital activity](http://hospitalactivity.com/), [tracking excess deaths](http://www.trackingexcessdeaths.com/))
