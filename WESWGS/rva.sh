@@ -23,3 +23,5 @@
 # outputs
 # - A space-delimited file containing single variant scores
 # - A binary file containing between-variant covariance matrices
+
+# Meta-analysis

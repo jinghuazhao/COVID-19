@@ -8,6 +8,22 @@ stata -b do weswgs.do
 for panel in cvd2 cvd3 inf neu
 do
   paste -d, work/${panel}-covariates.txt work/${panel}-protein.txt > work/${panel}.txt
+  cut -d, -f1 work/${panel}.txt | awk 'NR>1 && !/-999/' > work/${panel}-wes.samples
+  cut -d, -f2 work/${panel}.txt | awk 'NR>1 && !/-999/' > work/${panel}-wgs.samples
+done
+
+for panel in cvd2 cvd3
+do
+  bcftools query -l wes/WES_QCed_Info_updated_4006_FINAL.vcf.gz | \
+  grep -f work/${panel}-wes.samples | \
+  bcftools view -S wes/WES_QCed_Info_updated_4006_FINAL.vcf.gz -O -z -o work/${panel}-wes.vcf.gz
+  for chr in chr{1..22} chrX chrY
+  do
+    export chr=${chr}
+    export VCF_PATH=~/COVID-19/WESWGS/wgs/${chr}/${chr}.intervalwgs_v2_GT_only.vcf.bgz
+    bcftools query -l $VCF_PATH | grep -f work/${panel}-wgs.samples | \
+    bcftools view -S - $VCF_PATH -O z -o work/${panel}-wgs-${chr}.vcf.gz
+  done
 done
 
 function chopped()
@@ -31,6 +47,7 @@ done
 
 bcftools query -l wes/WES_QCed_Info_updated_4006_FINAL.vcf.gz | wc -l
 bcftools query -l wgs/chr22/chr22.intervalwgs_v1_all_info.vcf.bgz | wc -l
+bcftools query -l wgs/chr22/chr22.intervalwgs_v2_GT_only.vcf.bgz | wc -l
 
 (
   head -1 work/weswgs.txt

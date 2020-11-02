@@ -16,5 +16,11 @@
 # <olink_protein>_<cohort>_<date_of_analysis>_<analyst_initials>.txt.bgz
 # ACE2_pooled_MANOLIS_28102019_GP.txt.bgz
 
-bcftools query -l wes/WES_QCed_Info_updated_4006_FINAL.vcf.gz | wc -l
-bcftools query -l wgs/chr22/chr22.intervalwgs_v1_all_info.vcf.bgz | wc -l
+cd burden_testing
+export COHORT_NAME=INTERVAL
+export chr=22
+export VCF_PATH=~/COVID-19/WESWGS/wgs/chr${chr}/chr${chr}.intervalwgs_v2_GT_only.vcf.bgz
+singularity exec -B $(pwd) burden.1.6.5 step1 $COHORT_NAME $VCF_PATH
+
+# slurm
+# sbatch --mem 2G -e step1.e -o step1.o --wrap "singularity exec -B $(pwd) burden.1.6.5 step1 $COHORT_NAME $VCF_PATH"
