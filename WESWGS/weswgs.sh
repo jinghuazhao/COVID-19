@@ -26,6 +26,18 @@ do
   done
 done
 
+(
+  head -1 work/weswgs.txt
+  bcftools query -l wes/WES_QCed_Info_updated_4006_FINAL.vcf.gz | \
+  grep -f - work/weswgs.txt
+) > work/wes.txt
+
+(
+  head -1 work/weswgs.txt
+  bcftools query -l wgs/chr22/chr22.intervalwgs_v1_all_info.vcf.bgz | \
+  grep -f - work/weswgs.txt
+) > work/wgs.txt
+
 function chopped()
 # This version avoids Stata but has lines chopped
 {
@@ -44,19 +56,3 @@ do
   export c=$(($c+1))
 done
 }
-
-bcftools query -l wes/WES_QCed_Info_updated_4006_FINAL.vcf.gz | wc -l
-bcftools query -l wgs/chr22/chr22.intervalwgs_v1_all_info.vcf.bgz | wc -l
-bcftools query -l wgs/chr22/chr22.intervalwgs_v2_GT_only.vcf.bgz | wc -l
-
-(
-  head -1 work/weswgs.txt
-  bcftools query -l wes/WES_QCed_Info_updated_4006_FINAL.vcf.gz | \
-  grep -f - work/weswgs.txt
-) > work/wes.txt
-
-(
-  head -1 work/weswgs.txt
-  bcftools query -l wgs/chr22/chr22.intervalwgs_v1_all_info.vcf.bgz | \
-  grep -f - work/weswgs.txt
-) > work/wgs.txt
