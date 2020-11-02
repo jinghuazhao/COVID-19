@@ -13,15 +13,16 @@ done
 
 for panel in cvd2 cvd3
 do
-  bcftools query -l wes/WES_QCed_Info_updated_4006_FINAL.vcf.gz | \
+  export WES=wes/WES_QCed_Info_updated_4006_FINAL.vcf.gz
+  bcftools query -l ${WES} | \
   grep -f work/${panel}-wes.samples | \
-  bcftools view -S - wes/WES_QCed_Info_updated_4006_FINAL.vcf.gz -O z -o work/${panel}-wes.vcf.gz
+  bcftools view -S - ${WES} -O z -o work/${panel}-wes.vcf.gz
   for chr in chr{1..22} chrX chrY
   do
     export chr=${chr}
-    export VCF_PATH=~/COVID-19/WESWGS/wgs/${chr}/${chr}.intervalwgs_v2_GT_only.vcf.bgz
-    bcftools query -l $VCF_PATH | grep -f work/${panel}-wgs.samples | \
-    bcftools view -S - $VCF_PATH -O z -o work/${panel}-wgs-${chr}.vcf.gz
+    export WGS=~/COVID-19/WESWGS/wgs/${chr}/${chr}.intervalwgs_v2_GT_only.vcf.bgz
+    bcftools query -l ${WGS} | grep -f work/${panel}-wgs.samples | \
+    bcftools view -S - ${WGS} -O z -o work/${panel}-wgs-${chr}.vcf.gz
   done
 done
 
