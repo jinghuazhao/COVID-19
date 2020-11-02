@@ -16,7 +16,7 @@ for panel in cvd2 cvd3
 do
   bcftools query -l wes/WES_QCed_Info_updated_4006_FINAL.vcf.gz | \
   grep -f work/${panel}-wes.samples | \
-  bcftools view -S wes/WES_QCed_Info_updated_4006_FINAL.vcf.gz -O -z -o work/${panel}-wes.vcf.gz
+  bcftools view -S wes/WES_QCed_Info_updated_4006_FINAL.vcf.gz -O z -o work/${panel}-wes.vcf.gz
   for chr in chr{1..22} chrX chrY
   do
     export chr=${chr}
