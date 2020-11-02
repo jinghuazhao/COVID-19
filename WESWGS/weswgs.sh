@@ -2,17 +2,20 @@
 
 module load ceuadmin/stata
 stata -b do weswgs.do
+(
+  head -1 work/weswgs.txt
+  bcftools query -l wes/WES_QCed_Info_updated_4006_FINAL.vcf.gz | grep -f - work/weswgs.txt
+) > work/wes.txt
+(
+  head -1 work/weswgs.txt
+  bcftools query -l wgs/chr22/chr22.intervalwgs_v1_all_info.vcf.bgz | grep -f - work/weswgs.txt
+) > work/wgs.txt
 
-# This version replaces those from Stata by putting covariates before proteins
 for panel in cvd2 cvd3 inf neu
 do
   paste -d, work/${panel}-covariates.txt work/${panel}-protein.txt > work/${panel}.txt
   cut -d, -f1 work/${panel}.txt | awk 'NR>1 && !/-999/' > work/${panel}-wes.samples
   cut -d, -f2 work/${panel}.txt | awk 'NR>1 && !/-999/' > work/${panel}-wgs.samples
-done
-
-for panel in cvd2 cvd3
-do
   export WES=wes/WES_QCed_Info_updated_4006_FINAL.vcf.gz
   bcftools query -l ${WES} | \
   grep -f work/${panel}-wes.samples | \
@@ -21,22 +24,11 @@ do
   do
     export chr=${chr}
     export WGS=~/COVID-19/WESWGS/wgs/${chr}/${chr}.intervalwgs_v2_GT_only.vcf.bgz
-    bcftools query -l ${WGS} | grep -f work/${panel}-wgs.samples | \
+    bcftools query -l ${WGS} | \
+    grep -f work/${panel}-wgs.samples | \
     bcftools view -S - ${WGS} -O z -o work/${panel}-wgs-${chr}.vcf.gz
   done
 done
-
-(
-  head -1 work/weswgs.txt
-  bcftools query -l wes/WES_QCed_Info_updated_4006_FINAL.vcf.gz | \
-  grep -f - work/weswgs.txt
-) > work/wes.txt
-
-(
-  head -1 work/weswgs.txt
-  bcftools query -l wgs/chr22/chr22.intervalwgs_v1_all_info.vcf.bgz | \
-  grep -f - work/weswgs.txt
-) > work/wgs.txt
 
 function chopped()
 # This version avoids Stata but has lines chopped
