@@ -1,7 +1,6 @@
 #!/usr/bin/bash
 
 module load ceuadmin/stata
-
 stata -b do weswgs.do
 
 # This version replaces those from Stata by putting covariates before proteins
