@@ -34,6 +34,9 @@ do
   done
 done
 
+cd work
+ls *vcf.gz | parallel  -j5 -C' ' 'tabix -f {}' &
+
 function chopped()
 # This version avoids Stata but has lines chopped
 {
