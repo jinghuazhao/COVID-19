@@ -18,6 +18,6 @@ git add HGI/20200731.sh
 git commit -m "HGI analysis"
 git add NGS/README.* NGS/ngs.png NGS/ngs.do NGS/ngs.R NGS/ngs.sb NGS/ngs.sh NGS/lod.sh NGS/pQTLtools.R NGS/utils
 git commit -m "Olink/NGS pilot"
-git add WESWGS/README.md WESWGS/spa.sh WESWGS/rva.sh WESWGS/doc WESWGS/weswgs.do WESWGS/weswgs.sh WES/WGS/weswgs.wrap
+git add WESWGS/README.md WESWGS/spa.sh WESWGS/rva.sh WESWGS/doc WESWGS/weswgs.do WESWGS/weswgs.sh WESWGS/weswgs.wrap
 git commit -m "SCALLOP/WES-WGS meta-analysis"
 git push
