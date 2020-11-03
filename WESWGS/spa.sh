@@ -8,21 +8,12 @@ module load singularity
 for panel in cvd2 cvd3 inf neu
 do
   export panel=${panel}
-  burden.1.6.5 step1 ${COHORT}-${panel}-wes ../work/${panel}-wes.vcf.gz
-  for chr in chr{1..22}
-  do
-    export chr=${chr}
-    sbatch --job-name=_${panel}_step1 --account CARDIO-SL0-CPU --partition cardio --qos=cardio --mem=40800 --time=5-00:00:00 --export ALL \
-           --output=${TMPDIR}/_${panel}_${chr}.out --error=${TMPDIR}/_${panel}_${chr}.err \
-           --wrap ". burden.1.6.5 step1 ${COHORT}-${panel}-wgs ../work/${panel}-wgs-${chr}.vcf.gz"
-  done
-  for chr in chrX chrY
-  do
-    export chr=${chr}
-    burden.1.6.5 step1 ${COHORT}-${panel}-wgs ../work/${panel}-wgs-${chr}.vcf.gz
-  done
+  echo chr{1..22} chrX chrY | \
+  tr ' ' '\n' | \
+  parallel --env COHORT --env panel -C' ' 'burden.1.6.5 step1 ${COHORT}-${panel}-wgs ../work/${panel}-wgs-{}.vcf.gz'
   for chr in chr{1..22} chrX chrY
   do zcat ${COHORT}-${panel}.${chr}.variantlist.gz; done | sed 's/^chr//' | gzip -f > ${COHORT}-${panel}-wgs.variantlist.gz
+  burden.1.6.5 step1 ${COHORT}-${panel}-wes ../work/${panel}-wes.vcf.gz
 done
 single_cohort_munge_variantlist 1 1
 
