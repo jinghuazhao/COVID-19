@@ -23,7 +23,7 @@ do
   bcftools view -S - ${WES} -O z -o work/${panel}-wes.vcf.gz
   export panel=${panel}
   sbatch --job-name=_${panel} --account CARDIO-SL0-CPU --partition cardio --qos=cardio --array=1-22 --mem=40800 --time=5-00:00:00 --export ALL \
-         --output=${TMPDIR}/_subset_%A_%a.out --error=${TMPDIR}/_subset_%A_%a.err --wrap ". ${HOME}/COVID-19/WESWGS/weswgs.wrap"
+         --output=${TMPDIR}/_${panel}_%A_%a.out --error=${TMPDIR}/_${panel}_%A_%a.err --wrap ". ${HOME}/COVID-19/WESWGS/weswgs.wrap"
   for chr in chrX chrY
   do
     export chr=${chr}
