@@ -14,6 +14,7 @@ stata -b do weswgs.do
 export TMPDIR=${HPC_WORK}/work
 for panel in cvd2 cvd3 inf neu
 do
+  export panel=${panel}
   paste -d, work/${panel}-covariates.txt work/${panel}-protein.txt > work/${panel}.txt
   cut -d, -f1 work/${panel}.txt | awk 'NR>1 && !/-999/' > work/${panel}-wes.samples
   cut -d, -f2 work/${panel}.txt | awk 'NR>1 && !/-999/' > work/${panel}-wgs.samples
@@ -21,7 +22,7 @@ do
   bcftools query -l ${WES} | \
   grep -f work/${panel}-wes.samples | \
   bcftools view -S - ${WES} -O z -o work/${panel}-wes.vcf.gz
-  export panel=${panel}
+  for chr in chr{1..22} chrX chrY; do bcftools view --regions ${chr} ${panel}-wes.vcf.gz -O z -o work/${panel}-wes-${chr}.vcf.gz; done
   sbatch --job-name=_${panel} --account CARDIO-SL0-CPU --partition cardio --qos=cardio --array=1-22 --mem=40800 --time=5-00:00:00 --export ALL \
          --output=${TMPDIR}/_${panel}_%A_%a.out --error=${TMPDIR}/_${panel}_%A_%a.err --wrap ". ${HOME}/COVID-19/WESWGS/weswgs.wrap"
   for chr in chrX chrY

@@ -1,26 +1,34 @@
 #!/usr/bin/bash
 
 # --- step1 ---
-cd burden_testing
 export TMPDIR=${HPC_WORK}/work
 export COHORT=INTERVAL
 module load singularity
+cd burden_testing
 for panel in cvd2 cvd3 inf neu
 do
   export panel=${panel}
-  echo chr{1..22} chrX chrY | \
-  tr ' ' '\n' | \
-  parallel --env COHORT --env panel -C' ' 'burden.1.6.5 step1 ${COHORT}-${panel}-wgs ../work/${panel}-wgs-{}.vcf.gz'
-  for chr in chr{1..22} chrX chrY
-  do zcat ${COHORT}-${panel}.${chr}.variantlist.gz; done | sed 's/^chr//' | gzip -f > ${COHORT}-${panel}-wgs.variantlist.gz
-  burden.1.6.5 step1 ${COHORT}-${panel}-wes ../work/${panel}-wes.vcf.gz
+  for weswgs in wes wgs
+  do
+    export weswgs=${weswgs}
+    echo chr{1..22} chrX chrY | \
+    tr ' ' '\n' | \
+    parallel --env COHORT --env panel --env weswgs -C' ' 'burden.1.6.5 step1 ${COHORT}-${panel}-${weswgs} ../work/${panel}-${weswgs}-{}.vcf.gz'
+    for chr in chr{1..22} chrX chrY; do zcat ${COHORT}-${panel}-${weswgs}.${chr}.variantlist.gz; done | \
+    sed 's/^chr//' | gzip -f > ${COHORT}-${panel}-${weswgs}.variantlist.gz
+    tabix -f ${COHORT}-${panel}-${weswgs}.variantlist.gz
+  # single_cohort_munge_variantlist ${COHORT}-${panel}-${weswgs}.variantlist.gz 1 1
+  done
 done
-single_cohort_munge_variantlist 1 1
 
 # --- geneset (annotation) data ---
 # install axel, moreutils
 # http://www.tucows.com/preview/231886/Axel
-# https://joeyh.name/code/moreutils/
+# git://git.joeyh.name/moreutils
+# http://downloads.sourceforge.net/docbook2x/docbook2X-0.8.8.tar.gz
+# ftp://xmlsoft.org/libxml2/
+# ftp://xmlsoft.org/libxml2/libxslt-1.1.34.tar.gz
+# ftp://xmlsoft.org/libxml2/libxml2-2.9.10.tar.gz
 
 ln -sf geneset_data/ensembl-vep/INSTALL.pl
 prepare-regions -o $(pwd)/geneset_data
@@ -40,9 +48,17 @@ export OPTS2="-g exon -x 50 -s CADD"
 export OPTS3="-g exon -x 50 -e promoter,enhancer,TF_bind -l promoter,enhancer,TF_bind -s EigenPhred"
 export OPTS4="-e promoter,enhancer,TF_bind -l promoter,enhancer,TF_bind -s EigenPhred"
 
-for group in OPTS{1..4}
+export chunks=10
+for panel in cvd2 cvd3 inf neu
 do
-  for i in {1..10}; do make-group-file -L chr21.genes -C config.txt -i ${COHORT_NAME}.chr21.variantlist.gz ${!group} -o -w $(pwd) -d 10 -c $i & done
+  for group in OPTS{1..4}
+  do
+    for i in $(seq $chunks)
+    do
+       make-group-file -C geneset_data/config.txt -i ${COHORT}-${panel}-wes.variantlist.gz ${!group} -o -w $(pwd) -d ${chunks} -c $i &
+       make-group-file -C geneset_data/config.txt -i ${COHORT}-${panel}-wgs.variantlist.gz ${!group} -o -w $(pwd) -d ${chunks} -c $i &
+    done
+  done
 done
 
 find -name "group_file*.txt" -exec cat \{} \+ > group_file.txt

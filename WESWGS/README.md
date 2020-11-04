@@ -12,6 +12,10 @@ rva.sh | Rare-variant analysis
 * Grace Png: grace.png@helmholtz-muenchen.de
 * Arthur Gilly: arthur.gilly@helmholtz-muenchen.de
 
+## slack channel
+
+* scallop-seq.slack.com
+
 ## URLs
 
 * https://github.com/hmgu-itg/burden_testing
