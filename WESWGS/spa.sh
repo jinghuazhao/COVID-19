@@ -70,6 +70,8 @@ fgrep -wvf singlesnp.genes.txt concat.group.file.txt > concat.group.file.filtere
 
 # --- step2 ---
 
+VCF2GDS
+
 # <olink_protein>_<cohort>_<date_of_analysis>_<analyst_initials>.txt.bgz
 # ACE2_INTERVAL_02112020_JHZ.txt.bgz
 
