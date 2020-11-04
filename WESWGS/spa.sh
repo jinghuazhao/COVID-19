@@ -21,8 +21,6 @@ do
     parallel --env COHORT --env PREFIX --env panel --env weswgs -C' ' '${PREFIX} step1 ${COHORT}-${panel}-${weswgs} ${panel}-${weswgs}-{}.vcf.gz'
     for chr in chr{1..22} chrX chrY; do zcat ${COHORT}-${panel}-${weswgs}.${chr}.variantlist.gz; done | \
     sed 's/^chr//' | gzip -f > ${COHORT}-${panel}-${weswgs}.variantlist.gz
-    tabix -f ${COHORT}-${panel}-${weswgs}.variantlist.gz
-  # single_cohort_munge_variantlist ${COHORT}-${panel}-${weswgs}.variantlist.gz 1 1
   done
 done
 
@@ -60,18 +58,24 @@ find -name "group_file*.txt" -exec cat \{} \+ > group_file.txt
 cut -f1 concat.group.file.txt | sort | uniq -c | awk '$1==1{print $2}'> singlesnp.genes.txt
 fgrep -wvf singlesnp.genes.txt concat.group.file.txt > concat.group.file.filtered.txt
 
-# --- GRM generation ---
-
 
 # --- step2 ---
+
+# phenotype file
 
 id         height
 SAMPLE001  0.593
 SAMPLE002  -0.135
 
+# relatedness matrix files
+# --- GRM generation ---
+
+# GDS file
 for i in chr{1..22} chrX chrY; do
   ${PREFIX} VCF2GDS ${COHORT}.vcf.gz ${COHORT}.${chr}.gds 10
 done
+
+# group file containing testing groups
 
 ${PREFIX} step2 --out test --threads 3
 
