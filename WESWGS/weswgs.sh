@@ -38,6 +38,8 @@ done
 cd work
 ls *vcf.gz | parallel  -j5 -C' ' 'tabix -f {}' &
 
+singularity pull shub://hmgu-itg/burden_testing
+
 function chopped()
 # This version avoids Stata but has lines chopped
 {
