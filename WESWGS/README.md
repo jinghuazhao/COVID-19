@@ -14,7 +14,7 @@ rva.sh | Rare-variant analysis
 
 ## slack channel
 
-* [scallop-seq.slack.com](scallop-seq.slack.com)
+* [https://scallop-seq.slack.com](https://scallop-seq.slack.com)
 
 ## URLs
 
