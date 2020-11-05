@@ -2,8 +2,7 @@
 
 Filename | Description
 ---------|------------
-weswgs.sh| WES/WGS preprocessing
-weswgs.do| WES/WGS preprocessing
+weswgs.sh, weswgs.do| WES/WGS preprocessing
 spa.sh | Single-point analysis
 rva.sh | Rare-variant analysis
 

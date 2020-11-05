@@ -1,15 +1,17 @@
 #!/usr/bin/bash
 
-# --- step1 ---
-
 export TMPDIR=${HPC_WORK}/work
 export WESWGS=${HOME}/COVID-19/WESWGS
 export COHORT=INTERVAL
-export PREFIX=
 export PREFIX="singularity exec ${WESWGS}/burden_testing_latest.sif"
 
 module load singularity
 cd work
+
+# --- step1 ---
+
+# obtain variant lists
+
 for panel in cvd2 cvd3 inf neu
 do
   export panel=${panel}
@@ -24,17 +26,11 @@ do
   done
 done
 
+# prepare regions
+
 ${PREFIX} prepare-regions -o $(pwd)/geneset_data
 
-# --- make (annotation) group files ---
-#1. exon severe
-#   variants with a "high" predicted consequence according to Ensembl (roughly equivalent to more severe than missense)
-#2. exon CADD
-#   all exonic variants (+50 bp outside of exons) weighted by CADD scores
-#3. exon regulatory 
-#   same as above, but weighted by Eigen scores (phred-scaled). Variants in regulatory regions that overlap with eQTL for that gene are also included.
-#4. regulatory only
-#   same as above but excluding exonic variants
+# make (annotation) group files
 
 export OPTS1="-g exon"
 export OPTS2="-g exon -x 50 -s CADD"
@@ -48,8 +44,8 @@ do
   do
     for i in $(seq $chunks)
     do
-       ${PREFIX} make-group-file -C geneset_data/config.txt -i ${COHORT}-${panel}-wes.variantlist.gz ${!group} -o -w $(pwd) -d ${chunks} -c $i &
-       ${PREFIX} make-group-file -C geneset_data/config.txt -i ${COHORT}-${panel}-wgs.variantlist.gz ${!group} -o -w $(pwd) -d ${chunks} -c $i &
+       ${PREFIX} make-group-file -C ${WESWGS}/geneset_data/config.txt -i ${COHORT}-${panel}-wes.variantlist.gz ${!group} -o -w $(pwd) -d ${chunks} -c $i &
+       ${PREFIX} make-group-file -C ${WESWGS}/geneset_data/config.txt -i ${COHORT}-${panel}-wgs.variantlist.gz ${!group} -o -w $(pwd) -d ${chunks} -c $i &
     done
   done
 done
@@ -58,6 +54,15 @@ find -name "group_file*.txt" -exec cat \{} \+ > group_file.txt
 cut -f1 concat.group.file.txt | sort | uniq -c | awk '$1==1{print $2}'> singlesnp.genes.txt
 fgrep -wvf singlesnp.genes.txt concat.group.file.txt > concat.group.file.filtered.txt
 
+# Remarks
+#1. exon severe
+#   variants with a "high" predicted consequence according to Ensembl (roughly equivalent to more severe than missense)
+#2. exon CADD
+#   all exonic variants (+50 bp outside of exons) weighted by CADD scores
+#3. exon regulatory 
+#   same as above, but weighted by Eigen scores (phred-scaled). Variants in regulatory regions that overlap with eQTL for that gene are also included.
+#4. regulatory only
+#   same as above but excluding exonic variants
 
 # --- step2 ---
 
@@ -116,10 +121,15 @@ do
   done
 done
 
-# --- geneset (annotation) data ---
-# install axel, moreutils
 # http://www.tucows.com/preview/231886/Axel
 # git://git.joeyh.name/moreutils
+# sudo apt install docbook2x
+# sudo apt install libxml2-utils
+# git clone git://git.joeyh.name/moreutils
+# cd moreutils
+# make
+# make install
+# alternatives
 # http://downloads.sourceforge.net/docbook2x/docbook2X-0.8.8.tar.gz
 # ftp://xmlsoft.org/libxml2/
 # ftp://xmlsoft.org/libxml2/libxslt-1.1.34.tar.gz
