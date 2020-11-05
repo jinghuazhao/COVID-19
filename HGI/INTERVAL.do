@@ -105,6 +105,7 @@ program CxV2
   tab sex SARS_CoV if age<=60
   tab sex SARS_CoV if age>60
   tabstat age if SARS_CoV!=., stat(mean sd n) by(sex)
+  tabstat age if SARS_CoV!=., stat(mean sd n) by(SARS_CoV)
   drop if SARS_CoV==.
   outsheet ID SARS_CoV `3' PC_1-PC_20 using `2'/work/INTERVAL-covid.txt, delim(" ") noquote replace
   tostring ID,gen(IDS) format(%15.0g)
