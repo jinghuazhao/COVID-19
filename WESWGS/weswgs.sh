@@ -4,11 +4,11 @@ module load ceuadmin/stata
 stata -b do weswgs.do
 (
   head -1 work/weswgs.txt
-  bcftools query -l wes/WES_QCed_Info_updated_4006_FINAL.vcf.gz | grep -f - work/weswgs.txt
+  bcftools query -l wes/WES_QCed_Info_updated_4006_FINAL.vcf.gz | grep -w -f - work/weswgs.txt
 ) > work/wes.txt
 (
   head -1 work/weswgs.txt
-  bcftools query -l wgs/chr22/chr22.intervalwgs_v1_all_info.vcf.bgz | grep -f - work/weswgs.txt
+  bcftools query -l wgs/chr22/chr22.intervalwgs_v2_GT_only.vcf.bgz | grep -w -f - work/weswgs.txt
 ) > work/wgs.txt
 
 export TMPDIR=${HPC_WORK}/work
@@ -25,19 +25,14 @@ do
   for chr in chr{1..22} chrX chrY; do bcftools view --regions ${chr} ${panel}-wes.vcf.gz -O z -o work/${panel}-wes-${chr}.vcf.gz; done
   sbatch --job-name=_${panel} --account CARDIO-SL0-CPU --partition cardio --qos=cardio --array=1-22 --mem=40800 --time=5-00:00:00 --export ALL \
          --output=${TMPDIR}/_${panel}_%A_%a.out --error=${TMPDIR}/_${panel}_%A_%a.err --wrap ". ${HOME}/COVID-19/WESWGS/weswgs.wrap"
-  for chr in chrX chrY
-  do
-    export chr=${chr}
-    export WGS=~/COVID-19/WESWGS/wgs/${chr}/${chr}.intervalwgs_v2_GT_only.vcf.bgz
-    bcftools query -l ${WGS} | \
-    grep -f work/${panel}-wgs.samples | \
-    bcftools view -S - ${WGS} -O z -o work/${panel}-wgs-${chr}.vcf.gz
-  done
+  for SLURM_ARRAY_TASK_ID in X Y; do ". ${HOME}/COVID-19/WESWGS/weswgs.wrap"; done
 done
 
 cd work
 ls *vcf.gz | parallel  -j5 -C' ' 'tabix -f {}' &
 
+# https://sylabs.io/singularity/
+module load singularity
 singularity pull shub://hmgu-itg/burden_testing
 
 function chopped()
