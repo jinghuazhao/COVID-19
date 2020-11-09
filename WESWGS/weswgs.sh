@@ -35,6 +35,8 @@ ls *vcf.gz | parallel  -j5 -C' ' 'tabix -f {}' &
 module load singularity
 singularity pull shub://hmgu-itg/burden_testing
 
+sftp INTERVAL_VariantListUpload@146.107.169.40
+
 function chopped()
 # This version avoids Stata but has lines chopped
 {
