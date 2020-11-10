@@ -26,6 +26,11 @@ do
   ) | gzip -f > ${COHORT}-${weswgs}.variantlist.gz
 done
 
+join -v1 <(gunzip -c ${COHORT}-wes.variantlist.gz | awk -vOFS="\t" 'NR>1 {snpid=$1":"$2"_"$3"_"$4;print snpid,$0}' | sort -k1,1) \
+         <(gunzip -c ${COHORT}-wgs.variantlist.gz | awk -vOFS="\t" 'NR>1 {snpid=$1":"$2"_"$3"_"$4;print snpid,$0}' | sort -k1,1) | \
+sort -k2,2n -k3,3n | \
+gzip -f > ${COHORT}-wes-wgs.variantlist.gz
+
 # prepare regions
 
 ${STEP1} prepare-regions -o $(pwd)/geneset_data
