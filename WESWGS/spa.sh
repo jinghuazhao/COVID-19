@@ -31,6 +31,12 @@ join -v1 <(gunzip -c ${COHORT}-wes.variantlist.gz | awk -vOFS="\t" 'NR>1 {snpid=
 sort -k2,2n -k3,3n | \
 gzip -f > ${COHORT}-wes-wgs.variantlist.gz
 
+(
+  gunzip -c ${COHORT}-${weswgs}.variantlist.gz | head -1
+  gunzip -c ${COHORT}-${weswgs}.variantlist.gz ${COHORT}-wes-wgs.variantlist.gz | sort -k1,1n -k2,2n
+) | \
+gzip -f > ${COHORT}-wes+wgs.variantlist.gz
+
 # prepare regions
 
 ${STEP1} prepare-regions -o $(pwd)/geneset_data
@@ -87,6 +93,8 @@ done
 # group file containing testing groups
 
 ${STEP2} step2 -h
+
+cd -
 
 # <olink_protein>_<cohort>_<date_of_analysis>_<analyst_initials>.txt.bgz
 # ACE2_INTERVAL_02112020_JHZ.txt.bgz
