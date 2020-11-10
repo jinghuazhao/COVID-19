@@ -26,14 +26,15 @@ do
   ) | gzip -f > ${COHORT}-${weswgs}.variantlist.gz
 done
 
-join -v1 <(gunzip -c ${COHORT}-wes.variantlist.gz | awk -vOFS="\t" 'NR>1 {snpid=$1":"$2"_"$3"_"$4;print snpid,$0}' | sort -k1,1) \
-         <(gunzip -c ${COHORT}-wgs.variantlist.gz | awk -vOFS="\t" 'NR>1 {snpid=$1":"$2"_"$3"_"$4;print snpid,$0}' | sort -k1,1) | \
+join -v1 -t$'\t' <(gunzip -c ${COHORT}-wes.variantlist.gz | awk -vOFS="\t" 'NR>1 {snpid=$1":"$2"_"$3"_"$4;print snpid,$0}' | sort -k1,1) \
+                 <(gunzip -c ${COHORT}-wgs.variantlist.gz | awk -vOFS="\t" 'NR>1 {snpid=$1":"$2"_"$3"_"$4;print snpid,$0}' | sort -k1,1) | \
 sort -k2,2n -k3,3n | \
+cut -f1 --complement | \
 gzip -f > ${COHORT}-wes-wgs.variantlist.gz
 
 (
   gunzip -c ${COHORT}-${weswgs}.variantlist.gz | head -1
-  gunzip -c ${COHORT}-${weswgs}.variantlist.gz ${COHORT}-wes-wgs.variantlist.gz | sort -k1,1n -k2,2n
+  gunzip -c ${COHORT}-${weswgs}.variantlist.gz ${COHORT}-wes-wgs.variantlist.gz | sed 's/X/23/;s/Y/24/' | sort -k1,1n -k2,2n | sed 's/23/X/;s/24/Y/'
 ) | \
 gzip -f > ${COHORT}-wes+wgs.variantlist.gz
 
