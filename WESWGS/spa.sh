@@ -13,21 +13,17 @@ cd work
 
 # obtain variant lists
 
-for panel in cvd2 cvd3 inf neu
+for weswgs in wes wgs
 do
-  export panel=${panel}
-  for weswgs in wes wgs
-  do
-    export weswgs=${weswgs}
-    echo chr{1..22} chrX chrY | \
-    tr ' ' '\n' | \
-    parallel --env COHORT --env STEP1 --env panel --env weswgs -C' ' '${STEP1} step1 ${COHORT}-${panel}-${weswgs} ${panel}-${weswgs}-{}.vcf.gz'
-    (
-      echo -e "#CHROM\tPOS\tREF\tALT\tAC\tAN"
-      for chr in chr{1..22} chrX chrY; do zcat ${COHORT}-${panel}-${weswgs}.${chr}.variantlist.gz; done | \
-      sed 's/^chr//' 
-    ) | gzip -f > ${COHORT}-${panel}-${weswgs}.variantlist.gz
-  done
+  export weswgs=${weswgs}
+  echo chr{1..22} chrX chrY | \
+  tr ' ' '\n' | \
+  parallel --env COHORT --env STEP1 --env weswgs -C' ' '${STEP1} step1 ${COHORT}-${weswgs} ${weswgs}-{}.vcf.gz'
+  (
+    echo -e "#CHROM\tPOS\tREF\tALT\tAC\tAN"
+    for chr in chr{1..22} chrX chrY; do zcat ${COHORT}-${weswgs}.${chr}.variantlist.gz; done | \
+    sed 's/^chr//' 
+  ) | gzip -f > ${COHORT}-${weswgs}.variantlist.gz
 done
 
 # prepare regions

@@ -3,6 +3,7 @@
 Filename | Description
 ---------|------------
 weswgs.do, weswgs.R, weswgs.sh, weswgs.wrap | WES/WGS preprocessing
+doc/1_pool_phenotypes_nmr_olink_somalogic.R | CEU central code
 spa.sh | Single-point analysis
 rva.sh | Rare-variant analysis
 
