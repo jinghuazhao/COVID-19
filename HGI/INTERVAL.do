@@ -1,19 +1,5 @@
 // Phenotype
 
-program single_imputation
-// https://stats.idre.ucla.edu/stata/seminars/mi_in_stata_pt1_new/
-// less useful after conversion of the whole cohort into 8-bit format
-   mi set wide
-   mi register imputed age sex1
-   mi register regular PC_1-PC_20
-   mi impute chained (regress) age (logit) sex1 = PC_1-PC_20, add(1) rseed(123456)
-   replace SARS_CoV=0 if SARS_CoV!=1
-   replace age=_1_age
-   replace age2=age*age
-   replace sex=_1_sex1+1
-   replace sexage=sex*age
-end
-
 local dir : env HGI
 local ev : env ev
 
@@ -30,7 +16,7 @@ save work/INTERVAL-pca, replace
 // insheet using "20200603/INTERVALdata_03JUN2020.csv", case clear
 insheet using "20200731/INTERVALdata_31JUL2020.csv", case clear
 sort identifier
-keep identifier sexPulse agePulse
+keep identifier sexPulse agePulse attendanceDate
 rename agePulse age
 gen age2=age*age
 rename sexPulse sex
@@ -70,9 +56,9 @@ save work/INTERVAL-omics-X, replace
 // insheet using "20200603/INTERVAL_Covid_03JUN2020.csv", case clear
 insheet using "20200731/INTERVAL_Covid_31JUL2020.csv", case clear
 sort identifier
-egen SARS_CoV=rowtotal(SARS_CoV2_1 SARS_CoV2_2 SARS_CoV2_3 SARS_CoV2_4 SARS_CoV2_5 SARS_CoV2_6 SARS_CoV2_7 SARS_CoV2_8 SARS_CoV2_9 SARS_CoV2_10)
-replace SARS_CoV=1 if SARS_CoV>0
-keep identifier SARS_CoV
+egen SARS_CoV2=rowtotal(SARS_CoV2_1 SARS_CoV2_2 SARS_CoV2_3 SARS_CoV2_4 SARS_CoV2_5 SARS_CoV2_6 SARS_CoV2_7 SARS_CoV2_8 SARS_CoV2_9 SARS_CoV2_10)
+gen SARS_CoV=SARS_CoV2
+replace SARS_CoV=1 if SARS_CoV2>0
 save work/covid, replace
 
 // 5. INTERVAL-COVID
@@ -80,10 +66,21 @@ gzuse work/INTERVAL, clear
 drop if identifier==.
 merge 1:1 identifier using work/covid, gen(omics_data_pca_covid)
 keep if omics_data_pca_covid==3
+forval x=1/10 {
+  gen age_`x'=age+(date(specimenDate_`x',"DMY")-date(attendanceDate,"DMY"))/365.25
+}
+gen age_at_test=.
+replace age_at_test=max(age_1,age_2,age_3,age_4,age_5,age_6,age_7,age_8,age_9,age_10) if SARS_CoV2==0
+forval x=1/10 {
+  replace age_at_test=age_`x' if SARS_CoV2>0 & SARS_CoV2_`x'==1
+}
+format age_* %6.4g
 save work/INTERVAL-covid, replace
 
 gzuse work/INTERVAL,clear
 merge 1:1 ID using work/INTERVAL-covid
+replace age=age_at_test if SARS_CoV2!=.
+replace age2=age*age if SARS_CoV2!=.
 drop _merge
 merge 1:1 ID using work/INTERVAL-omics
 keep if _merge==3
@@ -175,3 +172,17 @@ sex60CxV2 1 20200731-male-60-ANA_C1_V2 1
 sex60CxV2 2 20200731-male-60-ANA_C2_V2 1
 sex60CxV2 1 20200731-female-60-ANA_C1_V2 2
 sex60CxV2 2 20200731-female-60-ANA_C2_V2 2
+
+program single_imputation
+// https://stats.idre.ucla.edu/stata/seminars/mi_in_stata_pt1_new/
+// less useful after conversion of the whole cohort into 8-bit format
+   mi set wide
+   mi register imputed age sex1
+   mi register regular PC_1-PC_20
+   mi impute chained (regress) age (logit) sex1 = PC_1-PC_20, add(1) rseed(123456)
+   replace SARS_CoV=0 if SARS_CoV!=1
+   replace age=_1_age
+   replace age2=age*age
+   replace sex=_1_sex1+1
+   replace sexage=sex*age
+end
