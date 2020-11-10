@@ -33,8 +33,8 @@ cut -f1 --complement | \
 gzip -f > ${COHORT}-wes-wgs.variantlist.gz
 
 (
-  gunzip -c ${COHORT}-${weswgs}.variantlist.gz | head -1
-  gunzip -c ${COHORT}-${weswgs}.variantlist.gz ${COHORT}-wes-wgs.variantlist.gz | sed 's/X/23/;s/Y/24/' | sort -k1,1n -k2,2n | sed 's/23/X/;s/24/Y/'
+  gunzip -c ${COHORT}-wgs.variantlist.gz | head -1
+  gunzip -c ${COHORT}-wgs.variantlist.gz ${COHORT}-wes-wgs.variantlist.gz | sed '1d;s/X/23/;s/Y/24/' | sort -k1,1n -k2,2n | sed 's/23/X/;s/24/Y/'
 ) | \
 gzip -f > ${COHORT}-wes+wgs.variantlist.gz
 
