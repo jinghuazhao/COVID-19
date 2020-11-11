@@ -1,3 +1,12 @@
+## Variant lists as of 11/11/2020
+
+The following two files were also uploaded.
+
+* INTERVAL-wes.variantlist.gz
+* INTERVAL-wgs.variantlist.gz
+
+for WES and WGS, respectively.
+
 ## Variant lists as of 10/11/2020
 
 * A combination of WES+WGS when there were samples with cvd2/cvd3/inf/neu measurements.
