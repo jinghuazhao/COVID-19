@@ -1,11 +1,11 @@
 #!/usr/bin/bash
 
 export TMPDIR=${HPC_WORK}/work
-export WESWGS=${HOME}/COVID-19/WESWGS
+export SEQ=${HOME}/COVID-19/SEQ
 export COHORT=INTERVAL
-export CONFIG=${WESWGS}/geneset_data/config.txt
-export STEP1="singularity exec ${WESWGS}/burden_testing_latest.sif"
-export STEP2="singularity exec --containall ${WESWGS}/burden_testing_latest.sif"
+export CONFIG=${SEQ}/geneset_data/config.txt
+export STEP1="singularity exec ${SEQ}/burden_testing_latest.sif"
+export STEP2="singularity exec --containall ${SEQ}/burden_testing_latest.sif"
 
 cd work
 
