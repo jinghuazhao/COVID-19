@@ -16,10 +16,12 @@ function phenotype()
   cut -d' ' -f1 > work/INTERVAL.samples
   awk '{print $1 "_" $1}' work/INTERVAL.samples > work/INTERVAL-X.samples
   stata -b do INTERVAL.do
-  export d=20200731
-  for dir in ${d}-ANA_C1_V2 ${d}-ANA_C2_V2 \
-             ${d}-male-ANA_C1_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C1_V2 ${d}-female-ANA_C2_V2 \
-             ${d}-male-60-ANA_C1_V2 ${d}-male-60-ANA_C2_V2 ${d}-female-60-ANA_C1_V2 ${d}-female-60-ANA_C2_V2
+# export d=20200731
+# for dir in ${d}-ANA_C1_V2 ${d}-ANA_C2_V2 \
+#            ${d}-male-ANA_C1_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C1_V2 ${d}-female-ANA_C2_V2 \
+#            ${d}-male-60-ANA_C1_V2 ${d}-male-60-ANA_C2_V2 ${d}-female-60-ANA_C1_V2 ${d}-female-60-ANA_C2_V2
+  export d=20201116
+  for dir in ${d}-male-ANA_C2_V2 ${d}-female-ANA_C2_V2 ${d}-le_60-ANA_C2_V2 ${d}-gt_60-ANA_C2_V2
   do
     cd ${dir}
     sed '1d' work/INTERVAL-covid.txt | \
@@ -45,10 +47,12 @@ function make_bed()
   module load plink/2.00-alpha
   export merged_imputation=/home/jhz22/rds/post_qc_data/interval/genotype/affy_ukbiobank_array/genotyped/merged_imputation
   plink2 --bfile ${merged_imputation} --indep-pairwise 1000kb 1 0.1 --out ${SCALLOP}/HGI/work/INTERVAL-covid
-  export d=20200731
-  for dir in ${d}-ANA_C1_V2 ${d}-ANA_C2_V2 \
-             ${d}-male-ANA_C1_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C1_V2 ${d}-female-ANA_C2_V2 \
-             ${d}-male-60-ANA_C1_V2 ${d}-male-60-ANA_C2_V2 ${d}-female-60-ANA_C1_V2 ${d}-female-60-ANA_C2_V2
+# export d=20200731
+# for dir in ${d}-ANA_C1_V2 ${d}-ANA_C2_V2 \
+#            ${d}-male-ANA_C1_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C1_V2 ${d}-female-ANA_C2_V2 \
+#            ${d}-male-60-ANA_C1_V2 ${d}-male-60-ANA_C2_V2 ${d}-female-60-ANA_C1_V2 ${d}-female-60-ANA_C2_V2
+  export d=20201116
+  for dir in ${d}-male-ANA_C2_V2 ${d}-female-ANA_C2_V2 ${d}-le_60-ANA_C2_V2 ${d}-gt_60-ANA_C2_V2
   do
     cd ${dir}
     plink2 --bfile ${merged_imputation} --make-bed --extract ${SCALLOP}/HGI/work/INTERVAL-covid.prune.in \
@@ -99,10 +103,12 @@ function X()
 # bcftools index -tf output/INTERVAL-X-src.vcf.gz
   bcftools annotate --set-id '%CHROM:%POS\_%REF\/%FIRST_ALT' ${X}/INTERVAL_X_imp_ann_filt_v2.vcf.gz -O z -o work/INTERVAL-X-src.vcf.gz
   bcftools index -tf work/INTERVAL-X-src.vcf.gz
-  export d=20200731
-  for dir in ${d}-ANA_C1_V2 ${d}-ANA_C2_V2 \
-             ${d}-male-ANA_C1_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C1_V2 ${d}-female-ANA_C2_V2 \
-             ${d}-male-60-ANA_C1_V2 ${d}-male-60-ANA_C2_V2 ${d}-female-60-ANA_C1_V2 ${d}-female-60-ANA_C2_V2
+# export d=20200731
+# for dir in ${d}-ANA_C1_V2 ${d}-ANA_C2_V2 \
+#            ${d}-male-ANA_C1_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C1_V2 ${d}-female-ANA_C2_V2 \
+#            ${d}-male-60-ANA_C1_V2 ${d}-male-60-ANA_C2_V2 ${d}-female-60-ANA_C1_V2 ${d}-female-60-ANA_C2_V2
+  export d=20201116
+  for dir in ${d}-male-ANA_C2_V2 ${d}-female-ANA_C2_V2 ${d}-le_60-ANA_C2_V2 ${d}-gt_60-ANA_C2_V2
   do
     cd ${dir}
     grep -v -f work/INTERVAL-covid-X.excl-samples work/INTERVAL-covid-X.samples | \
@@ -194,9 +200,11 @@ function aggregate()
 # sex=M/MALE, F/FEMALE, ALL
 # [dataset].[last name].[analysis_name].[freeze_number].[age].[sex].[ancestry].[n_cases].[n_controls].[gwas software].[YYYYMMDD].txt.gz
 # export snvResults=output/INTERVAL.Zhao.ANA_C2_V2.5.ALL.EUR.144.612.SAIGE.20200617.txt.gz
-  for dir in ${d}-ANA_C1_V2 ${d}-ANA_C2_V2 \
-             ${d}-male-ANA_C1_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C1_V2 ${d}-female-ANA_C2_V2 \
-             ${d}-male-60-ANA_C1_V2 ${d}-male-60-ANA_C2_V2 ${d}-female-60-ANA_C1_V2 ${d}-female-60-ANA_C2_V2
+# for dir in ${d}-ANA_C1_V2 ${d}-ANA_C2_V2 \
+#            ${d}-male-ANA_C1_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C1_V2 ${d}-female-ANA_C2_V2 \
+#            ${d}-male-60-ANA_C1_V2 ${d}-male-60-ANA_C2_V2 ${d}-female-60-ANA_C1_V2 ${d}-female-60-ANA_C2_V2
+  export d=20201116
+  for dir in ${d}-male-ANA_C2_V2 ${d}-female-ANA_C2_V2 ${d}-le_60-ANA_C2_V2 ${d}-gt_60-ANA_C2_V2
   do
   export dir=${dir}
   cd ${dir}

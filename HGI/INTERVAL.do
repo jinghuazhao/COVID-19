@@ -1,4 +1,5 @@
-// Phenotype
+// Phenotype preparation
+// essential to check for test dates
 
 local dir : env HGI
 local ev : env ev
@@ -14,7 +15,8 @@ save work/INTERVAL-pca, replace
 // insheet using "`dir'/06-05-2020/INTERVAL/INTERVALdata_06MAY2020.csv", case clear
 // insheet using "20200520/INTERVALdata_20MAY2020.csv", case clear
 // insheet using "20200603/INTERVALdata_03JUN2020.csv", case clear
-insheet using "20200731/INTERVALdata_31JUL2020.csv", case clear
+// insheet using "20200731/INTERVALdata_31JUL2020.csv", case clear
+insheet using "Data_INTERVAL_latest/INTERVALdata_16NOV2020.csv", case clear
 sort identifier
 keep identifier sexPulse agePulse attendanceDate
 rename sexPulse sex
@@ -26,7 +28,8 @@ save work/INTERVAL-data, replace
 // insheet using "`dir'/06-05-2020/INTERVAL/INTERVAL_OmicsMap_20200506.csv", case clear
 // insheet using "20200520/INTERVAL_OmicsMap_20200520.csv", case clear
 // insheet using "20200603/INTERVAL_OmicsMap_20200603.csv", case clear
-insheet using "20200731/INTERVAL_OmicsMap_20200731.csv", case clear
+// insheet using "20200731/INTERVAL_OmicsMap_20200731.csv", case clear
+insheet using "Data_INTERVAL_latest/INTERVAL_OmicsMap_20201116.csv", case clear
 keep identifier Affymetrix_QC_bl Affymetrix_gwasQC_bl
 format Affymetrix_QC_bl %15.0g
 format Affymetrix_gwasQC_bl %15.0g
@@ -51,7 +54,8 @@ save work/INTERVAL-omics-X, replace
 // insheet using "06-05-2020/INTERVAL/INTERVAL_Covid_06MAY2020.csv", case clear
 // insheet using "20200520/INTERVAL_Covid_20MAY2020.csv", case clear
 // insheet using "20200603/INTERVAL_Covid_03JUN2020.csv", case clear
-insheet using "20200731/INTERVAL_Covid_31JUL2020.csv", case clear
+// insheet using "20200731/INTERVAL_Covid_31JUL2020.csv", case clear
+insheet using "20200731/INTERVAL_Covid_16NOV2020.csv", case clear
 sort identifier
 egen SARS_CoV2=rowtotal(SARS_CoV2_1 SARS_CoV2_2 SARS_CoV2_3 SARS_CoV2_4 SARS_CoV2_5 SARS_CoV2_6 SARS_CoV2_7 SARS_CoV2_8 SARS_CoV2_9 SARS_CoV2_10)
 gen SARS_CoV=SARS_CoV2
@@ -77,6 +81,9 @@ save work/INTERVAL-covid, replace
 gzuse work/INTERVAL,clear
 merge 1:1 ID using work/INTERVAL-covid
 rename age_at_test age
+gen agegroup=.
+replace agegroup=1 if age<=60
+replace agegroup-2 if age>60
 gen age2=age*age
 gen sexage=sex*age
 drop _merge
@@ -85,6 +92,54 @@ keep if _merge==3
 drop _merge
 gzsave work/INTERVAL-omics-covid, replace
 
+program C2sex
+  // 1=working directory; 2=sex
+  gzuse work/INTERVAL-omics-covid,clear
+  outsheet ID if sex==. | age==. using `2'/work/INTERVAL.excl-samples, noname replace
+  drop if sex==. | age==.
+  replace SARS_CoV=0 if SARS_CoV==.
+  drop if SARS_CoV==. | sex!=`2'
+  outsheet ID SARS_CoV `4' PC_1-PC_20 using `2'/work/INTERVAL-covid.txt, delim(" ") noquote replace
+  tostring ID,gen(IDS) format(%15.0g)
+  gen str31 ID2=IDS + "_" + IDS
+  label define sexFM 1 "M" 2 "F"
+  label values sex sexFM
+  drop if idn==.
+  gzsave `2'/work/INTERVAL-covid, replace
+  merge 1:1 ID2 using work/INTERVAL-omics-X
+  keep if _merge==3
+  drop _merge
+  outsheet ID2 age age2 using `2'/work/INTERVAL-X.FM if idx!=., noname noquote replace
+end
+
+C2sex 20201116-male-ANA_C2_V2 1
+C2sex 20201116-female-ANA_C2_V2 2
+
+program C2age
+// 1=working directory; 2=age
+  gzuse work/INTERVAL-omics-covid, clear
+  outsheet ID if sex==. | age==. using `1'/work/INTERVAL.excl-samples, noname replace
+  drop if sex==. | age==.
+  replace SARS_CoV=0 if SARS_CoV==.
+  drop if SARS_CoV==. | agegroup!=`2'
+  outsheet ID SARS_CoV PC_1-PC_20 using `1'/work/INTERVAL-covid.txt, delim(" ") noquote replace
+  tostring ID,gen(IDS) format(%15.0g)
+  gen str31 ID2=IDS + "_" + IDS
+  label define sexFM 1 "M" 2 "F"
+  label values sex sexFM
+  drop if idn==.
+  gzsave `1'/work/INTERVAL-covid, replace
+  merge 1:1 ID2 using work/INTERVAL-omics-X
+  keep if _merge==3
+  drop _merge
+  outsheet ID2 sex using `2'/work/INTERVAL-X.FM if idx!=., noname noquote replace
+end
+
+C2age 20201116-LE60-ANA_C2_V2 1
+C2age 20201116-GT60-ANA_C2_V2 2
+
+exit,clear
+// 31JUL2020 version
 program CxV2
 //1=1/2 for C1/C2; 2=working directory
   gzuse work/INTERVAL-omics-covid, clear
@@ -115,7 +170,6 @@ program CxV2
   outsheet ID2 sex using `2'/work/INTERVAL-X.FM if idx!=., noname noquote replace
 end
 
-// setup
 local covlist sex age age2 sexage
 CxV2 1 20200731-ANA_C1_V2 "`covlist'"
 CxV2 2 20200731-ANA_C2_V2 "`covlist'"
