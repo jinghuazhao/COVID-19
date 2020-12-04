@@ -67,6 +67,13 @@ function make_bed()
 # step 3. sample-specific bgen files
 function autosomes_sbatch()
 {
+  export d=20201116
+  for dir in ${d}-male-ANA_C2_V2 ${d}-female-ANA_C2_V2 ${d}-le_60-ANA_C2_V2 ${d}-gt_60-ANA_C2_V2
+  do
+    cd ${dir}
+    sbatch ${HGI}/bgen.sb
+    cd -
+  done
 #!/usr/bin/bash
 
 #SBATCH --job-name=_bgen
@@ -291,5 +298,5 @@ function upload()
 # gsutil cp $1 gs://covid19-hg-upload-bugbank
 # https://console.cloud.google.com/storage/browser/covid19-hg-upload-bugbank
 }
-
-# srun -A CARDIO-SL0-CPU -p cardio_intr --qos=cardio_intr -N1 -n1 -c4 --mem=50G -t 12:0:0 --pty bash -i
+# --mem=50G -N1 -n1 -c4
+# srun -A CARDIO-SL0-CPU -p cardio_intr --qos=cardio_intr -t 12:0:0 --pty bash -i
