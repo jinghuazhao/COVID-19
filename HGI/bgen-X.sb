@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-#SBATCH --job-name=_bgen
+#SBATCH --job-name=_bgen-X
 #SBATCH --account CARDIO-SL0-CPU
 #SBATCH --partition cardio
 #SBATCH --qos=cardio
