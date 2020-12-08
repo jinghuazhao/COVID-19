@@ -14,7 +14,7 @@ git add GEO/GEO.R GEO/GEO2R.R GEO/test.ini GEO/test.R GEO/test.sh GEO/README.md
 git commit -m "GEO test"
 git add HGI/README.md HGI/INTERVAL.do HGI/INTERVAL.rec HGI/INTERVAL.sh HGI/autosomes.sb HGI/X.sb HGI/X-female.sb
 git add HGI/glist-hg19.sb HGI/glist-hg19.sh HGI/L10RB_IFNAR2_variants.sh
-git add HGI/20200731.sh HGI/20201116.sh
+git add HGI/20200731.sh HGI/20201116.sh HGI/bgen.sb HGI/bgen-X.sb
 git commit -m "HGI analysis"
 git add NGS/README.* NGS/ngs.png NGS/ngs.do NGS/ngs.R NGS/ngs.sb NGS/ngs.sh NGS/lod.sh NGS/pQTLtools.R NGS/utils
 git commit -m "Olink/NGS pilot"
