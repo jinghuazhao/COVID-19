@@ -74,28 +74,6 @@ function autosomes_sbatch()
     sbatch ${HGI}/bgen.sb
     cd -
   done
-#!/usr/bin/bash
-
-#SBATCH --job-name=_bgen
-#SBATCH --account CARDIO-SL0-CPU
-#SBATCH --partition cardio
-#SBATCH --qos=cardio
-#SBATCH --array=1-22
-#SBATCH --mem=28800
-#SBATCH --time=5-00:00:00
-#SBATCH --output=/rds/user/jhz22/hpc-work/work/_bgen_%A_%a.out
-#SBATCH --error=/rds/user/jhz22/hpc-work/work/_bgen_%A_%a.err
-#SBATCH --export ALL
-
-export job=$SLURM_ARRAY_TASK_ID
-export autosomes=/home/jhz22/rds/post_qc_data/interval/imputed/uk10k_1000g_b37
-export TMPDIR=/rds/user/jhz22/hpc-work/work
-
-qctool -g ${autosomes}/imputed/impute_${job}_interval.bgen -s ${autosomes}/imputed/interval.samples \
-       -incl-samples work/INTERVAL-covid.samples \
-       -bgen-bits 8 -og output/INTERVAL-${job}.bgen -os output/INTERVAL-${job}.samples
-
-bgenix -g output/INTERVAL-${job}.bgen -index -clobber
 }
 
 function X()
@@ -118,10 +96,7 @@ function X()
   for dir in ${d}-male-ANA_C2_V2 ${d}-female-ANA_C2_V2 ${d}-le_60-ANA_C2_V2 ${d}-gt_60-ANA_C2_V2
   do
     cd ${dir}
-    grep -v -f work/INTERVAL-covid-X.excl-samples work/INTERVAL-covid-X.samples | \
-    bcftools view -S - ${SCALLOP}/HGI/work/INTERVAL-X-src.vcf.gz -O v | \
-    bgzip -cf > output/INTERVAL-X-ploidy.vcf.gz
-    bcftools index -tf output/INTERVAL-X-ploidy.vcf.gz
+    sbatch ${HGI}/bgen-X.sb
     cd -
   done
 }

@@ -1,0 +1,18 @@
+#!/usr/bin/bash
+
+#SBATCH --job-name=_bgen
+#SBATCH --account CARDIO-SL0-CPU
+#SBATCH --partition cardio
+#SBATCH --qos=cardio
+#SBATCH --mem=28800
+#SBATCH --time=5-00:00:00
+#SBATCH --output=/rds/user/jhz22/hpc-work/work/_bgen_%A_%a.out
+#SBATCH --error=/rds/user/jhz22/hpc-work/work/_bgen_%A_%a.err
+#SBATCH --export ALL
+
+export TMPDIR=/rds/user/jhz22/hpc-work/work
+
+grep -v -f work/INTERVAL-covid-X.excl-samples work/INTERVAL-covid-X.samples | \
+bcftools view -S - ${SCALLOP}/HGI/work/INTERVAL-X-src.vcf.gz -O v | \
+bgzip -cf > output/INTERVAL-X-ploidy.vcf.gz
+bcftools index -tf output/INTERVAL-X-ploidy.vcf.gz
