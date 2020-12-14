@@ -192,6 +192,7 @@ function aggregate()
   export d=20201201
   for dir in ${d}-male-ANA_C2_V2 ${d}-female-ANA_C2_V2 ${d}-le_60-ANA_C2_V2 ${d}-gt_60-ANA_C2_V2
   do
+  echo ${dir}
   export dir=${dir}
   cd ${dir}
   export snvResults=${SCALLOP}/HGI/${dir}.txt.gz
@@ -262,10 +263,10 @@ function upload()
 # upload
   gsutil ls gs://covid19-hg-upload-uk--blood-donors-cohort
   gsutil cp $1 gs://covid19-hg-upload-uk--blood-donors-cohort 
-  gsutil cp 20200731*/output/INTERVAL.Zhao* gs://covid19-hg-upload-uk--blood-donors-cohort
+  gsutil cp 20201201*/output/INTERVAL.Zhao* gs://covid19-hg-upload-uk--blood-donors-cohort
 # web: https://console.cloud.google.com/storage/browser/covid19-hg-upload-uk--blood-donors-cohort?project=covid-19-hg
 # HGI spreadsheet
-  ls 20200731*/output/INTERVAL.Zhao* | xargs -l basename | xsel -i
+  ls 20201201*/output/INTERVAL.Zhao* | xargs -l basename | xsel -i
 # Fill the form (now uses tab in the spreadsheet),
 # https://airtable.com/shrdJDwSHRZKXv45H
 # HGI results
