@@ -9,7 +9,7 @@
 
 ## COVID-19
 * [CITIID](https://covid19.medschl.cam.ac.uk/)
-* [COG-UK](https://www.cogconsortium.uk/)
+* [COG-UK](https://www.cogconsortium.uk/) ([GitHub repos](https://github.com/COG-UK))
 * [COVID-19 Data Portal](https://www.covid19dataportal.org/)
 * [DockCov2](https://covirus.cc/drugs/)
 * [CUH clinical update](https://cuhstaffportal.co.uk/operational/clinical-updates/) and [testing](https://www.cam.ac.uk/coronavirus/general-staff-advice/health-and-wellbeing#testing).
