@@ -38,11 +38,20 @@ function rename()
   echo ${filename}.txt.gz
 }
 
+rename 20201201-ANA_C2_V2           C2_V2 ALL   ALL  838 40994
 rename 20201201-female-ANA_C2_V2    C2_V2 ALL   F    460 20698
 rename 20201201-male-ANA_C2_V2      C2_V2 ALL   M    378 20296
 rename 20201201-le_60-ANA_C2_V2     C2_V2 LE_60 ALL  676 28144
 rename 20201201-gt_60-ANA_C2_V2     C2_V2 GT_60 ALL  162 12850
 
+
+#   SARS_CoV |      Freq.     Percent        Cum.
+#------------+-----------------------------------
+#          0 |     40,994       98.00       98.00
+#          1 |        838        2.00      100.00
+#------------+-----------------------------------
+#      Total |     41,832      100.00
+#
 #. tab agegroup SARS_CoV
 #
 #           |       SARS_CoV
