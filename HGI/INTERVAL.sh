@@ -21,7 +21,7 @@ function phenotype()
 #            ${d}-male-ANA_C1_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C1_V2 ${d}-female-ANA_C2_V2 \
 #            ${d}-male-60-ANA_C1_V2 ${d}-male-60-ANA_C2_V2 ${d}-female-60-ANA_C1_V2 ${d}-female-60-ANA_C2_V2
   export d=20201201
-  for dir in ${d}-male-ANA_C2_V2 ${d}-female-ANA_C2_V2 ${d}-le_60-ANA_C2_V2 ${d}-gt_60-ANA_C2_V2
+  for dir in ${d}-ANA_C2_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C2_V2 ${d}-le_60-ANA_C2_V2 ${d}-gt_60-ANA_C2_V2
   do
     cd ${dir}
     sed '1d' work/INTERVAL-covid.txt | \
@@ -52,7 +52,7 @@ function make_bed()
 #            ${d}-male-ANA_C1_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C1_V2 ${d}-female-ANA_C2_V2 \
 #            ${d}-male-60-ANA_C1_V2 ${d}-male-60-ANA_C2_V2 ${d}-female-60-ANA_C1_V2 ${d}-female-60-ANA_C2_V2
   export d=20201201
-  for dir in ${d}-male-ANA_C2_V2 ${d}-female-ANA_C2_V2 ${d}-le_60-ANA_C2_V2 ${d}-gt_60-ANA_C2_V2
+  for dir in ${d}-ANA_C2_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C2_V2 ${d}-le_60-ANA_C2_V2 ${d}-gt_60-ANA_C2_V2
   do
     cd ${dir}
     plink2 --bfile ${merged_imputation} --make-bed --extract ${SCALLOP}/HGI/work/INTERVAL-covid.prune.in \
@@ -68,7 +68,7 @@ function make_bed()
 function autosomes_sbatch()
 {
   export d=20201201
-  for dir in ${d}-male-ANA_C2_V2 ${d}-female-ANA_C2_V2 ${d}-le_60-ANA_C2_V2 ${d}-gt_60-ANA_C2_V2
+  for dir in ${d}-ANA_C2_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C2_V2 ${d}-le_60-ANA_C2_V2 ${d}-gt_60-ANA_C2_V2
   do
     cd ${dir}
     sbatch ${HGI}/bgen.sb
@@ -93,7 +93,7 @@ function X()
 #            ${d}-male-ANA_C1_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C1_V2 ${d}-female-ANA_C2_V2 \
 #            ${d}-male-60-ANA_C1_V2 ${d}-male-60-ANA_C2_V2 ${d}-female-60-ANA_C1_V2 ${d}-female-60-ANA_C2_V2
   export d=20201201
-  for dir in ${d}-male-ANA_C2_V2 ${d}-female-ANA_C2_V2 ${d}-le_60-ANA_C2_V2 ${d}-gt_60-ANA_C2_V2
+  for dir in ${d}-ANA_C2_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C2_V2 ${d}-le_60-ANA_C2_V2 ${d}-gt_60-ANA_C2_V2
   do
     cd ${dir}
     sbatch ${HGI}/bgen-X.sb
@@ -147,7 +147,7 @@ export d=20201201
 
 export covlist=age,age2,PC_1,PC_2,PC_3,PC_4,PC_5,PC_6,PC_7,PC_8,PC_9,PC_10,PC_11,PC_12,PC_13,PC_14,PC_15,PC_16,PC_17,PC_18,PC_19,PC_20
 # for dir in ${d}-male-ANA_C1_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C1_V2 ${d}-female-ANA_C2_V2
-for dir in ${d}-male-ANA_C2_V2 ${d}-female-ANA_C2_V2
+for dir in ${d}-ANA_C2_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C2_V2
 do
   export dir=${dir}
   Cx_V2_step1
@@ -166,7 +166,7 @@ done
 # for dir in ${d}-ANA_C1_V2 ${d}-ANA_C2_V2 \
 #            ${d}-male-ANA_C1_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C1_V2 ${d}-female-ANA_C2_V2 \
 #            ${d}-male-60-ANA_C1_V2 ${d}-male-60-ANA_C2_V2 ${d}-female-60-ANA_C1_V2 ${d}-female-60-ANA_C2_V2
-for dir in ${d}-male-ANA_C2_V2 ${d}-female-ANA_C2_V2 ${d}-le_60-ANA_C2_V2 ${d}-gt_60-ANA_C2_V2
+for dir in ${d}-ANA_C2_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C2_V2 ${d}-le_60-ANA_C2_V2 ${d}-gt_60-ANA_C2_V2
 do
   export dir=${dir}
   sbatch --wait ${SCALLOP}/HGI/autosomes.sb
@@ -190,7 +190,7 @@ function aggregate()
 #            ${d}-male-ANA_C1_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C1_V2 ${d}-female-ANA_C2_V2 \
 #            ${d}-male-60-ANA_C1_V2 ${d}-male-60-ANA_C2_V2 ${d}-female-60-ANA_C1_V2 ${d}-female-60-ANA_C2_V2
   export d=20201201
-  for dir in ${d}-male-ANA_C2_V2 ${d}-female-ANA_C2_V2 ${d}-le_60-ANA_C2_V2 ${d}-gt_60-ANA_C2_V2
+  for dir in ${d}-ANA_C2_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C2_V2 ${d}-le_60-ANA_C2_V2 ${d}-gt_60-ANA_C2_V2
   do
   echo ${dir}
   export dir=${dir}

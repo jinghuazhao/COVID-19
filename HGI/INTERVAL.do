@@ -111,6 +111,39 @@ tab agegroup SARS_CoV
 tab sex SARS_CoV
 gzsave work/INTERVAL-omics-covid, replace
 
+program CxV2
+//1=1/2 for C1/C2; 2=working directory
+  gzuse work/INTERVAL-omics-covid, clear
+  tab SARS_CoV
+  tab sex if SARS_CoV!=.
+  tabstat age if SARS_CoV!=., stat(mean sd n) by(sex) format
+  outsheet ID if sex==. | age==. using `2'/work/INTERVAL.excl-samples, noname replace
+  drop if sex==. | age==.
+  replace SARS_CoV=0 if SARS_CoV==. & `1'==2
+  tab SARS_CoV
+  tab sex if SARS_CoV!=.
+  tab sex SARS_CoV
+  tab sex SARS_CoV if age<=60
+  tab sex SARS_CoV if age>60
+  tabstat age if SARS_CoV!=., stat(mean sd n) by(sex) format
+  tabstat age if SARS_CoV!=., stat(mean sd n) by(SARS_CoV) format
+  drop if SARS_CoV==.
+  outsheet ID SARS_CoV `3' PC_1-PC_20 using `2'/work/INTERVAL-covid.txt, delim(" ") noquote replace
+  tostring ID,gen(IDS) format(%15.0g)
+  gen str31 ID2=IDS + "_" + IDS
+  label define sexFM 1 "M" 2 "F"
+  label values sex sexFM
+  drop if idn==.
+  gzsave `2'/INTERVAL-covid, replace
+  merge 1:1 ID2 using work/INTERVAL-omics-X
+  keep if _merge==3
+  drop _merge
+  outsheet ID2 sex using `2'/work/INTERVAL-X.FM if idx!=., noname noquote replace
+end
+
+local covlist sex age age2 sexage
+CxV2 2 20201201-ANA_C2_V2 "`covlist'"
+
 program C2sex
   // 1=working directory; 2=sex
   gzuse work/INTERVAL-omics-covid,clear

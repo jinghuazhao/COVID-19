@@ -3,15 +3,16 @@
 function HGI20201201()
 {
   for d in \
+  20201201-ANA_C2_V2 \
   20201201-male-ANA_C2_V2 \
   20201201-female-ANA_C2_V2 \
   20201201-le_60-ANA_C2_V2 \
   20201201-gt_60-ANA_C2_V2
   do
     mkdir ~/rds/rds-asb38-ceu-restricted/projects/covid/HGI/${d}
-    ln -s ~/rds/rds-asb38-ceu-restricted/projects/covid/HGI/${d}
     mkdir ~/rds/rds-asb38-ceu-restricted/projects/covid/HGI/${d}/work
     mkdir ~/rds/rds-asb38-ceu-restricted/projects/covid/HGI/${d}/output
+    ln -s ~/rds/rds-asb38-ceu-restricted/projects/covid/HGI/${d}
   done
 }
 
