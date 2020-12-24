@@ -113,6 +113,8 @@ cd -
 #10	P_LRT	P-value LRT
 #11	P_SCORE	P-value score
 
+awk '($2!="NA" || $3!="NA") && ($5!="NA"||$6!="NA"||$7!="NA"||$8!="NA")' ${SEQ}/doc/WGS-WES-Olink_ID_map_INTERVAL_release_28FEB2020.txt
+
 # --- deprecated ---
 
 function gihub()
