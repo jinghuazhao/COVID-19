@@ -255,7 +255,7 @@ function upload()
 # setup
 # Request an account
 # https://docs.google.com/forms/d/1eAaf-4XNYkplBo5Appbf8LHl2KHJyks9R4t0E3h0jII/viewform?edit_requested=true
-  cd ${HGI}
+  cd ${SCALLOP}
   module load python/3.7
   virtualenv py37
   source py37/bin/activate
