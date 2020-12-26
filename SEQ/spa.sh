@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 export TMPDIR=${HPC_WORK}/work
-export SEQ=${HOME}/COVID-19/SEQ
+export SEQ=${SCALLOP}/SEQ
 export COHORT=INTERVAL
 export CONFIG=${SEQ}/geneset_data/config.txt
 export STEP1="singularity exec ${SEQ}/burden_testing_latest.sif"
@@ -113,7 +113,13 @@ cd -
 #10	P_LRT	P-value LRT
 #11	P_SCORE	P-value score
 
-awk '($2!="NA" || $3!="NA") && ($5!="NA"||$6!="NA"||$7!="NA"||$8!="NA")' ${SEQ}/doc/WGS-WES-Olink_ID_map_INTERVAL_release_28FEB2020.txt
+export idmap=${SEQ}/WGS-WES-Olink_ID_map_INTERVAL_release_28FEB2020.txt
+awk '($2!="NA" || $3!="NA") && ($5!="NA"||$6!="NA"||$7!="NA"||$8!="NA")' ${idmap} | wc -l
+awk '($2=="NA" && $4!="NA") && ($5!="NA"||$6!="NA"||$7!="NA"||$8!="NA")' ${idmap} | wc -l
+awk '($2=="NA" && $4!="NA") && ($5!="NA"||$6!="NA"||$7!="NA"||$8!="NA")' ${idmap} | \
+cut -f4 | sed '1d' | grep -v -f work/wes.samples
+awk '($2=="NA" && $4!="NA") && ($5!="NA"||$6!="NA"||$7!="NA"||$8!="NA")' ${idmap} | \
+cut -f4 | sed '1d' | grep -v -f work/wes.samples | grep -f - ${idmap}
 
 # --- deprecated ---
 
