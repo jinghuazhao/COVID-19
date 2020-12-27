@@ -46,40 +46,46 @@ weswgs <- read.delim("work/weswgs.txt")
 y_wes <- id_wes %>% select(-c(phase,wgs_id)) %>%
          rename(Aliquot_Id=Olink_CVD2_id.merge) %>% left_join(cvd2[c(1:92,104)],by="Aliquot_Id") %>% select(-Aliquot_Id) %>%
          rename(Aliquot_Id=Olink_CVD3_id.merge) %>% left_join(cvd3[c(1:92,104)],by="Aliquot_Id") %>% select(-Aliquot_Id) %>%
-         rename(Aliquot_Id=Olink_INF_id.merge) %>% left_join(inf1[c(1:92,104)],by="Aliquot_Id") %>%  select(-Aliquot_Id) %>%
-         rename(Aliquot_Id=Olink_NEU_id.merge) %>% left_join(neu[c(7,53:144)],by="Aliquot_Id") %>%
+         rename(Aliquot_Id=Olink_INF_id.merge) %>% left_join(inf1[c(1:92,104)],by="Aliquot_Id") %>% select(-Aliquot_Id) %>%
+         rename(Aliquot_Id=Olink_NEU_id.merge) %>% left_join(neu[c(7,53:144)],by="Aliquot_Id") %>% select(-Aliquot_Id) %>%
          left_join(weswgs[c("identifier","sexPulse","agePulse")])
 rownames(y_wes) <- y_wes[["wes_id"]]
 
 y_wgs <- id_wgs %>% select(-c(phase,wes_id)) %>%
          rename(Aliquot_Id=Olink_CVD2_id.merge) %>% left_join(cvd2[c(1:92,104)],by="Aliquot_Id") %>% select(-Aliquot_Id) %>%
          rename(Aliquot_Id=Olink_CVD3_id.merge) %>% left_join(cvd3[c(1:92,104)],by="Aliquot_Id") %>% select(-Aliquot_Id) %>%
-         rename(Aliquot_Id=Olink_INF_id.merge) %>% left_join(inf1[c(1:92,104)],by="Aliquot_Id") %>%  select(-Aliquot_Id) %>%
-         rename(Aliquot_Id=Olink_NEU_id.merge) %>% left_join(neu[c(7,53:144)],by="Aliquot_Id") %>%
+         rename(Aliquot_Id=Olink_INF_id.merge) %>% left_join(inf1[c(1:92,104)],by="Aliquot_Id") %>% select(-Aliquot_Id) %>%
+         rename(Aliquot_Id=Olink_NEU_id.merge) %>% left_join(neu[c(7,53:144)],by="Aliquot_Id") %>% select(-Aliquot_Id) %>%
          left_join(weswgs[c("identifier","sexPulse","agePulse")])
 rownames(y_wgs) <- y_wgs[["wgs_id"]]
 
-proteins <- grep("cvd2|cvd3|inf1|neu",names(y_wes))
 library(gap)
-y_wes[proteins] <- apply(y_wes[proteins],1,invnormal)
-y_wgs[proteins] <- apply(y_wgs[proteins],1,invnormal)
-
-normalize <- function(d,id)
+normalize <- function(d,sexage,id)
 {
-  normfun <- function(col)
+  normfun <- function(col,verbose=TRUE)
   {
-    y <- d[,col]
-    l <- lm(y~sexPulse+agePulse,data=d[c("sexPulse","agePulse")])
+    if (verbose) cat(names(d[col]),col,"\n")
+    y <- invnormal(d[[col]])
+    l <- lm(y~sexPulse+agePulse,data=sexage)
     r <- y-predict(l,na.action=na.pass)
-   invnormal(r)
+    invnormal(r)
   }
-  z <- sapply(proteins, normfun)
-  colnames(z) <- names(d)[proteins]
+  z <- sapply(names(d), normfun)
+  colnames(z) <- names(d)
   rownames(z) <- d[[id]]
   z
 }
-y_wes_n <- normalize(y_wes,"wes_id")
-y_wgs_n <- normalize(y_wgs,"wgs_id")
+proteins <- grep("cvd2|cvd3|inf1|neu",names(y_wes))
+sexage <- grep("sex|age",names(y_wes))
+y_wes_n <- cbind(y_wes[,proteins],y_wes[,-proteins])
+y_wes_n[proteins] <- normalize(y_wes[proteins],y_wes[sexage],"wes_id")
+a <- as.data.frame(y_wes_n)["neu_KYNU___Q16719"]
+l <- lm(invnormal(neu_KYNU___Q16719)~sexPulse+agePulse,data=y_wes)
+r <- y_wes["neu_KYNU___Q16719"]-predict(l,na.action=na.pass)
+b <- invnormal(r)
+plot(cbind(a,b))
+y_wgs_n <- cbind(y_wgs[,proteins],y_wgs[,-proteins])
+y_wgs_n[proteins] <- normalize(y_wgs[proteins],y_wgs[sexage],"wgs_id")
 
 ## overlaps
 
@@ -93,3 +99,21 @@ s <- subset(d[,c("ID_WGS","ID_WES")],ID_WGS==ID_WES)
 o <- with(s,order(ID_WES))
 overlap <- s[o,]
 share==overlap
+
+test <- function(d,id)
+{
+  normfun <- function(col,verbose=TRUE)
+  {
+    if (verbose) cat(col,names(y_wes[proteins])[col],"\n")
+    y <- d[,col]
+    l <- lm(y~sexPulse+agePulse,data=d[c("sexPulse","agePulse")])
+    r <- y-predict(l,na.action=na.pass)
+   invnormal(r)
+  }
+  z <- sapply(proteins, normfun)
+  colnames(z) <- names(d)[proteins]
+  rownames(z) <- d[[id]]
+  z
+}
+y_wes_test <- test(y_wes[c(proteins,sexage)],"wes_id")
+y_wgs_test <- test(y_wgs[c(proteins,sexage)],"wgs_id")
