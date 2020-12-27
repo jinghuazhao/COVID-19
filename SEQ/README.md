@@ -7,6 +7,9 @@ doc/1_pool_phenotypes_nmr_olink_somalogic.R | CEU central code
 spa.sh | Single-point analysis
 rva.sh | Rare-variant analysis
 
+1. weswgs.sh ==> spa.sh, rva.sh
+2. stata do weswgs.do ==> R --no-save < weswgs.R
+
 ## Contacts
 
 * Grace Png: grace.png@helmholtz-muenchen.de
