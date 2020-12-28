@@ -127,25 +127,7 @@ share <- s[o,]
 
 f <- "work/interval_flagship_phenotype_nmr_olink_somalogic.txt"
 d <- read.delim(f)
-s <- subset(d[,c("ID_WGS","ID_WES")],ID_WGS==ID_WES)
-o <- with(s,order(ID_WES))
+s <- subset(d[,c("ID_WGS","ID_WES")],ID_WGS==ID_WES) %>% rename(id_wes=ID_WES,id_wgs=ID_WGS)
+o <- with(s,order(id_wes))
 overlap <- s[o,]
-share==overlap
-
-test <- function(d,id)
-{
-  normfun <- function(col,verbose=TRUE)
-  {
-    if (verbose) cat(col,names(y_wes[proteins])[col],"\n")
-    y <- d[,col]
-    l <- lm(y~sexPulse+agePulse,data=d[c("sexPulse","agePulse")])
-    r <- y-predict(l,na.action=na.pass)
-   invnormal(r)
-  }
-  z <- sapply(proteins, normfun)
-  colnames(z) <- names(d)[proteins]
-  rownames(z) <- d[[id]]
-  z
-}
-y_wes_test <- test(y_wes[c(proteins,sexage)],"wes_id")
-y_wgs_test <- test(y_wgs[c(proteins,sexage)],"wgs_id")
+cbind(share,overlap)
