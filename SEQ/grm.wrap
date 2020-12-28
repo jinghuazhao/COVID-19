@@ -1,0 +1,9 @@
+!/usr/bin/bash
+
+export chr=chr${SLURM_ARRAY_TASK_ID}
+module load plink/2.00-alpha
+plink2 --vcf ${SCALLOP}/SEQ/work/${weswgs}-${chr}.vcf.gz \
+       --geno 0.1 --mind 0.1 --maf 0.1 --indep-pairwise 1000kb 1 0.1 --out ${SCALLOP}/SEQ/work/${weswgs}-${chr}
+plink2 --vcf ${SCALLOP}/SEQ/work/${weswgs}-${chr}.vcf.gz \
+       --extract ${SCALLOP}/SEQ/work/${weswgs}-${chr}.prune.in \
+       --make-bed --out ${SCALLOP}/SEQ/work/${weswgs}-${chr}

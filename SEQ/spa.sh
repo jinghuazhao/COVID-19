@@ -86,6 +86,20 @@ SAMPLE002  -0.135
 # relatedness matrix files
 # --- GRM generation ---
 
+for weswgs in wes wgs
+do
+  export weswgs=${weswgs}
+  sbatch --job-name=_${weswgs} --account CARDIO-SL0-CPU --partition cardio --qos=cardio --array=1-22 --mem=40800 --time=5-00:00:00 --export ALL \
+         --output=${TMPDIR}/_wgs_%A_%a.out --error=${TMPDIR}/_weswgs_%A_%a.err --wrap ". ${SCALLOP}/SEQ/grm.wrap"
+  export SLURM_ARRAY_TASK_ID=X
+  ${SCALLOP}/SEQ/grm.wrap
+  export SLURM_ARRAY_TASK_ID=Y
+  ${SCALLOP}/SEQ/grm.wrap
+  echo ${weswgs}-chr{{1..22},X,Y} | tr ' ' '\n' > work/${weswgs}.list
+  module load plink/2.00-alpha
+  plink2 --merge-list work/${weswgs}.list --make-bed --out work/${weswgs}
+done
+
 # GDS file
 for i in chr{1..22} chrX chrY; do
   ${STEP2} VCF2GDS ${COHORT}.vcf.gz ${COHORT}.${chr}.gds 10
