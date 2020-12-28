@@ -45,71 +45,58 @@ id_wes <- subset(idmap,wes_id%in%wes)
 id_wgs <- subset(idmap,wgs_id%in%wgs)
 overlap <- subset(id_wgs,wes_id==wgs_id)
 subset(id_wes,wes_id%in%with(overlap,wes_id))
-#id_wes <- id_wes %>% select(-c(phase,wgs_id))
-#id_wgs <- id_wgs %>% select(-c(phase,wes_id))
+id_wes <- id_wes %>% select(-c(phase,wgs_id))
+id_wgs <- id_wgs %>% select(-c(phase,wes_id))
 weswgs <- read.delim("work/weswgs.txt")
 
-panels <- function(d,id)
+panels <- function(d,weswgs_id,pca)
 {
   d <- d %>%
   rename(Aliquot_Id=Olink_CVD2_id.merge) %>% left_join(cvd2[c(1:92,104)],by="Aliquot_Id") %>% select(-Aliquot_Id) %>%
   rename(Aliquot_Id=Olink_CVD3_id.merge) %>% left_join(cvd3[c(1:92,104)],by="Aliquot_Id") %>% select(-Aliquot_Id) %>%
   rename(Aliquot_Id=Olink_INF_id.merge) %>% left_join(inf1[c(1:92,104)],by="Aliquot_Id") %>% select(-Aliquot_Id) %>%
   rename(Aliquot_Id=Olink_NEU_id.merge) %>% left_join(neu[c(7,53:144)],by="Aliquot_Id") %>% select(-Aliquot_Id) %>%
-  left_join(weswgs[c("identifier","sexPulse","agePulse")])
-  rownames(d) <- d[[id]]
+  rename(id=weswgs_id) %>%
+  left_join(weswgs[c("identifier","sexPulse","agePulse")]) %>%
+  left_join(pca)
+  rownames(d) <- d[["id"]]
+  d
 }
 
-#y_wes <- panels(id_wes,"wes_id")
-#y_wgs <- panels(id_wgs,"wgs_id")
-
-y_wes <- id_wes %>% select(-c(phase,wgs_id)) %>%
-         rename(Aliquot_Id=Olink_CVD2_id.merge) %>% left_join(cvd2[c(1:92,104)],by="Aliquot_Id") %>% select(-Aliquot_Id) %>%
-         rename(Aliquot_Id=Olink_CVD3_id.merge) %>% left_join(cvd3[c(1:92,104)],by="Aliquot_Id") %>% select(-Aliquot_Id) %>%
-         rename(Aliquot_Id=Olink_INF_id.merge) %>% left_join(inf1[c(1:92,104)],by="Aliquot_Id") %>% select(-Aliquot_Id) %>%
-         rename(Aliquot_Id=Olink_NEU_id.merge) %>% left_join(neu[c(7,53:144)],by="Aliquot_Id") %>% select(-Aliquot_Id) %>%
-         left_join(weswgs[c("identifier","sexPulse","agePulse")])
-rownames(y_wes) <- y_wes[["wes_id"]]
-
-y_wgs <- id_wgs %>% select(-c(phase,wes_id)) %>%
-         rename(Aliquot_Id=Olink_CVD2_id.merge) %>% left_join(cvd2[c(1:92,104)],by="Aliquot_Id") %>% select(-Aliquot_Id) %>%
-         rename(Aliquot_Id=Olink_CVD3_id.merge) %>% left_join(cvd3[c(1:92,104)],by="Aliquot_Id") %>% select(-Aliquot_Id) %>%
-         rename(Aliquot_Id=Olink_INF_id.merge) %>% left_join(inf1[c(1:92,104)],by="Aliquot_Id") %>% select(-Aliquot_Id) %>%
-         rename(Aliquot_Id=Olink_NEU_id.merge) %>% left_join(neu[c(7,53:144)],by="Aliquot_Id") %>% select(-Aliquot_Id) %>%
-         left_join(weswgs[c("identifier","sexPulse","agePulse")])
-rownames(y_wgs) <- y_wgs[["wgs_id"]]
+y_wes <- panels(id_wes,"wes_id",pca_wes)
+y_wgs <- panels(id_wgs,"wgs_id",pca_wgs)
 
 library(gap)
-normalize_sapply <- function(d,id)
+normalize_sapply <- function(d)
 {
   normfun <- function(col,verbose=FALSE)
   {
     if (verbose) cat(names(d[col]),col,"\n")
     y <- invnormal(d[[col]])
-    l <- lm(y~sexPulse+agePulse,data=sexage)
+    l <- lm(y~sexPulse+agePulse+PC1+PC2+PC3+PC4+PC5+PC6+PC7+PC8+PC9+PC10+PC11+PC12+PC13+PC14+PC15+PC16+PC17+PC18+PC19+PC20,data=d[covars])
     r <- y-predict(l,na.action=na.pass)
     invnormal(r)
   }
   proteins <- grep("cvd2|cvd3|inf1|neu",names(d))
-  sexage <- d[grep("sex|age",names(d))]
+  covars <- c(names(d)[grep("sex|age",names(d))],paste0("PC",1:20))
   z <- sapply(names(d[proteins]), normfun)
   colnames(z) <- names(d[proteins])
-  rownames(z) <- d[[id]]
-  data.frame(id=d[[id]],z)
+  rownames(z) <- d[["id"]]
+  data.frame(id=d[["id"]],z)
 }
-y_wes_sapply <- normalize_sapply(y_wes,"wes_id")
-y_wgs_sapply <- normalize_sapply(y_wgs,"wgs_id")
+y_wes_sapply <- normalize_sapply(y_wes)
+y_wgs_sapply <- normalize_sapply(y_wgs)
 
 require(doMC)
 doMC::registerDoMC(cores = 14)
 normalize_adply <- function(d)
 {
   proteins <- names(d)[grep("cvd2|cvd3|inf1|neu",names(d))]
-  sexage <- d[grep("sex|age",names(d))]
+  covars <- c(names(d)[grep("sex|age",names(d))],paste0("PC",1:20))
   z <- adply(d[proteins], 2, function(x)
        {
           y <- invnormal(x)
-          l <- lm(y~sexPulse+agePulse,data=sexage)
+          l <- lm(y~sexPulse+agePulse+PC1+PC2+PC3+PC4+PC5+PC6+PC7+PC8+PC9+PC10+PC11+PC12+PC13+PC14+PC15+PC16+PC17+PC18+PC19+PC20,data=d[covars])
           r <- y-predict(l,na.action=na.pass)
           invnormal(r)
        }, .progress = "none", .parallel = TRUE)
