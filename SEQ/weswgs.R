@@ -77,7 +77,7 @@ normalize_sapply <- function(d,id)
   z <- sapply(names(d[proteins]), normfun)
   colnames(z) <- names(d[proteins])
   rownames(z) <- d[[id]]
-  as.data.frame(z)
+  data.frame(id=d[[id]],z)
 }
 y_wes_sapply <- normalize_sapply(y_wes,"wes_id")
 y_wgs_sapply <- normalize_sapply(y_wgs,"wgs_id")
@@ -99,7 +99,7 @@ normalize_adply <- function(d)
   z <- t(z[,-1])
   colnames(z) <- tnames
   rownames(z) <- rownames(d)
-  as.data.frame(z)
+  data.frame(id=rownames(d),z)
 }
 y_wes_adply <- normalize_adply(y_wes)
 y_wgs_adply <- normalize_adply(y_wgs)
