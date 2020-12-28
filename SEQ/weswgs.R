@@ -39,11 +39,29 @@ idmap <- within(read.delim(f),
 # WES/WGS samples
 wes <- scan("work/wes.samples",what="")
 wgs <- scan("work/wgs.samples",what="")
+pca_wes <- read.table("work/wes.eigenvec",col.names=c("z","id",paste0("PC",1:20))) %>% select(-z)
+pca_wgs <- read.table("work/wgs.eigenvec",col.names=c("z","id",paste0("PC",1:20))) %>% select(-z)
 id_wes <- subset(idmap,wes_id%in%wes)
 id_wgs <- subset(idmap,wgs_id%in%wgs)
 overlap <- subset(id_wgs,wes_id==wgs_id)
 subset(id_wes,wes_id%in%with(overlap,wes_id))
+#id_wes <- id_wes %>% select(-c(phase,wgs_id))
+#id_wgs <- id_wgs %>% select(-c(phase,wes_id))
 weswgs <- read.delim("work/weswgs.txt")
+
+panels <- function(d,id)
+{
+  d <- d %>%
+  rename(Aliquot_Id=Olink_CVD2_id.merge) %>% left_join(cvd2[c(1:92,104)],by="Aliquot_Id") %>% select(-Aliquot_Id) %>%
+  rename(Aliquot_Id=Olink_CVD3_id.merge) %>% left_join(cvd3[c(1:92,104)],by="Aliquot_Id") %>% select(-Aliquot_Id) %>%
+  rename(Aliquot_Id=Olink_INF_id.merge) %>% left_join(inf1[c(1:92,104)],by="Aliquot_Id") %>% select(-Aliquot_Id) %>%
+  rename(Aliquot_Id=Olink_NEU_id.merge) %>% left_join(neu[c(7,53:144)],by="Aliquot_Id") %>% select(-Aliquot_Id) %>%
+  left_join(weswgs[c("identifier","sexPulse","agePulse")])
+  rownames(d) <- d[[id]]
+}
+
+#y_wes <- panels(id_wes,"wes_id")
+#y_wgs <- panels(id_wgs,"wgs_id")
 
 y_wes <- id_wes %>% select(-c(phase,wgs_id)) %>%
          rename(Aliquot_Id=Olink_CVD2_id.merge) %>% left_join(cvd2[c(1:92,104)],by="Aliquot_Id") %>% select(-Aliquot_Id) %>%
