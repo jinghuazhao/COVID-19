@@ -75,41 +75,35 @@ find -name "group_file*.txt" -exec cat \{} \+ > group_file.txt
 cut -f1 concat.group.file.txt | sort | uniq -c | awk '$1==1{print $2}'> singlesnp.genes.txt
 fgrep -wvf singlesnp.genes.txt concat.group.file.txt > concat.group.file.filtered.txt
 
+cd -
+
 # --- step2 ---
-
-# phenotype file
-
-id         height
-SAMPLE001  0.593
-SAMPLE002  -0.135
-
-# relatedness matrix files
-# --- GRM generation ---
 
 for weswgs in wes wgs
 do
   export weswgs=${weswgs}
+# phenotype file
+# relatedness matrix files
+# prune genotypes
   sbatch --job-name=_${weswgs} --account CARDIO-SL0-CPU --partition cardio --qos=cardio --array=1-22 --mem=40800 --time=5-00:00:00 --export ALL \
          --output=${TMPDIR}/_wgs_%A_%a.out --error=${TMPDIR}/_weswgs_%A_%a.err --wrap ". ${SCALLOP}/SEQ/grm.wrap"
   export SLURM_ARRAY_TASK_ID=X
   ${SCALLOP}/SEQ/grm.wrap
   export SLURM_ARRAY_TASK_ID=Y
   ${SCALLOP}/SEQ/grm.wrap
-  echo ${weswgs}-chr{{1..22},X,Y} | tr ' ' '\n' > work/${weswgs}.list
-  module load plink/2.00-alpha
-  plink2 --merge-list work/${weswgs}.list --make-bed --out work/${weswgs}
+# merge of pruned genotypes
+  echo work/${weswgs}-chr{{1..22},X,Y} | tr ' ' '\n' > work/${weswgs}.list
+  plink --merge-list work/${weswgs}.list --make-bed --out work/${weswgs}
+# GRM
+  gcta64 --bfile work/${weswgs} --make-grm --out work/${weswgs}
+# GDS file and single-cohort SMMAT assocaition analysis
+  for i in {{1..22},X,Y}
+  do
+      ${STEP2} VCF2GDS work/${weswgs}-chr${i}.vcf.gz work/${weswgs}-chr${i}.gds 10
+      ${STEP2} step2 -c ${COHORT} -p work/${weswgs}-${pheno} -y work/${weswgs}.gds \
+                     -m work/${weswgs} -t GCTA -o work/${COHORT}-${weswgs}-${pheno}
+  done
 done
-
-# GDS file
-for i in chr{1..22} chrX chrY; do
-  ${STEP2} VCF2GDS ${COHORT}.vcf.gz ${COHORT}.${chr}.gds 10
-done
-
-# group file containing testing groups
-
-${STEP2} step2 -h
-
-cd -
 
 # <olink_protein>_<cohort>_<date_of_analysis>_<analyst_initials>.txt.bgz
 # ACE2_INTERVAL_02112020_JHZ.txt.bgz
