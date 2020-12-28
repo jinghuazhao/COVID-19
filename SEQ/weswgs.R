@@ -60,7 +60,7 @@ y_wgs <- id_wgs %>% select(-c(phase,wes_id)) %>%
 rownames(y_wgs) <- y_wgs[["wgs_id"]]
 
 library(gap)
-normalize <- function(d,sexage,id)
+normalize <- function(d,id)
 {
   normfun <- function(col,verbose=TRUE)
   {
@@ -70,22 +70,42 @@ normalize <- function(d,sexage,id)
     r <- y-predict(l,na.action=na.pass)
     invnormal(r)
   }
-  z <- sapply(names(d), normfun)
-  colnames(z) <- names(d)
+  proteins <- grep("cvd2|cvd3|inf1|neu",names(d))
+  sexage <- d[grep("sex|age",names(d))]
+  z <- sapply(names(d[proteins]), normfun)
+  colnames(z) <- names(d[proteins])
   rownames(z) <- d[[id]]
-  z
+  as.data.frame(z)
 }
-proteins <- grep("cvd2|cvd3|inf1|neu",names(y_wes))
-sexage <- grep("sex|age",names(y_wes))
-y_wes_n <- cbind(y_wes[,proteins],y_wes[,-proteins])
-y_wes_n[proteins] <- normalize(y_wes[proteins],y_wes[sexage],"wes_id")
-a <- as.data.frame(y_wes_n)["neu_KYNU___Q16719"]
+y_wes_n <- normalize(y_wes,"wes_id")
+a <- y_wes_n["neu_KYNU___Q16719"]
 l <- lm(invnormal(neu_KYNU___Q16719)~sexPulse+agePulse,data=y_wes)
 r <- y_wes["neu_KYNU___Q16719"]-predict(l,na.action=na.pass)
 b <- invnormal(r)
 plot(cbind(a,b))
-y_wgs_n <- cbind(y_wgs[,proteins],y_wgs[,-proteins])
-y_wgs_n[proteins] <- normalize(y_wgs[proteins],y_wgs[sexage],"wgs_id")
+y_wgs_n <- normalize(y_wgs,"wgs_id")
+
+normalize <- function(d)
+{
+  require(plyr)
+  require(doMC)
+  doMC::registerDoMC(cores = 14)
+  require(gdata)
+  require(data.table)
+  result <- rbindlist(alply(names(d), 1, function(obs) {
+          tryCatch({
+                  y <- d[[obs]]
+                  y <- invnormal(d[[col]])
+                  l <- lm(y~sexPulse+agePulse,data=sexage)
+                  r <- y-predict(l,na.action=na.pass)
+                  return(invnormal(r))
+          }, error = function(e) {
+                  return(-1)
+          })}, .progress = "none", .parallel = TRUE))
+
+  result <- as.data.frame(result)
+}
+y_wes_n[proteins] <- normalize(y_wes[proteins])
 
 ## overlaps
 
