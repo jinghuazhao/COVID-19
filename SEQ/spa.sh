@@ -111,7 +111,7 @@ do
 # relatedness matrix files
 # prune genotypes
   sbatch --job-name=_${weswgs} --account CARDIO-SL0-CPU --partition cardio --qos=cardio --array=1-22 --mem=40800 --time=5-00:00:00 --export ALL \
-         --output=${TMPDIR}/_wgs_%A_%a.out --error=${TMPDIR}/_${weswgs}_%A_%a.err --wrap ". ${SCALLOP}/SEQ/grm.wrap"
+         --output=${TMPDIR}/_${weswgs}_%A_%a.out --error=${TMPDIR}/_${weswgs}_%A_%a.err --wrap ". ${SCALLOP}/SEQ/grm.wrap"
   export SLURM_ARRAY_TASK_ID=X
   ${SCALLOP}/SEQ/grm.wrap
   export SLURM_ARRAY_TASK_ID=Y
@@ -128,10 +128,18 @@ do
   gcta-1.9 --grm-gz work/${weswgs} --pca 20 --out work/${weswgs}
 # phenotype file
 # R --no-save < weswgs.R 2>&1 | tee weswgs.log
-  for i in {{1..22},X,Y}
+  for pheno in $(ls work/${weswgs} | xargs -I{} basename {} .pheno)
   do
-      ${STEP2} step2 -c ${COHORT} -p work/${weswgs}-${pheno} -y work/${weswgs}.gds \
-                     -m work/${weswgs} -t GCTA -o work/${COHORT}-${weswgs}-${pheno}
+    export pheno=${pheno}
+    echo ${pheno}
+    sbatch --job-name=_${weswgs}_{pheno} --account CARDIO-SL0-CPU --partition cardio --qos=cardio --array=1-22 \
+           --mem=40800 --time=5-00:00:00 --export ALL \
+           --output=${TMPDIR}/_${weswgs}_${pheno}_%A_%a.out --error=${TMPDIR}/_${weswgs}_${pheno}_%A_%a.err \
+           --wrap ". ${SCALLOP}/SEQ/spa.wrap"
+    export SLURM_ARRAY_TASK_ID=X
+    ${SCALLOP}/SEQ/spa.wrap
+    export SLURM_ARRAY_TASK_ID=Y
+    ${SCALLOP}/SEQ/spa.wrap
   done
 done
 
