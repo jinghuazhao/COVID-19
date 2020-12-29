@@ -65,7 +65,7 @@ panels <- function(d,weswgs_id,pca)
   rename(Aliquot_Id=Olink_INF_id.merge) %>% left_join(inf1[c(1:92,104)],by="Aliquot_Id") %>% select(-Aliquot_Id) %>%
   rename(Aliquot_Id=Olink_NEU_id.merge) %>% left_join(neu[c(7,53:144)],by="Aliquot_Id") %>% select(-Aliquot_Id) %>%
   rename(id=weswgs_id) %>%
-  left_join(weswgs[c("identifier","sexPulse","agePulse")]) %>%
+  left_join(weswgs[c("identifier","sexPulse","agePulse")]) %>% mutate(age2=agePulse*agePulse) %>%
   left_join(pca)
   rownames(d) <- d[["id"]]
   d
