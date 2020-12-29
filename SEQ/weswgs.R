@@ -13,7 +13,7 @@ olink <- function(panel)
      eset <- readRDS(f)
      fd <- within(as(featureData(eset),"data.frame")[c("ID","uniprot.id")],{
                      ID <- as.character(ID)
-                     fdi <- paste(panel,ID,uniprot.id,sep="_")
+                     fdi <- paste0(paste(panel,ID,sep="_"),"__",uniprot.id)
            }) %>% select(-uniprot.id)
     cb <-  cbind(rownames(eset),fd)
     rownames(eset) <- cb[,3]
@@ -122,15 +122,15 @@ examine <- function()
   identical(y_wgs_sapply,y_wgs_adply)
   identical(y_wgs_sapply,y_wgs_adply)
 
-  check <- y_wes[grep("cvd2_BMP.6_P22004|sex|age|PC",names(y_wes))]
+  check <- y_wes[grep("cvd2_BMP.6__P22004|sex|age|PC",names(y_wes))]
   check <- within(check,
            {
-             y <- invnormal(cvd2_BMP.6_P22004)
+             y <- invnormal(cvd2_BMP.6__P22004)
              r <- y-predict(lm(y~sexPulse+agePulse+PC1+PC2+PC3+PC4+PC5+PC6+PC7+PC8+PC9+PC10+PC11+PC12+PC13+PC14+PC15+PC16+PC17+PC18+PC19+PC20),
                             na.action=na.pass)
              b <- invnormal(r)
            }) %>% select(-names(test)[grep("sex|age|PC",names(test))])
-  a <- y_wes_sapply["cvd2_BMP.6_P22004"]
+  a <- y_wes_sapply["cvd2_BMP.6__P22004"]
   plot(cbind(a,check$b),pch=19)
   head(cbind(a,check$b))
 # overlaps
