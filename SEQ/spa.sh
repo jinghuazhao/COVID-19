@@ -79,10 +79,34 @@ cd -
 
 # --- step2 ---
 
+function vcf2gds()
+{
+  cd work
+  for weswgs in wes wgs
+  do
+  export weswgs=${weswgs}
+  for i in {{1..22},X,Y}
+  do
+      export i=${i}
+      R --no-save <<\ \ \ \ \ \ END
+        weswgs <- Sys.getenv("weswgs")
+        chr <- paste0("chr",Sys.getenv("i"))
+        vcffile <- paste(weswgs,paste0(chr,".vcf.gz"),sep="-")
+        gdsfile <- paste(weswgs,paste0(chr,".gds"),sep="-")
+# Only SNPs
+#       SNPRelate::snpgdsVCF2GDS(vcffile, gdsfile)
+# the latest
+        SeqArray::seqVCF2GDS(vcffile, gdsfile, storage.option="ZIP_RA")
+      END
+      ${STEP2} VCF2GDS ${weswgs}-chr${i}.vcf.gz ${weswgs}-chr${i}.gds 10
+  done
+  done
+  cd -
+}
+
 for weswgs in wes wgs
 do
   export weswgs=${weswgs}
-# phenotype file
 # relatedness matrix files
 # prune genotypes
   sbatch --job-name=_${weswgs} --account CARDIO-SL0-CPU --partition cardio --qos=cardio --array=1-22 --mem=40800 --time=5-00:00:00 --export ALL \
@@ -98,11 +122,13 @@ do
 # gcta-1.9 --mbfile work/${weswgs}.list --make-grm-gz --out work/${weswgs}
   gcta-1.9 --bfile work/${weswgs} --autosome --make-grm-gz --out work/${weswgs} --thread-num 12
 # GDS file and single-cohort SMMAT assocaition analysis
+# vcf2gds
 # PCA
   gcta-1.9 --grm-gz work/${weswgs} --pca 20 --out work/${weswgs}
+# phenotype file
+# R --no-save < weswgs.R 2>&1 | tee weswgs.log
   for i in {{1..22},X,Y}
   do
-      ${STEP2} VCF2GDS work/${weswgs}-chr${i}.vcf.gz work/${weswgs}-chr${i}.gds 10
       ${STEP2} step2 -c ${COHORT} -p work/${weswgs}-${pheno} -y work/${weswgs}.gds \
                      -m work/${weswgs} -t GCTA -o work/${COHORT}-${weswgs}-${pheno}
   done

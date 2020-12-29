@@ -1,27 +1,35 @@
 olink <- function(panel)
 {
-  if (panel=="neu") x <- within(read.table("olink_proteomics/post_QC/interval_olink_neuro_post_qc_data_20180309.txt",as.is=TRUE,header=TRUE),
-                               {Aliquot_Id <- as.character(Aliquot_Id)})
-  else
-  {
-    require(Biobase)
-    prefix <- "olink_proteomics/post-qc/eset"
-    suffix <- "flag.out.outlier.in.rds"
-    f <- paste(prefix,panel,suffix,sep=".")
-    x <- as(readRDS(f),"data.frame")
+  if (panel=="neu") {
+     x <- within(read.table("olink_proteomics/post_QC/interval_olink_neuro_post_qc_data_20180309.txt",as.is=TRUE,header=TRUE),
+                {Aliquot_Id <- as.character(Aliquot_Id)})
+     renameList <- !names(x)=="Aliquot_Id"
+     names(x)[renameList] <- paste(panel,names(x)[renameList],sep="_")
+  } else {
+     require(Biobase)
+     prefix <- "olink_proteomics/post-qc/eset"
+     suffix <- "flag.out.outlier.in.rds"
+     f <- paste(prefix,panel,suffix,sep=".")
+     eset <- readRDS(f)
+     fd <- within(as(featureData(eset),"data.frame")[c("ID","uniprot.id")],{
+                     ID <- as.character(ID)
+                     fdi <- paste(panel,ID,uniprot.id,sep="_")
+           }) %>% select(-uniprot.id)
+    cb <-  cbind(rownames(eset),fd)
+    rownames(eset) <- cb[,3]
+    x <- as(eset,"data.frame")
   }
-  renameList <- !names(x)=="Aliquot_Id"
-  names(x)[renameList] <- paste(panel,names(x)[renameList],sep="_")
   x
 }
+
+options(width=200)
+require(plyr)
+library(dplyr)
 cvd2 <- olink("cvd2")
 cvd3 <- olink("cvd3")
 inf1 <- olink("inf1")
 neu <- olink("neu")
 
-options(width=200)
-require(plyr)
-library(dplyr)
 y <- cvd2[c(1:92,104)] %>%
      full_join(cvd3[c(1:92,104)],by="Aliquot_Id") %>%
      full_join(inf1[c(1:92,104)],by="Aliquot_Id") %>%
@@ -112,9 +120,10 @@ y_wgs_adply <- normalize_adply(y_wgs)
 identical(y_wgs_sapply,y_wgs_adply)
 identical(y_wgs_sapply,y_wgs_adply)
 
-a <- y_wes_sapply["cvd2_BMP.6"]
-l <- lm(invnormal(cvd2_BMP.6)~sexPulse+agePulse,data=y_wes)
-r <- y_wes["cvd2_BMP.6"]-predict(l,na.action=na.pass)
+a <- y_wes_sapply["cvd2_BMP.6_P22004"]
+y <- invnormal(y_wes["cvd2_BMP.6_P22004"])
+l <- lm(y~sexPulse+agePulse+PC1+PC2+PC3+PC4+PC5+PC6+PC7+PC8+PC9+PC10+PC11+PC12+PC13+PC14+PC15+PC16+PC17+PC18+PC19+PC20,data=y_wes)
+r <- y_wes["cvd2_BMP.6_P22004"]-predict(l,na.action=na.pass)
 b <- invnormal(r)
 plot(cbind(a,b))
 head(cbind(a,b))
