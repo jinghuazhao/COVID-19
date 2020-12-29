@@ -1,6 +1,16 @@
 #!/usr/bin/bash
 
-export chr=chr${SLURM_ARRAY_TASK_ID}
-${STEP2} step2 -c ${COHORT} -p work/${weswgs}/${pheno} -y work/${weswgs}-${chr}.gds \
-               -m work/${weswgs} -t GCTA -o work/${weswgs}/${COHORT}-${weswgs}-${pheno}-${chr}
+export TMPDIR=${HPC_WORK}/work
+export SEQ=${SCALLOP}/SEQ
+export COHORT=INTERVAL
+export CONFIG=${SEQ}/geneset_data/config.txt
+export STEP1="singularity exec ${SEQ}/burden_testing_latest.sif"
+export STEP2="singularity exec --containall ${SEQ}/burden_testing_latest.sif"
 
+export chr=chr${SLURM_ARRAY_TASK_ID}
+${STEP2} step2 --cohort-name ${COHORT} \
+               --pheno work/${weswgs}/${pheno}.pheno \
+               --GDS work/${weswgs}-${chr}.gds \
+               --matrix-prefix work/${weswgs} \
+               --matrix-type GCTA \
+               --out work/${weswgs}/${COHORT}-${weswgs}-${pheno}-${chr}

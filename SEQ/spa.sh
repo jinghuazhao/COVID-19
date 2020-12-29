@@ -136,10 +136,14 @@ do
            --mem=40800 --time=5-00:00:00 --export ALL \
            --output=${TMPDIR}/_${weswgs}_${pheno}_%A_%a.out --error=${TMPDIR}/_${weswgs}_${pheno}_%A_%a.err \
            --wrap ". ${SCALLOP}/SEQ/spa.wrap"
-    export SLURM_ARRAY_TASK_ID=X
-    ${SCALLOP}/SEQ/spa.wrap
-    export SLURM_ARRAY_TASK_ID=Y
-    ${SCALLOP}/SEQ/spa.wrap
+    for i in X Y
+    do
+      export SLURM_ARRAY_TASK_ID=${i}
+      sbatch --job-name=_${weswgs}_{pheno} --account CARDIO-SL0-CPU --partition cardio --qos=cardio \
+             --mem=40800 --time=5-00:00:00 --export ALL \
+             --output=${TMPDIR}/_${weswgs}_${pheno}_%A_%a.out --error=${TMPDIR}/_${weswgs}_${pheno}_%A_%a.err \
+             --wrap ". ${SCALLOP}/SEQ/spa.wrap"
+      done
   done
 done
 
