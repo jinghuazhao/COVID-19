@@ -117,26 +117,46 @@ normalize_adply <- function(d)
 y_wes_adply <- normalize_adply(y_wes)
 y_wgs_adply <- normalize_adply(y_wgs)
 
-identical(y_wgs_sapply,y_wgs_adply)
-identical(y_wgs_sapply,y_wgs_adply)
+examine <- function()
+{
+  identical(y_wgs_sapply,y_wgs_adply)
+  identical(y_wgs_sapply,y_wgs_adply)
 
-a <- y_wes_sapply["cvd2_BMP.6_P22004"]
-y <- invnormal(y_wes["cvd2_BMP.6_P22004"])
-l <- lm(y~sexPulse+agePulse+PC1+PC2+PC3+PC4+PC5+PC6+PC7+PC8+PC9+PC10+PC11+PC12+PC13+PC14+PC15+PC16+PC17+PC18+PC19+PC20,data=y_wes)
-r <- y_wes["cvd2_BMP.6_P22004"]-predict(l,na.action=na.pass)
-b <- invnormal(r)
-plot(cbind(a,b))
-head(cbind(a,b))
+  check <- y_wes[grep("cvd2_BMP.6_P22004|sex|age|PC",names(y_wes))]
+  check <- within(check,
+           {
+             y <- invnormal(cvd2_BMP.6_P22004)
+             r <- y-predict(lm(y~sexPulse+agePulse+PC1+PC2+PC3+PC4+PC5+PC6+PC7+PC8+PC9+PC10+PC11+PC12+PC13+PC14+PC15+PC16+PC17+PC18+PC19+PC20),
+                            na.action=na.pass)
+             b <- invnormal(r)
+           }) %>% select(-names(test)[grep("sex|age|PC",names(test))])
+  a <- y_wes_sapply["cvd2_BMP.6_P22004"]
+  plot(cbind(a,check$b),pch=19)
+  head(cbind(a,check$b))
+# overlaps
+  s <- subset(idmap[,c("wes_id","wgs_id")],wes_id==wgs_id)
+  o <- with(s,order(wes_id))
+  share <- s[o,]
+# earlier version
+  f <- "work/interval_flagship_phenotype_nmr_olink_somalogic.txt"
+  d <- read.delim(f)
+  s <- subset(d[,c("ID_WGS","ID_WES")],ID_WGS==ID_WES) %>% rename(id_wes=ID_WES,id_wgs=ID_WGS)
+  o <- with(s,order(id_wes))
+  overlap <- s[o,]
+  cbind(share,overlap)
+}
 
-## overlaps
+output <- function(weswgs,d)
+{
+  if(!dir.exists(weswgs)) dir.create(weswgs)
+  n_vars <- ncol(d)
+  invisible(sapply(2:n_vars,function(x)
+            {
+              print(names(d[x]))
+              write.table(d[c(1,x)],file=file.path(weswgs,paste0(names(d[x]),".pheno")),quote=FALSE,row.names=FALSE,sep="\t")
+            })
+  )
+}
 
-s <- subset(idmap[,c("wes_id","wgs_id")],wes_id==wgs_id)
-o <- with(s,order(wes_id))
-share <- s[o,]
-
-f <- "work/interval_flagship_phenotype_nmr_olink_somalogic.txt"
-d <- read.delim(f)
-s <- subset(d[,c("ID_WGS","ID_WES")],ID_WGS==ID_WES) %>% rename(id_wes=ID_WES,id_wgs=ID_WGS)
-o <- with(s,order(id_wes))
-overlap <- s[o,]
-cbind(share,overlap)
+output("work/wes",y_wes_sapply)
+output("work/wgs",y_wgs_sapply)

@@ -98,7 +98,8 @@ function vcf2gds()
 # the latest
         SeqArray::seqVCF2GDS(vcffile, gdsfile, storage.option="ZIP_RA")
       END
-      ${STEP2} VCF2GDS ${weswgs}-chr${i}.vcf.gz ${weswgs}-chr${i}.gds 10
+# inside singularity?
+#     ${STEP2} VCF2GDS ${weswgs}-chr${i}.vcf.gz ${weswgs}-chr${i}.gds 10
   done
   done
   cd -
