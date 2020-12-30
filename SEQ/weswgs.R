@@ -97,6 +97,20 @@ y_wgs_sapply <- normalize_sapply(y_wgs)
 write.table(y_wes_sapply,file="work/wes.pheno",quote=FALSE,row.names=FALSE,sep="\t")
 write.table(y_wgs_sapply,file="work/wgs.pheno",quote=FALSE,row.names=FALSE,sep="\t")
 
+output <- function(weswgs,d)
+{
+  if(!dir.exists(weswgs)) dir.create(weswgs)
+  n_vars <- ncol(d)
+  invisible(sapply(2:n_vars,function(x)
+            {
+              print(names(d[x]))
+              write.table(d[c(1,x)],file=file.path(weswgs,paste0(names(d[x]),".pheno")),quote=FALSE,row.names=FALSE,sep="\t")
+            })
+  )
+}
+output("work/wes",y_wes_sapply)
+output("work/wgs",y_wgs_sapply)
+
 require(doMC)
 doMC::registerDoMC(cores = 14)
 normalize_adply <- function(d)
@@ -118,6 +132,26 @@ normalize_adply <- function(d)
 }
 y_wes_adply <- normalize_adply(y_wes)
 y_wgs_adply <- normalize_adply(y_wgs)
+
+test <- function(d,id)
+{
+  proteins <- grep("cvd2|cvd3|inf1|neu",names(d))
+  sexage <- d[grep("sex|age",names(d))]
+  normfun <- function(col,verbose=TRUE)
+  {
+    if (verbose) cat(col,names(y_wes[proteins])[col],"\n")
+    y <- d[,col]
+    l <- lm(y~sex+age,data=d[c("sex","age")])
+    r <- y-predict(l,na.action=na.pass)
+   invnormal(r)
+  }
+  z <- sapply(proteins, normfun)
+  colnames(z) <- names(d)[proteins]
+  rownames(z) <- d[[id]]
+  z
+}
+y_wes_test <- test(y_wes,"wes_id")
+y_wgs_test <- test(y_wgs,"wgs_id")
 
 examine <- function()
 {
@@ -149,18 +183,3 @@ examine <- function()
 }
 
 examine()
-
-output <- function(weswgs,d)
-{
-  if(!dir.exists(weswgs)) dir.create(weswgs)
-  n_vars <- ncol(d)
-  invisible(sapply(2:n_vars,function(x)
-            {
-              print(names(d[x]))
-              write.table(d[c(1,x)],file=file.path(weswgs,paste0(names(d[x]),".pheno")),quote=FALSE,row.names=FALSE,sep="\t")
-            })
-  )
-}
-
-output("work/wes",y_wes_sapply)
-output("work/wgs",y_wgs_sapply)
