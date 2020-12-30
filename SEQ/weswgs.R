@@ -133,25 +133,25 @@ normalize_adply <- function(d)
 y_wes_adply <- normalize_adply(y_wes)
 y_wgs_adply <- normalize_adply(y_wgs)
 
-test <- function(d,id)
+test <- function(d)
 {
   proteins <- grep("cvd2|cvd3|inf1|neu",names(d))
-  sexage <- d[grep("sex|age",names(d))]
+  covars <- cbind(d[grep("average|sex|age",names(d))],d[paste0("PC",1:20)])
   normfun <- function(col,verbose=TRUE)
   {
-    if (verbose) cat(col,names(y_wes[proteins])[col],"\n")
+    if (verbose) cat(col,names(d[col]),"\n")
     y <- d[,col]
-    l <- lm(y~sex+age,data=d[c("sex","age")])
+    l <- lm(y~average+sex+age+age2+PC1+PC2+PC3+PC4+PC5+PC6+PC7+PC8+PC9+PC10+PC11+PC12+PC13+PC14+PC15+PC16+PC17+PC18+PC19+PC20, data=covars)
     r <- y-predict(l,na.action=na.pass)
-   invnormal(r)
+    invnormal(r)
   }
   z <- sapply(proteins, normfun)
-  colnames(z) <- names(d)[proteins]
-  rownames(z) <- d[[id]]
-  z
+  colnames(z) <- names(d[proteins])
+  rownames(z) <- rownames(d)
+  data.frame(id=rownames(d),z)
 }
-y_wes_test <- test(y_wes,"wes_id")
-y_wgs_test <- test(y_wgs,"wgs_id")
+y_wes_test <- test(y_wes)
+y_wgs_test <- test(y_wgs)
 
 examine <- function()
 {
