@@ -1,0 +1,23 @@
+#!/usr/bin/bash
+
+#SBATCH --job-name=_bgen
+#SBATCH --account CARDIO-SL0-CPU
+#SBATCH --partition cardio
+#SBATCH --qos=cardio
+#SBATCH --array=1-22
+#SBATCH --mem=28800
+#SBATCH --time=5-00:00:00
+#SBATCH --output=/rds/user/jhz22/hpc-work/work/${weswgs}_bgen_%A_%a.out
+#SBATCH --error=/rds/user/jhz22/hpc-work/work/${weswgs}_bgen_%A_%a.err
+#SBATCH --export ALL
+
+export TMPDIR=${HPC_WORK}/work
+export SEQ=${SCALLOP}/SEQ
+export COHORT=INTERVAL
+
+export chr=chr${SLURM_ARRAY_TASK_ID}
+qctool -g ${SEQ}/work/${weswgs}-${chr}.vcf.gz \
+       -bgen-bits 8 -og ${SEQ}/work/${weswgs}-${chr}.bgen -os ${SEQ}/work/${weswgs}-${chr}.samples
+
+bgenix -g ${SEQ}/work/${weswgs}-${chr}.bgen -index -clobber
+
