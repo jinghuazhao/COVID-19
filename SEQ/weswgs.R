@@ -137,7 +137,7 @@ test <- function(d)
 {
   proteins <- grep("cvd2|cvd3|inf1|neu",names(d))
   covars <- cbind(d[grep("average|sex|age",names(d))],d[paste0("PC",1:20)])
-  normfun <- function(col,verbose=TRUE)
+  normfun <- function(col,verbose=FALSE)
   {
     if (verbose) cat(col,names(d[col]),"\n")
     y <- d[,col]
