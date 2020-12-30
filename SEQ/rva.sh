@@ -152,7 +152,7 @@ do
              --mem=40800 --time=5-00:00:00 --export ALL \
              --output=${TMPDIR}/_${weswgs}_${pheno}_%A_%a.out --error=${TMPDIR}/_${weswgs}_${pheno}_%A_%a.err \
              --wrap ". ${SCALLOP}/SEQ/rva.wrap"
-      done
+    done
   done
 done
 

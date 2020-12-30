@@ -1,10 +1,28 @@
 #!/usr/bin/bash
 
-module avail ceuadmin/boltlmm
-module load ceuadmin/boltlmm/2.3.4
+export TMPDIR=${HPC_WORK}/work
+export SEQ=${SCALLOP}/SEQ
 
-# GRM
-# LMM
+for weswgs in wes wgs
+do
+  export weswgs=${weswgs}
+  sbatch ${SEQ}/bgen.wrap
+  for i in X Y
+  do
+    export SLURM_ARRAY_TASK_ID=${i}
+    sbatch --job-name=_${weswgs}_chr${i} --account CARDIO-SL0-CPU --partition cardio --qos=cardio \
+           --mem=40800 --time=5-00:00:00 --export ALL \
+           --output=${TMPDIR}/_${weswgs}_bgen-chr${i}_%A_%a.out --error=${TMPDIR}/_${weswgs}_bgen-chr${i}_%A_%a.err \
+           --wrap ". ${SCALLOP}/SEQ/bgen.wrap"
+  done
+done
+
+for weswgs in wes wgs
+do
+  echo ${SEQ}/work/${weswgs}-chr{{1..22},X}.bgen | tr ' ' '\n' > ${SEQ}/work/${weswgs}-bgen.list
+  export weswgs=${weswgs}
+  sbatch ${SEQ}/spa.sb
+done
 
 # <olink_protein>_<cohort>_<date_of_analysis>_<analyst_initials>.txt.bgz
 # ACE2_INTERVAL_02112020_JHZ.txt.bgz

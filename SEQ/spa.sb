@@ -1,0 +1,34 @@
+#!/usr/bin/bash
+
+#SBATCH --job-name=_spa
+#SBATCH --account CARDIO-SL0-CPU
+#SBATCH --partition cardio
+#SBATCH --qos=cardio
+#SBATCH --array=1-368
+#SBATCH --mem=28800
+#SBATCH --time=5-00:00:00
+#SBATCH --output=/rds/user/jhz22/hpc-work/work/${weswgs}_spa_%A_%a.out
+#SBATCH --error=/rds/user/jhz22/hpc-work/work/${weswgs}_spa_%A_%a.err
+#SBATCH --export ALL
+
+export TMPDIR=${HPC_WORK}/work
+export SEQ=${SCALLOP}/SEQ
+
+module avail ceuadmin/boltlmm
+module load ceuadmin/boltlmm/2.3.4
+
+export phenocol=${SLURM_ARRAY_TASK_ID}
+bolt \
+    --fam=${SEQ}/work/${weswgs}.fam \
+    --bim=${SEQ}/work/${weswgs}.bim \
+    --bed=${SEQ}/work/${weswgs}.bed \
+    --phenoFile=${SEQ}/work/${weswgs}.pheno \
+    --phenoCol=${phenocol} \
+    --lmm \
+    --impute2FileList=${SEQ}/work/${weswgs}-bgen.list \
+    --statsFileImpute2Snps=${SEQ}/work/spa/${weswgs}_${phenocol}.stats \
+    --LDscoresUseChip \
+    --noMapCheck \
+    --numLeaveOutChunks 2 \
+    --statsFile=${SEQ}/work/spa/CHIP-${weswgs}_${phenocol}.stats \
+    2>&1 | tee ${SEQ}/work/spa/${weswgs}_${phenocol}.log
