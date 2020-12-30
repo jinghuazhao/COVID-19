@@ -1,0 +1,27 @@
+#!/usr/bin/bash
+
+#SBATCH --job-name=_rva
+#SBATCH --account CARDIO-SL0-CPU
+#SBATCH --partition cardio
+#SBATCH --qos=cardio
+#SBATCH --array=1-22
+#SBATCH --mem=28800
+#SBATCH --time=5-00:00:00
+#SBATCH --output=/rds/user/jhz22/hpc-work/work/${weswgs}_rva_%A_%a.out
+#SBATCH --error=/rds/user/jhz22/hpc-work/work/${weswgs}_rva_%A_%a.err
+#SBATCH --export ALL
+
+export TMPDIR=${HPC_WORK}/work
+export SEQ=${SCALLOP}/SEQ
+export COHORT=INTERVAL
+export CONFIG=${SEQ}/geneset_data/config.txt
+export STEP1="singularity exec ${SEQ}/burden_testing_latest.sif"
+export STEP2="singularity exec --containall ${SEQ}/burden_testing_latest.sif"
+
+export chr=chr${SLURM_ARRAY_TASK_ID}
+${STEP2} step2 --cohort-name ${COHORT} \
+               --pheno work/${weswgs}/${pheno}.pheno \
+               --GDS work/${weswgs}-${chr}.gds \
+               --matrix-prefix work/${weswgs} \
+               --matrix-type GCTA \
+               --out work/${weswgs}/${COHORT}-${weswgs}-${pheno}-${chr}
