@@ -3,8 +3,8 @@
 export TMPDIR=${HPC_WORK}/work
 export SEQ=${SCALLOP}/SEQ
 
-for weswgs in wes wgs
-do
+bgen <- function()
+{
   export weswgs=${weswgs}
   sbatch ${SEQ}/bgen.sb
   for i in X Y
@@ -15,13 +15,17 @@ do
            --output=${TMPDIR}/_${weswgs}_bgen-chr${i}_%A_%a.out --error=${TMPDIR}/_${weswgs}_bgen-chr${i}_%A_%a.err \
            --wrap ". ${SCALLOP}/SEQ/bgen.sb"
   done
-done
+}
 
-for weswgs in wes wgs
+for weswgs in wes
 do
-  echo ${SEQ}/work/${weswgs}-chr{{1..22},X}.bgen | tr ' ' '\n' > ${SEQ}/work/${weswgs}-bgen.list
   export weswgs=${weswgs}
-  sbatch ${SEQ}/spa.sb
+# bgen()
+  cut -f1 --complement ${SEQ}/work/${weswgs}.pheno | head -1 | tr '\t' '\n' > ${SEQ}/work/${weswgs}.varlist
+  if [ ! -f ${SEQ}/work/${weswgs}.fam2 ]; then
+    awk '{$1=$2};1' ${SEQ}/work/${weswgs}.fam > ${SEQ}/work/${weswgs}.fam2
+  fi
+  sbatch --export=ALL,weswgs ${SEQ}/spa.sb
 done
 
 # <olink_protein>_<cohort>_<date_of_analysis>_<analyst_initials>.txt.bgz

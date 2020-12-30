@@ -4,31 +4,39 @@
 #SBATCH --account CARDIO-SL0-CPU
 #SBATCH --partition cardio
 #SBATCH --qos=cardio
-#SBATCH --array=1-368
+#SBATCH --array=368
 #SBATCH --mem=28800
 #SBATCH --time=5-00:00:00
-#SBATCH --output=/rds/user/jhz22/hpc-work/work/${weswgs}_spa_%A_%a.out
-#SBATCH --error=/rds/user/jhz22/hpc-work/work/${weswgs}_spa_%A_%a.err
+#SBATCH --output=/rds/user/jhz22/hpc-work/work/_weswgs_spa_%A_%a.o
+#SBATCH --error=/rds/user/jhz22/hpc-work/work/_weswgs_spa_%A_%a.e
 #SBATCH --export ALL
 
 export TMPDIR=${HPC_WORK}/work
 export SEQ=${SCALLOP}/SEQ
+export phenocol=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]{print $1}' ${SEQ}/work/${weswgs}.varlist)
 
-module avail ceuadmin/boltlmm
 module load ceuadmin/boltlmm/2.3.4
-
-export phenocol=${SLURM_ARRAY_TASK_ID}
+for chr in chr{{1..22},X,Y}
+do
 bolt \
-    --fam=${SEQ}/work/${weswgs}.fam \
+    --fam=${SEQ}/work/${weswgs}.fam2 \
     --bim=${SEQ}/work/${weswgs}.bim \
     --bed=${SEQ}/work/${weswgs}.bed \
     --phenoFile=${SEQ}/work/${weswgs}.pheno \
     --phenoCol=${phenocol} \
     --lmm \
-    --impute2FileList=${SEQ}/work/${weswgs}-bgen.list \
-    --statsFileImpute2Snps=${SEQ}/work/spa/${weswgs}_${phenocol}.stats \
+    --statsFile=${SEQ}/work/spa/CHIP-${weswgs}_${phenocol}-${chr}.stats \
+    --bgenFile=${SEQ}/work/${weswgs}-${chr}.bgen \
+    --sampleFile=${SEQ}/work/${weswgs}-${chr}.samples \
     --LDscoresUseChip \
     --noMapCheck \
     --numLeaveOutChunks 2 \
-    --statsFile=${SEQ}/work/spa/CHIP-${weswgs}_${phenocol}.stats \
-    2>&1 | tee ${SEQ}/work/spa/${weswgs}_${phenocol}.log
+    --statsFileBgenSnps=${SEQ}/work/${weswgs}/${weswgs}_${phenocol}-${chr}.stats \
+    2>&1 | tee ${SEQ}/work/spa/${weswgs}_${phenocol}-${chr}.log
+done
+
+# module avail ceuadmin/boltlmm
+# impute2 files
+#    --impute2FileList=${SEQ}/work/${weswgs}-bgen.list \
+#    --impute2FidIidFile=${SEQ}/work/${weswgs}.id \
+#    --statsFileImpute2Snps=${SEQ}/work/spa/${weswgs}_${phenocol}.stats \
