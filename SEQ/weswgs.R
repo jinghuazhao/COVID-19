@@ -55,7 +55,7 @@ overlap <- subset(id_wgs,wes_id==wgs_id)
 subset(id_wes,wes_id%in%with(overlap,wes_id))
 id_wes <- id_wes %>% select(-c(phase,wgs_id))
 id_wgs <- id_wgs %>% select(-c(phase,wes_id))
-weswgs <- read.delim("work/weswgs.txt")
+weswgs <- read.delim("work/weswgs.txt") %>% rename(sex=sexPulse,age=agePulse) %>% mutate(age2=age*age)
 
 panels <- function(d,weswgs_id,pca)
 {
@@ -65,7 +65,7 @@ panels <- function(d,weswgs_id,pca)
   rename(Aliquot_Id=Olink_INF_id.merge) %>% left_join(inf1[c(1:92,104)],by="Aliquot_Id") %>% select(-Aliquot_Id) %>%
   rename(Aliquot_Id=Olink_NEU_id.merge) %>% left_join(neu[c(7,53:144)],by="Aliquot_Id") %>% select(-Aliquot_Id) %>%
   rename(id=weswgs_id) %>% mutate(average = rowMeans(select(., starts_with("cvd2_BMP.6__P22004")), na.rm = TRUE)) %>%
-  left_join(weswgs[c("identifier","sexPulse","agePulse")]) %>% mutate(age2=agePulse*agePulse) %>%
+  left_join(weswgs[c("identifier","sex","age","age2")]) %>% 
   left_join(pca)
   rownames(d) <- d[["id"]]
   d
@@ -81,7 +81,7 @@ normalize_sapply <- function(d)
   {
     if (verbose) cat(names(d[col]),col,"\n")
     y <- invnormal(d[[col]])
-    l <- lm(y~average+sexPulse+agePulse+PC1+PC2+PC3+PC4+PC5+PC6+PC7+PC8+PC9+PC10+PC11+PC12+PC13+PC14+PC15+PC16+PC17+PC18+PC19+PC20,data=d[covars])
+    l <- lm(y~average+sex+age+age2+PC1+PC2+PC3+PC4+PC5+PC6+PC7+PC8+PC9+PC10+PC11+PC12+PC13+PC14+PC15+PC16+PC17+PC18+PC19+PC20, data=d[covars])
     r <- y-predict(l,na.action=na.pass)
     invnormal(r)
   }
@@ -106,7 +106,7 @@ normalize_adply <- function(d)
   z <- adply(d[proteins], 2, function(x)
        {
           y <- invnormal(x)
-          l <- lm(y~average+sexPulse+agePulse+PC1+PC2+PC3+PC4+PC5+PC6+PC7+PC8+PC9+PC10+PC11+PC12+PC13+PC14+PC15+PC16+PC17+PC18+PC19+PC20,data=d[covars])
+          l <- lm(y~average+sex+age+age2+PC1+PC2+PC3+PC4+PC5+PC6+PC7+PC8+PC9+PC10+PC11+PC12+PC13+PC14+PC15+PC16+PC17+PC18+PC19+PC20, data=d[covars])
           r <- y-predict(l,na.action=na.pass)
           invnormal(r)
        }, .progress = "none", .parallel = TRUE)
@@ -128,7 +128,7 @@ examine <- function()
   check <- within(check,
            {
              y <- invnormal(cvd2_BMP.6__P22004)
-             r <- y-predict(lm(y~average+sexPulse+agePulse+PC1+PC2+PC3+PC4+PC5+PC6+PC7+PC8+PC9+PC10+PC11+PC12+PC13+PC14+PC15+PC16+PC17+PC18+PC19+PC20),
+             r <- y-predict(lm(y~average+sex+age+age2+PC1+PC2+PC3+PC4+PC5+PC6+PC7+PC8+PC9+PC10+PC11+PC12+PC13+PC14+PC15+PC16+PC17+PC18+PC19+PC20),
                             na.action=na.pass)
              b <- invnormal(r)
            }) %>% select(-names(check)[grep("sex|age|PC",names(check))])
