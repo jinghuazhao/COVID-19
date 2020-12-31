@@ -29,6 +29,6 @@ function plink()
          --out ${SEQ}/work/${weswgs}-${chr}
 }
 
-plink()
+plink
 bgenix -g ${SEQ}/work/${weswgs}-${chr}.bgen -index -clobber
 
