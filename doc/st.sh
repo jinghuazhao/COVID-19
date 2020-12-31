@@ -19,6 +19,6 @@ git commit -m "HGI analysis"
 git add NGS/README.* NGS/ngs.png NGS/ngs.do NGS/ngs.R NGS/ngs.sb NGS/ngs.sh NGS/lod.sh NGS/pQTLtools.R NGS/utils
 git commit -m "Olink/NGS pilot"
 git add SEQ/INTERVAL.md SEQ/README.md SEQ/doc SEQ/weswgs.do SEQ/weswgs.R SEQ/weswgs.sh SEQ/wgs.wrap
-git add SEQ/bgen.sb SEQ/spa.* SEQ/grm.wrap SEQ/rva.*
+git add SEQ/bgen.sb SEQ/spa.* SEQ/prune.wrap SEQ/rva.*
 git commit -m "SCALLOP-seq meta-analysis"
 git push
