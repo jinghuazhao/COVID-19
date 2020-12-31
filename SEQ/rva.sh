@@ -120,23 +120,21 @@ do
 # relatedness matrix files
 # prune genotypes
   sbatch --job-name=_${weswgs} --account CARDIO-SL0-CPU --partition cardio --qos=cardio --array=1-22 --mem=40800 --time=5-00:00:00 --export ALL \
-         --output=${TMPDIR}/_${weswgs}_%A_%a.out --error=${TMPDIR}/_${weswgs}_%A_%a.err --wrap ". ${SCALLOP}/SEQ/grm.wrap"
+         --output=${TMPDIR}/_${weswgs}_prune_%A_%a.out --error=${TMPDIR}/_${weswgs}_prune_%A_%a.err --wrap ". ${SCALLOP}/SEQ/prune.wrap"
   export SLURM_ARRAY_TASK_ID=X
-  ${SCALLOP}/SEQ/grm.wrap
+  ${SCALLOP}/SEQ/prune.wrap
   export SLURM_ARRAY_TASK_ID=Y
-  ${SCALLOP}/SEQ/grm.wrap
+  ${SCALLOP}/SEQ/prune.wrap
 # process of pruned genotypes
-  echo work/${weswgs}-chr{{1..22},X} | tr ' ' '\n' > work/${weswgs}.list
-  plink --merge-list work/${weswgs}.list --make-bed --out work/${weswgs}
+  echo ${SEQ}/work/${weswgs}/${weswgs}-chr{{1..22},X} | tr ' ' '\n' > ${SEQ}/work/${weswgs}.list
+  plink --merge-list ${SEQ}/work/${weswgs}.list --make-bed --out work/${weswgs}
 # GRM with GCTA --mbfile but it does not tolerate
 # gcta-1.9 --mbfile work/${weswgs}.list --make-grm-gz --out work/${weswgs}
-  gcta-1.9 --bfile work/${weswgs} --autosome --make-grm-gz --out work/${weswgs} --thread-num 12
+  gcta-1.9 --bfile ${SEQ}/work/${weswgs} --autosome --make-grm-gz --out ${SEQ}/work/${weswgs} --thread-num 12
 # GDS file and single-cohort SMMAT assocaition analysis
-# vcf2gds
 # PCA
-  gcta-1.9 --grm-gz work/${weswgs} --pca 20 --out work/${weswgs}
-# phenotype file
-# R --no-save < weswgs.R 2>&1 | tee weswgs.log
+  gcta-1.9 --grm-gz ${SEQ}/work/${weswgs} --pca 20 --out ${SEQ}/work/${weswgs}
+  R --no-save < weswgs.R 2>&1 | tee weswgs.log
   for pheno in $(ls work/${weswgs} | xargs -I{} basename {} .pheno)
   do
     export pheno=${pheno}

@@ -94,8 +94,12 @@ normalize_sapply <- function(d)
 }
 y_wes_sapply <- normalize_sapply(y_wes)
 y_wgs_sapply <- normalize_sapply(y_wgs)
-write.table(y_wes_sapply,file="work/wes.pheno",quote=FALSE,row.names=FALSE,sep="\t")
-write.table(y_wgs_sapply,file="work/wgs.pheno",quote=FALSE,row.names=FALSE,sep="\t")
+wes.id <- y_wes_sapply %>% select(id) %>% rename(FID=id) %>% mutate(IID=FID)
+wgs.id <- y_wgs_sapply %>% select(id) %>% rename(FID=id) %>% mutate(IID=FID)
+wes.pheno <- y_wes_sapply %>% select(-id)
+wgs.pheno <- y_wgs_sapply %>% select(-id)
+write.table(data.frame(wes.id,wes.pheno),file="work/wes.pheno",quote=FALSE,row.names=FALSE,sep="\t")
+write.table(data.frame(wgs.id,wgs.pheno),file="work/wgs.pheno",quote=FALSE,row.names=FALSE,sep="\t")
 
 output <- function(weswgs,d)
 {
@@ -167,7 +171,7 @@ examine <- function()
              b <- invnormal(r)
            }) %>% select(-names(check)[grep("sex|age|PC",names(check))])
   a <- y_wes_sapply["cvd2_BMP.6__P22004"]
-  plot(cbind(a,check$b),pch=19)
+# plot(cbind(a,check$b),pch=19)
   head(cbind(a,check$b))
 # overlaps
   s <- subset(idmap[,c("wes_id","wgs_id")],wes_id==wgs_id)

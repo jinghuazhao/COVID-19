@@ -3,29 +3,24 @@
 export TMPDIR=${HPC_WORK}/work
 export SEQ=${SCALLOP}/SEQ
 
-bgen <- function()
+function bgen()
 {
-  export weswgs=${weswgs}
-  sbatch ${SEQ}/bgen.sb
-  for i in X Y
+  for chr in chr{{1..22},X,Y}
   do
-    export SLURM_ARRAY_TASK_ID=${i}
-    sbatch --job-name=_${weswgs}_chr${i} --account CARDIO-SL0-CPU --partition cardio --qos=cardio \
+    export SLURM_ARRAY_TASK_ID=${chr}
+    sbatch --job-name=_${weswgs}_${chr} --account CARDIO-SL0-CPU --partition cardio --qos=cardio \
            --mem=40800 --time=5-00:00:00 --export ALL \
-           --output=${TMPDIR}/_${weswgs}_bgen-chr${i}_%A_%a.out --error=${TMPDIR}/_${weswgs}_bgen-chr${i}_%A_%a.err \
-           --wrap ". ${SCALLOP}/SEQ/bgen.sb"
+           --output=${TMPDIR}/_${weswgs}_bgen-${chr}_%A_%a.out --error=${TMPDIR}/_${weswgs}_bgen-${chr}_%A_%a.err \
+           --wrap ". ${SEQ}/bgen.sb"
   done
 }
 
-for weswgs in wes
+for weswgs in wes wgs
 do
   export weswgs=${weswgs}
-# bgen()
-  cut -f1 --complement ${SEQ}/work/${weswgs}.pheno | head -1 | tr '\t' '\n' > ${SEQ}/work/${weswgs}.varlist
-  if [ ! -f ${SEQ}/work/${weswgs}.fam2 ]; then
-    awk '{$1=$2};1' ${SEQ}/work/${weswgs}.fam > ${SEQ}/work/${weswgs}.fam2
-  fi
-  sbatch --export=ALL,weswgs ${SEQ}/spa.sb
+  bgen
+  cut -f1,2 --complement ${SEQ}/work/${weswgs}.pheno | head -1 | tr '\t' '\n' > ${SEQ}/work/${weswgs}.varlist
+  sbatch --export=ALL,weswgs,sample_ext ${SEQ}/spa.sb
 done
 
 # <olink_protein>_<cohort>_<date_of_analysis>_<analyst_initials>.txt.bgz

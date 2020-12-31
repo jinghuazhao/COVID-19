@@ -22,10 +22,11 @@ tabix -f work/wes.vcf.gz
 for chr in chr{1..22} chrX chrY
 do
   bcftools view --regions ${chr} work/wes.vcf.gz -O z -o - | \
+  bcftools sort -O z -o - | \
   bcftools annotate --set-id +'%CHROM:%POS\_%REF\_%FIRST_ALT' -O z -o work/wes-${chr}.vcf.gz
 done
 sbatch --job-name=_wgs --account CARDIO-SL0-CPU --partition cardio --qos=cardio --array=1-22 --mem=40800 --time=5-00:00:00 --export ALL \
-       --output=${TMPDIR}/_wgs_%A_%a.out --error=${TMPDIR}/_wgs_%A_%a.err --wrap ". ${HOME}/COVID-19/SEQ/weswgs.wrap"
+       --output=${TMPDIR}/_wgs_%A_%a.out --error=${TMPDIR}/_wgs_%A_%a.err --wrap ". ${HOME}/COVID-19/SEQ/wgs.wrap"
 export SLURM_ARRAY_TASK_ID=X
 ${HOME}/COVID-19/SEQ/weswgs.wrap
 export SLURM_ARRAY_TASK_ID=Y
