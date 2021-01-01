@@ -2,16 +2,16 @@
 
 module load ceuadmin/stata
 stata -b do weswgs.do
+sed '1d' work/wes.txt | cut -f2 > work/wes.samples
+sed '1d' work/wgs.txt | cut -f2 > work/wgs.samples
 (
   head -1 work/weswgs.txt
   bcftools query -l wes/WES_QCed_Info_updated_4006_FINAL.vcf.gz | grep -f work/weswgs.overlap -v | grep -w -f - work/weswgs.txt
 ) > work/wes.txt
-sed '1d' work/wes.txt | cut -f2 > work/wes.samples
 (
   head -1 work/weswgs.txt
   bcftools query -l wgs/chr22/chr22.intervalwgs_v2_GT_only.vcf.bgz | grep -w -f - work/weswgs.txt
 ) > work/wgs.txt
-sed '1d' work/wgs.txt | cut -f1 > work/wgs.samples
 
 export TMPDIR=${HPC_WORK}/work
 export WES=wes/WES_QCed_Info_updated_4006_FINAL.vcf.gz
