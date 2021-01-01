@@ -13,28 +13,28 @@
 
 export TMPDIR=${HPC_WORK}/work
 export SEQ=${SCALLOP}/SEQ
-export phenocol=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]{print $1}' ${SEQ}/work/${weswgs}.varlist)
+export phenoname=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]{print $1}' ${SEQ}/work/${weswgs}.varlist)
 
 module load ceuadmin/boltlmm/2.3.4
-for chr in chr{{1..22},X,Y}
+for chr in chr{{1..22},X}
 do bolt \
    --fam=${SEQ}/work/${weswgs}.fam \
    --bim=${SEQ}/work/${weswgs}.bim \
    --bed=${SEQ}/work/${weswgs}.bed \
    --phenoFile=${SEQ}/work/${weswgs}.pheno \
-   --phenoCol=${phenocol} \
+   --phenoCol=${phenoname} \
    --lmm \
-   --statsFile=${SEQ}/work/spa/CHIP-${weswgs}_${phenocol}-${chr}.stats \
+   --statsFile=${SEQ}/work/spa/${weswgs}_${phenoname}-${chr}.chipstats \
    --bgenFile=${SEQ}/work/${weswgs}-${chr}.bgen \
    --sampleFile=${SEQ}/work/${weswgs}-${chr}.sample \
    --LDscoresUseChip \
    --numLeaveOutChunks 2 \
-   --statsFileBgenSnps=${SEQ}/work/${weswgs}/${weswgs}_${phenocol}-${chr}.stats \
-   2>&1 | tee ${SEQ}/work/spa/${weswgs}_${phenocol}-${chr}.log
+   --statsFileBgenSnps=${SEQ}/work/spa/${weswgs}_${phenoname}-${chr}.stats \
+   2>&1 | tee ${SEQ}/work/spa/${weswgs}_${phenoname}-${chr}.log
 done
 
 # module avail ceuadmin/boltlmm
 # impute2 files
 #  --impute2FileList=${SEQ}/work/${weswgs}-bgen.list \
 #  --impute2FidIidFile=${SEQ}/work/${weswgs}.id \
-#  --statsFileImpute2Snps=${SEQ}/work/spa/${weswgs}_${phenocol}.stats \
+#  --statsFileImpute2Snps=${SEQ}/work/spa/${weswgs}_${phenoname}.stats \

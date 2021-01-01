@@ -5,7 +5,7 @@ export SEQ=${SCALLOP}/SEQ
 
 function bgen()
 {
-  for chr in chr{{1..22},X,Y}
+  for chr in chr{{1..22},X}
   do
     export SLURM_ARRAY_TASK_ID=${chr}
     sbatch --job-name=_${weswgs}_${chr} --account CARDIO-SL0-CPU --partition cardio --qos=cardio \
@@ -18,9 +18,9 @@ function bgen()
 for weswgs in wes wgs
 do
   export weswgs=${weswgs}
-  bgen
+# bgen
   cut -f1,2 --complement ${SEQ}/work/${weswgs}.pheno | head -1 | tr '\t' '\n' > ${SEQ}/work/${weswgs}.varlist
-  sbatch --export=ALL,weswgs,sample_ext ${SEQ}/spa.sb
+  sbatch --export=ALL ${SEQ}/spa.sb
 done
 
 # <olink_protein>_<cohort>_<date_of_analysis>_<analyst_initials>.txt.bgz

@@ -1,10 +1,13 @@
 #!/usr/bin/bash
 
 export chr=chr${SLURM_ARRAY_TASK_ID}
+bcftools norm -d all ${SCALLOP}/SEQ/work/${weswgs}-${chr}.vcf.gz -O z -o ${SCALLOP}/SEQ/work/prune/${weswgs}-${chr}.vcf.gz
+bcftools index -f -t ${SCALLOP}/SEQ/work/prune/${weswgs}-${chr}.vcf.gz
+
 module load plink/2.00-alpha
+plink2 --vcf ${SCALLOP}/SEQ/work/prune/${weswgs}-${chr}.vcf.gz \
+       --geno 0.1 --mind 0.1 --maf 0.01 --indep-pairwise 500kb 1 0.8 --out ${SCALLOP}/SEQ/work/prune/${weswgs}-${chr}
 plink2 --vcf ${SCALLOP}/SEQ/work/${weswgs}-${chr}.vcf.gz \
-       --geno 0.1 --mind 0.1 --maf 0.01 --indep-pairwise 500kb 1 0.8 --out ${SCALLOP}/SEQ/work/${weswgs}/${weswgs}-${chr}
-plink2 --vcf ${SCALLOP}/SEQ/work/${weswgs}-${chr}.vcf.gz \
-       --extract ${SCALLOP}/SEQ/work/${weswgs}/${weswgs}-${chr}.prune.in \
-       --make-bed --double-id --out ${SCALLOP}/SEQ/work/${weswgs}/${weswgs}-${chr}
+       --extract ${SCALLOP}/SEQ/work/prune/${weswgs}-${chr}.prune.in \
+       --make-bed --double-id --out ${SCALLOP}/SEQ/work/prune/${weswgs}-${chr}
 

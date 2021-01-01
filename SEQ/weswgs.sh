@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
-# module load ceuadmin/stata
-# stata -b do weswgs.do
+module load ceuadmin/stata
+stata -b do weswgs.do
 (
   head -1 work/weswgs.txt
   bcftools query -l wes/WES_QCed_Info_updated_4006_FINAL.vcf.gz | grep -f work/weswgs.overlap -v | grep -w -f - work/weswgs.txt
@@ -24,6 +24,7 @@ do
   bcftools view --regions ${chr} work/wes.vcf.gz -O z -o - | \
   bcftools sort -O z -o - | \
   bcftools annotate --set-id +'%CHROM:%POS\_%REF\_%FIRST_ALT' -O z -o work/wes-${chr}.vcf.gz
+  bcftools index -f -t ${SCALLOP}/SEQ/work/wes-${chr}.vcf.gz
 done
 sbatch --job-name=_wgs --account CARDIO-SL0-CPU --partition cardio --qos=cardio --array=1-22 --mem=40800 --time=5-00:00:00 --export ALL \
        --output=${TMPDIR}/_wgs_%A_%a.out --error=${TMPDIR}/_wgs_%A_%a.err --wrap ". ${HOME}/COVID-19/SEQ/wgs.wrap"

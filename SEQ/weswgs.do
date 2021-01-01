@@ -7,17 +7,36 @@ insheet using omicsMap.csv, case clear comma
 sort identifier
 merge 1:1 identifier using work/INTERVALdata_28FEB2020
 d,f
-keep identifier Wes_gwasQC_bl Wgs_QC_bl Wgs_gwasQC_bl Olink_* sexPulse agePulse ethnicPulse centre ht_bl wt_bl
+keep identifier Wes_gwasQC_bl Wgs_gwasQC_bl Wgs_QC_bl Wgs_QC_24m Wgs_gwasQC_24m Olink_*
+format Wes_gwasQC_bl Wgs_QC_bl Wgs_gwasQC_bl Wgs_QC_24m %15s
+format Wgs_gwasQC_24m Olink_*_QC_24m Olink_*gwasQC_24m %15.0g
+drop if Wes_gwasQC_bl=="" & Wgs_QC_bl=="" & Wgs_gwasQC_bl=="" & Wgs_QC_24m=="" & Wgs_gwasQC_24m==.
+drop if Olink_cvd2_QC_24m==. & Olink_cvd3_QC_24m==. & Olink_inf_QC_24m==. & Olink_neu_QC_24m==.
+count if Wes_gwasQC_bl!=""
+count if Wgs_gwasQC_bl!=""
+count if Wgs_QC_bl!=""
+count if Wgs_QC_24m!=""
+count if Wgs_gwasQC_24m!=.
+drop Wgs_gwasQC_24m
+count if Wgs_gwasQC_bl!="" & Wgs_QC_bl=="" & Wgs_QC_24m==""
+count if Olink_cvd2_QC_24!=.
+count if Olink_cvd3_QC_24!=.
+count if Olink_inf_QC_24!=.
+count if Olink_neu_QC_24!=.
+count if !(Wgs_gwasQC_bl==Wgs_QC_bl | Wgs_gwasQC_bl==Wgs_QC_24m)
+drop Wgs_gwasQC_bl
 mvencode _all, mv(-999)
-format Wes_gwasQC_bl Wgs_QC_bl Wgs_gwasQC_bl %15s
-format Olink_*_QC_24m Olink_*gwasQC_24m %15.0g
 replace Wes_gwasQC_bl="-999" if Wes_gwasQC_bl==""
-replace Wgs_QC_bl="-999" if Wgs_QC_bl==""
 replace Wgs_gwasQC_bl="-999" if Wgs_gwasQC_bl==""
-outsheet identifier Olink_*_QC_24m sexPulse agePulse using work/weswgs.txt, noquote replace 
-saveold work/weswgs, replace
-
+replace Wgs_QC_bl="-999" if Wgs_QC_bl==""
+replace Wgs_QC_24m="-999" if Wgs_QC_24m==""
+outsheet identifier Wes_gwasQC_bl Olink_*QC_24m if Wes_gwasQC_bl!="-999" & Wgs_QC_bl=="-999" /*
+*/       & Wgs_QC_24m=="-999" using work/wes.txt, noquote replace 
+outsheet identifier Wgs_QC_bl Wgs_QC_24m Olink_*QC_24m if Wes_gwasQC_bl=="-999" /*
+*/       using work/wgs.txt, noquote replace 
+outsheet identifier Wes_gwasQC_bl Wgs_gwasQC_bl Wgs_QC_bl Wgs_QC_24m Olink_*QC_24m using work/weswgs.txt, noquote replace
 exit, clear
+
 program pheno
 insheet using `1', case clear comma
 format aliquot_id %15.0g

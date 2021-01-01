@@ -119,6 +119,7 @@ do
   export weswgs=${weswgs}
 # relatedness matrix files
 # prune genotypes
+  if [ ! -d ${SEQ}/work/prune ]; then mkdir ${SEQ}/work/prune; fi
   sbatch --job-name=_${weswgs} --account CARDIO-SL0-CPU --partition cardio --qos=cardio --array=1-22 --mem=40800 --time=5-00:00:00 --export ALL \
          --output=${TMPDIR}/_${weswgs}_prune_%A_%a.out --error=${TMPDIR}/_${weswgs}_prune_%A_%a.err --wrap ". ${SCALLOP}/SEQ/prune.wrap"
   export SLURM_ARRAY_TASK_ID=X
@@ -126,8 +127,8 @@ do
   export SLURM_ARRAY_TASK_ID=Y
   ${SCALLOP}/SEQ/prune.wrap
 # process of pruned genotypes
-  echo ${SEQ}/work/${weswgs}/${weswgs}-chr{{1..22},X} | tr ' ' '\n' > ${SEQ}/work/${weswgs}.list
-  plink --merge-list ${SEQ}/work/${weswgs}.list --make-bed --out work/${weswgs}
+  echo ${SEQ}/work/prune/${weswgs}-chr{{1..22},X} | tr ' ' '\n' > ${SEQ}/work/${weswgs}.list
+  plink --merge-list ${SEQ}/work/${weswgs}.list --make-bed --out ${SEQ}/work/${weswgs}
 # GRM with GCTA --mbfile but it does not tolerate
 # gcta-1.9 --mbfile work/${weswgs}.list --make-grm-gz --out work/${weswgs}
   gcta-1.9 --bfile ${SEQ}/work/${weswgs} --autosome --make-grm-gz --out ${SEQ}/work/${weswgs} --thread-num 12

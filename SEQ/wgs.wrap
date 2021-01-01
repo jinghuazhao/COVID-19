@@ -6,4 +6,4 @@ bcftools query -l ${WGS} | \
 grep -f work/wgs.samples | \
 bcftools view -S - ${WGS} -O z -o - | \
 bcftools annotate --set-id +'%CHROM:%POS\_%REF\_%FIRST_ALT' -O z -o work/wgs-${chr}.vcf.gz
-
+bcftools index -f -t work/wgs-${chr}.vcf.gz
