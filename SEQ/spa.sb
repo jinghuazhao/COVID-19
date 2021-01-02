@@ -15,9 +15,11 @@ export TMPDIR=${HPC_WORK}/work
 export SEQ=${SCALLOP}/SEQ
 export phenoname=$(awk 'NR==ENVIRON["SLURM_ARRAY_TASK_ID"]{print $1}' ${SEQ}/work/${weswgs}.varlist)
 
-module load ceuadmin/boltlmm/2.3.4
-for chr in chr{{1..22},X}
-do bolt \
+function boltlmm()
+{
+  module load ceuadmin/boltlmm/2.3.4
+  for chr in chr{{1..22},X}
+  do bolt \
    --fam=${SEQ}/work/${weswgs}.fam \
    --bim=${SEQ}/work/${weswgs}.bim \
    --bed=${SEQ}/work/${weswgs}.bed \
@@ -31,10 +33,33 @@ do bolt \
    --numLeaveOutChunks 2 \
    --statsFileBgenSnps=${SEQ}/work/spa/${weswgs}_${phenoname}-${chr}.stats \
    2>&1 | tee ${SEQ}/work/spa/${weswgs}_${phenoname}-${chr}.log
-done
-
+  done
+}
 # module avail ceuadmin/boltlmm
 # impute2 files
 #  --impute2FileList=${SEQ}/work/${weswgs}-bgen.list \
 #  --impute2FidIidFile=${SEQ}/work/${weswgs}.id \
 #  --statsFileImpute2Snps=${SEQ}/work/spa/${weswgs}_${phenoname}.stats \
+
+function fastGWA()
+# fastGWA mixed model
+{
+  gcta-1.9 --mbgen ${SEQ}/work/${weswgs}.bgenlist --grm-sparse ${SEQ}/work/spa/${weswgs}-spgrm \
+           --sample ${SEQ}/work/${weswgs}-chr1.sample \
+           --fastGWA-mlm --pheno ${SEQ}/work/spa/${weswgs}.pheno --mpheno ${{SLURM_ARRAY_TASK_ID} --threads 10 \
+           --out ${SEQ}/work/spa/${weswgs}-${phenoname}
+
+  gcta-1.9 --mbgen ${SEQ}/work/${weswgs}.bgenlist --grm-sparse ${SEQ}/work/spa/${weswgs}-spgrm \
+           --sample ${SEQ}/work/${weswgs}.sample \
+           --fastGWA-mlm --model-only --pheno ${SEQ}/work/spa/${weswgs}.pheno --mpheno ${{SLURM_ARRAY_TASK_ID} \
+           --keep ${SEQ}/work/spa/${weswgs}-chrX.idlist --threads 10 \
+           --out ${SEQ}/work/spa/${weswgs}-${phenoname}
+
+  gcta-1.9 --bgen ${SEQ}/work/${weswgs}-chrX.bgen \
+           --sample ${SEQ}/work/${weswgs}.sample \
+           --load-model ${SEQ}/work/spa/${weswgs}-${phenoname}.fastGWA \
+           --extract ${SEQ}/work/spa/${weswgs}-chrX.snplist --geno 0.1 --threads 10 \
+           --out ${SEQ}/work/spa/${weswgs}-${phenoname}-chrX
+}
+
+fastGWA

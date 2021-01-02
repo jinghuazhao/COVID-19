@@ -15,11 +15,32 @@ function bgen()
   done
 }
 
+function fastGWASsetup()
+{
+# a sparse GRM from SNP data
+  gcta-1.9 --bfile ${SEQ}/work/${weswgs} --make-grm --out ${SEQ}/work/spa/${weswgs}
+  gcta-1.9 --grm ${SEQ}/work/spa/${weswgs} --make-bK-sparse 0.05 --out ${SEQ}/work/spa/${weswgs}-spgrm
+  echo ${SEQ}/work/${weswgs}-chr{1..22}.bgen | tr ' ' '\n' > ${SEQ}/work/${weswgs}.bgenlist
+  (
+    head -2 ${SEQ}/work/${weswgs}-chrX.sample
+    sed '1,2d' ${SEQ}/work/${weswgs}-chrX.sample | \
+    cut -d' ' -f1-3 | \
+    join -a1 -e NA -o1.1,1.2,1.3,2.2 - ${SEQ}/work/${weswgs}.sex
+  ) > ${SEQ}/work/${weswgs}.sample
+
+  bcftools query -l ${SEQ}/work/${weswgs}-chrX.vcf.gz | awk '{print $1,$1}' > ${SEQ}/work/spa/${weswgs}-chrX.idlist
+  bcftools query -f "%ID\n" ${SEQ}/work/${weswgs}-chrX.vcf.gz > ${SEQ}/work/spa/${weswgs}-chrX.snplist
+
+# fastGWA mixed model
+  sed '1d' ${SEQ}/work/${weswgs}.pheno > ${SEQ}/work/spa/${weswgs}.pheno
+}
+
 for weswgs in wes wgs
 do
   export weswgs=${weswgs}
 # bgen
   cut -f1,2 --complement ${SEQ}/work/${weswgs}.pheno | head -1 | tr '\t' '\n' > ${SEQ}/work/${weswgs}.varlist
+  fastGWAsetup
   sbatch --export=ALL ${SEQ}/spa.sb
 done
 
