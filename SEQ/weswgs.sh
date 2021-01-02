@@ -42,32 +42,34 @@ grep -f work/wgs.idmap work/weswgs.txt| cut -f3,14 | sort -k1,1 > work/wgs.sex
 
 awk '$2!="NA" && ($5!="NA"||$6!="NA"||$7!="NA"||$8!="NA")' WGS-WES-Olink_ID_map_INTERVAL_release_28FEB2020.txt | wc -l
 awk '$2!="NA" && ($5!="NA"||$6!="NA"||$7!="NA"||$8!="NA")' WGS-WES-Olink_ID_map_INTERVAL_release_28FEB2020.txt | cut -f2 | grep -f - work/wgs.idmap | wc -l
-grep -f work/wgs.idmap WGS-WES-Olink_ID_map_INTERVAL_release_28FEB2020.txt | cut -f2| grep -v -f - work/wgs.idmap > work/wgs.exclude
+grep -f work/wgs.idmap WGS-WES-Olink_ID_map_INTERVAL_release_28FEB2020.txt | cut -f2 | grep -v -f - work/wgs.idmap > work/wgs.exclude
+head -1 WGS-WES-Olink_ID_map_INTERVAL_release_28FEB2020.txt
+cat work/wgs.exclude
+head -1 work/weswgs.txt
 grep -f work/wgs.exclude work/weswgs.txt
 grep -f work/wgs.exclude work/wgs.txt
 
 export TMPDIR=${HPC_WORK}/work
-export WES=wes/WES_QCed_Info_updated_4006_FINAL.vcf.gz
+export SEQ=${SCALLOP}/SEQ
+export WES=${SEQ}/wes/WES_QCed_Info_updated_4006_FINAL.vcf.gz
+
 bcftools query -l ${WES} | \
-grep -f work/wes.samples | \
-bcftools view -S - ${WES} -O z -o work/wes.vcf.gz
-tabix -f work/wes.vcf.gz
-for chr in chr{1..22} chrX chrY
+grep -f ${SEQ}/work/wes.idmap | \
+bcftools view -S - ${WES} -O z -o ${SEQ}/work/wes.vcf.gz
+tabix -f ${SEQ}/work/wes.vcf.gz
+for chr in chr{{1..22},X,Y}
 do
-  bcftools view --regions ${chr} work/wes.vcf.gz -O z -o - | \
+  bcftools view --regions ${chr} ${SEQ}/work/wes.vcf.gz -O z -o - | \
   bcftools sort -O z -o - | \
-  bcftools annotate --set-id +'%CHROM:%POS\_%REF\_%FIRST_ALT' -O z -o work/wes-${chr}.vcf.gz
-  bcftools index -f -t ${SCALLOP}/SEQ/work/wes-${chr}.vcf.gz
+  bcftools annotate --set-id +'%CHROM:%POS\_%REF\_%FIRST_ALT' -O z -o ${SEQ}/work/wes-${chr}.vcf.gz
+  bcftools index -f -t ${SEQ}/work/wes-${chr}.vcf.gz
 done
 sbatch --job-name=_wgs --account CARDIO-SL0-CPU --partition cardio --qos=cardio --array=1-22 --mem=40800 --time=5-00:00:00 --export ALL \
-       --output=${TMPDIR}/_wgs_%A_%a.out --error=${TMPDIR}/_wgs_%A_%a.err --wrap ". ${HOME}/COVID-19/SEQ/wgs.wrap"
+       --output=${TMPDIR}/_wgs_%A_%a.out --error=${TMPDIR}/_wgs_%A_%a.err --wrap ". ${SEQ}/wgs.wrap"
 export SLURM_ARRAY_TASK_ID=X
-${HOME}/COVID-19/SEQ/weswgs.wrap
+${SEQ}/wgs.wrap
 export SLURM_ARRAY_TASK_ID=Y
-${HOME}/COVID-19/SEQ/weswgs.wrap
-
-cd work
-ls *chr*vcf.gz | parallel  -j5 -C' ' 'tabix -f {}' &
+${SEQ}/wgs.wrap
 
 # https://sylabs.io/singularity/
 module load singularity

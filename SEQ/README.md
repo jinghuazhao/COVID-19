@@ -2,13 +2,13 @@
 
 Filename | Description
 ---------|------------
-weswgs.do, weswgs.R, weswgs.sh, weswgs.wrap | WES/WGS preprocessing
+idmap.do, weswgs.R, weswgs.sh, wgs.wrap, prune.wrap | WES/WGS preprocessing
 doc/1_pool_phenotypes_nmr_olink_somalogic.R | CEU central code
 spa.sh | Single-point analysis
 rva.sh | Rare-variant analysis
 
-1. weswgs.sh ==> spa.sh, rva.sh
-2. stata do weswgs.do ==> R --no-save < weswgs.R
+weswgs.sh ==> spa.sh, rva.sh; noting that sbatch implicates the --wait option
+as the following steps would require its full results.
 
 ## Contacts
 
