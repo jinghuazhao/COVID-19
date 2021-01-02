@@ -1,17 +1,50 @@
 #!/usr/bin/bash
 
 module load ceuadmin/stata
-stata -b do weswgs.do
+stata -b do idmap.do
 sed '1d' work/wes.txt | cut -f2 > work/wes.samples
 sed '1d' work/wgs.txt | cut -f2 > work/wgs.samples
-(
-  head -1 work/weswgs.txt
-  bcftools query -l wes/WES_QCed_Info_updated_4006_FINAL.vcf.gz | grep -f work/weswgs.overlap -v | grep -w -f - work/weswgs.txt
-) > work/wes.txt
-(
-  head -1 work/weswgs.txt
-  bcftools query -l wgs/chr22/chr22.intervalwgs_v2_GT_only.vcf.bgz | grep -w -f - work/weswgs.txt
-) > work/wgs.txt
+
+# dropouts
+# WES
+# EGAN00001217281 from omicsMap.csv does not appear in INTERVALdata_28FEB2020.csv
+head -1 omicsMap.csv
+grep EGAN00001217281 omicsMap.csv
+grep EGAN00001217281 INTERVALdata_28FEB2020.csv
+# WGS
+# EGAN00001240484
+# EGAN00001240488
+# EGAN00001585278
+# EGAN00001586195
+# EGAN00001586196
+# EGAN00001586198
+head -1 omicsMap.csv
+grep -e EGAN00001240484 -e EGAN00001240488 -e EGAN00001585278 -e EGAN00001586195 -e EGAN00001586196 -e EGAN00001586198 omicsMap.csv
+grep -e EGAN00001240484 -e EGAN00001240488 -e EGAN00001585278 -e EGAN00001586195 -e EGAN00001586196 -e EGAN00001586198 INTERVALdata_28FEB2020.csv
+
+# 50 overlaps between WES and WGS but only 5 with proteomics
+awk '$2==$4' WGS-WES-Olink_ID_map_INTERVAL_release_28FEB2020.txt | wc -l
+awk '$2==$4 && ($5!="NA"||$6!="NA"||$7!="NA"||$8!="NA")' WGS-WES-Olink_ID_map_INTERVAL_release_28FEB2020.txt | cut -f2 > work/weswgs.overlap
+wc -l work/weswgs.overlap
+
+echo WES -- only trimmed by availability of genotypic data
+bcftools query -l wes/WES_QCed_Info_updated_4006_FINAL.vcf.gz | grep -f work/weswgs.overlap | grep -f - work/wes.txt | wc -l
+bcftools query -l wes/WES_QCed_Info_updated_4006_FINAL.vcf.gz | grep -f work/wes.samples > work/wes.idmap
+wc -l work/wes.idmap
+grep -f work/wes.idmap work/weswgs.txt | cut -f2,14 | sort -k1,1 > work/wes.sex
+
+echo WGS
+bcftools query -l wgs/chr22/chr22.intervalwgs_v2_GT_only.vcf.bgz | grep -f - work/weswgs.overlap | grep -f - work/wgs.txt | wc -l
+bcftools query -l wgs/chr22/chr22.intervalwgs_v2_GT_only.vcf.bgz | grep -f work/wgs.samples > work/wgs.idmap
+wc -l work/wgs.idmap
+grep -f work/wgs.idmap work/wgs.txt | wc -l
+grep -f work/wgs.idmap work/weswgs.txt| cut -f3,14 | sort -k1,1 > work/wgs.sex
+
+awk '$2!="NA" && ($5!="NA"||$6!="NA"||$7!="NA"||$8!="NA")' WGS-WES-Olink_ID_map_INTERVAL_release_28FEB2020.txt | wc -l
+awk '$2!="NA" && ($5!="NA"||$6!="NA"||$7!="NA"||$8!="NA")' WGS-WES-Olink_ID_map_INTERVAL_release_28FEB2020.txt | cut -f2 | grep -f - work/wgs.idmap | wc -l
+grep -f work/wgs.idmap WGS-WES-Olink_ID_map_INTERVAL_release_28FEB2020.txt | cut -f2| grep -v -f - work/wgs.idmap > work/wgs.exclude
+grep -f work/wgs.exclude work/weswgs.txt
+grep -f work/wgs.exclude work/wgs.txt
 
 export TMPDIR=${HPC_WORK}/work
 export WES=wes/WES_QCed_Info_updated_4006_FINAL.vcf.gz

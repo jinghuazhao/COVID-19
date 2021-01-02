@@ -36,26 +36,37 @@ y <- cvd2[c(1:92,104)] %>%
      full_join(neu[c(7,53:144)],by="Aliquot_Id")
 dim(y)
 
-f <- "WGS-WES-Olink_ID_map_INTERVAL_release_28FEB2020.txt"
-idmap <- within(read.delim(f),
-         {
-           Olink_CVD2_id.merge <- as.character(Olink_CVD2_id.merge)
-           Olink_CVD3_id.merge <- as.character(Olink_CVD3_id.merge)
-           Olink_INF_id.merge <- as.character(Olink_INF_id.merge)
-           Olink_NEU_id.merge <- as.character(Olink_NEU_id.merge)
-         })
 # WES/WGS samples
-wes <- scan("work/wes.samples",what="")
-wgs <- scan("work/wgs.samples",what="")
+weswgs <- read.delim("work/weswgs.txt")
+wes <- scan("work/wes.idmap",what="")
+wgs <- scan("work/wgs.idmap",what="")
+
+idmap <- function(f,weswgs_id)
+{
+  d <- read.delim(f)
+  names(d)[2] <- "id"
+  subset(d,id%in%weswgs_id)
+}
+
+id_wes <- idmap("work/wes.txt",wes)
+id_wgs <- idmap("work/wgs.txt",wgs)
+
+f <- "WGS-WES-Olink_ID_map_INTERVAL_release_28FEB2020.txt"
+praveen <- within(read.delim(f),
+           {
+              Olink_CVD2_id.merge <- as.character(Olink_CVD2_id.merge)
+              Olink_CVD3_id.merge <- as.character(Olink_CVD3_id.merge)
+              Olink_INF_id.merge <- as.character(Olink_INF_id.merge)
+              Olink_NEU_id.merge <- as.character(Olink_NEU_id.merge)
+           })
 pca_wes <- read.table("work/wes.eigenvec",col.names=c("z","id",paste0("PC",1:20))) %>% select(-z)
 pca_wgs <- read.table("work/wgs.eigenvec",col.names=c("z","id",paste0("PC",1:20))) %>% select(-z)
-id_wes <- subset(idmap,wes_id%in%wes)
-id_wgs <- subset(idmap,wgs_id%in%wgs)
+id_wes <- subset(praveen,wes_id%in%wes)
+id_wgs <- subset(praveen,wgs_id%in%wgs)
 overlap <- subset(id_wgs,wes_id==wgs_id)
 subset(id_wes,wes_id%in%with(overlap,wes_id))
 id_wes <- id_wes %>% select(-c(phase,wgs_id))
 id_wgs <- id_wgs %>% select(-c(phase,wes_id))
-weswgs <- read.delim("work/weswgs.txt") %>% rename(sex=sexPulse,age=agePulse) %>% mutate(age2=age*age)
 
 panels <- function(d,weswgs_id,pca)
 {
