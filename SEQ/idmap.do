@@ -38,9 +38,9 @@ replace Wgs_QC_bl="-999" if Wgs_QC_bl==""
 replace Wgs_QC_24m="-999" if Wgs_QC_24m==""
 outsheet identifier Wes_gwasQC_bl Olink_*QC_24m if Wes_gwasQC_bl!="-999" & Wgs_QC_bl=="-999" /*
 */       & Wgs_QC_24m=="-999" using work/wes.txt, noquote replace
-outsheet identifier Wgs Olink_*QC_24m if Wes_gwasQC_bl=="-999" /*
+outsheet identifier Wgs Olink_*QC_24m if Wes_gwasQC_bl=="-999" | (Wes_gwasQC_bl!="-999" & Wes_gwasQC_bl==Wgs_QC_bl)/*
 */       using work/wgs.txt, noquote replace
-outsheet identifier Wes_gwasQC_bl Wgs Wgs_QC_bl Wgs_QC_24m Olink_*QC_24m using work/weswgs.txt, noquote replace
+outsheet identifier Wes_gwasQC_bl Wgs Wgs_QC_bl Wgs_QC_24m Olink_*QC_24m sex age age2 using work/weswgs.txt, noquote replace
 exit, clear
 
 /* The following is now furnised in R instead */
