@@ -60,6 +60,7 @@ function fastGWA()
            --load-model ${SEQ}/work/spa/${weswgs}-${phenoname}.fastGWA \
            --extract ${SEQ}/work/spa/${weswgs}-chrX.snplist --geno 0.1 --threads 10 \
            --out ${SEQ}/work/spa/${weswgs}-${phenoname}-chrX
+  gzip -f ${SEQ}/work/spa/${weswgs}-${phenoname}*fastGWA
 }
 
 fastGWA
