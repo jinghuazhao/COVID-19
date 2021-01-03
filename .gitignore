@@ -10,9 +10,6 @@ polyphen-2.2.2/
 py37/
 R/
 scratch/
-SEQ/doc/*.docx
-SEQ/doc/*.pptx
-SEQ/doc/*.pdf
-SEQ/doc/praveen.txt
+SEQ/doc
 SomaLogic/
 SWATH-MS
