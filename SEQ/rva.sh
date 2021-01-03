@@ -123,9 +123,9 @@ do
   sbatch --job-name=_${weswgs} --account CARDIO-SL0-CPU --partition cardio --qos=cardio --array=1-22 --mem=40800 --time=5-00:00:00 --export ALL \
          --output=${TMPDIR}/_${weswgs}_prune_%A_%a.out --error=${TMPDIR}/_${weswgs}_prune_%A_%a.err --wrap ". ${SCALLOP}/SEQ/prune.wrap"
   export SLURM_ARRAY_TASK_ID=X
-  ${SCALLOP}/SEQ/prune.wrap
+  ${SEQ}/prune.wrap
   export SLURM_ARRAY_TASK_ID=Y
-  ${SCALLOP}/SEQ/prune.wrap
+  ${SEQ}/prune.wrap
 # process of pruned genotypes
   echo ${SEQ}/work/prune/${weswgs}-chr{{1..22},X} | tr ' ' '\n' > ${SEQ}/work/${weswgs}.list
   plink --merge-list ${SEQ}/work/${weswgs}.list --make-bed --out ${SEQ}/work/${weswgs}
@@ -135,7 +135,8 @@ do
 # GDS file and single-cohort SMMAT assocaition analysis
 # PCA
   gcta-1.9 --grm-gz ${SEQ}/work/${weswgs} --pca 20 --out ${SEQ}/work/${weswgs}
-  R --no-save < weswgs.R 2>&1 | tee weswgs.log
+# once is enough for generating phenotypes
+  if [ ${weswgs} == "wgs" ]; then R --no-save < weswgs.R 2>&1 | tee weswgs.log; fi
   for pheno in $(ls work/${weswgs} | xargs -I{} basename {} .pheno)
   do
     export pheno=${pheno}

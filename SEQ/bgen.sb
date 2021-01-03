@@ -31,4 +31,3 @@ function plink()
 
 plink
 bgenix -g ${SEQ}/work/${weswgs}-${chr}.bgen -index -clobber
-
