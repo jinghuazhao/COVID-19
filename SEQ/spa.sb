@@ -46,12 +46,12 @@ function fastGWA()
 {
   gcta-1.9 --mbgen ${SEQ}/work/${weswgs}.bgenlist --grm-sparse ${SEQ}/work/spa/${weswgs}-spgrm \
            --sample ${SEQ}/work/${weswgs}-chr1.sample \
-           --fastGWA-mlm --pheno ${SEQ}/work/spa/${weswgs}.pheno --mpheno ${{SLURM_ARRAY_TASK_ID} --threads 10 \
+           --fastGWA-mlm --pheno ${SEQ}/work/spa/${weswgs}.pheno --mpheno ${SLURM_ARRAY_TASK_ID} --threads 10 \
            --out ${SEQ}/work/spa/${weswgs}-${phenoname}
 
   gcta-1.9 --mbgen ${SEQ}/work/${weswgs}.bgenlist --grm-sparse ${SEQ}/work/spa/${weswgs}-spgrm \
            --sample ${SEQ}/work/${weswgs}.sample \
-           --fastGWA-mlm --model-only --pheno ${SEQ}/work/spa/${weswgs}.pheno --mpheno ${{SLURM_ARRAY_TASK_ID} \
+           --fastGWA-mlm --model-only --pheno ${SEQ}/work/spa/${weswgs}.pheno --mpheno ${SLURM_ARRAY_TASK_ID} \
            --keep ${SEQ}/work/spa/${weswgs}-chrX.idlist --threads 10 \
            --out ${SEQ}/work/spa/${weswgs}-${phenoname}
 
