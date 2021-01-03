@@ -105,7 +105,7 @@ output <- function(weswgs,d)
   invisible(sapply(2:n_vars,function(x)
             {
               print(names(d[x]))
-              write.table(d[c(1,x)],file=file.path(weswgs,paste0(names(d[x]),".pheno")),quote=FALSE,row.names=FALSE,sep="\t")
+              write.table(d[c(1,x)],file=file.path(weswgs,paste0(names(d[x]),".pheno")),col.names=FALSE,quote=FALSE,row.names=FALSE,sep="\t")
             })
   )
 }
