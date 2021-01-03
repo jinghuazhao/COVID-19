@@ -152,6 +152,8 @@ examine <- function()
 
 examine()
 
+# --- deprecated ---
+
 y <- cvd2[c(1:92,104)] %>%
      full_join(cvd3[c(1:92,104)],by="Aliquot_Id") %>%
      full_join(inf1[c(1:92,104)],by="Aliquot_Id") %>%
@@ -159,40 +161,20 @@ y <- cvd2[c(1:92,104)] %>%
 dim(y)
 
 ceu <- function()
+# housekeeping of omicsMap.csv-based (not considering withdrawals) version
 {
-## Praveen's version, not fully incompatible with PCs
   f <- "WGS-WES-Olink_ID_map_INTERVAL_release_28FEB2020.txt"
-  praveen <- within(read.delim(f),
-             {
-                Olink_CVD2_id.merge <- as.character(Olink_CVD2_id.merge)
-                Olink_CVD3_id.merge <- as.character(Olink_CVD3_id.merge)
-                Olink_INF_id.merge <- as.character(Olink_INF_id.merge)
-                Olink_NEU_id.merge <- as.character(Olink_NEU_id.merge)
-             })
-  id_wes <- subset(praveen,wes_id%in%wes)
-  id_wgs <- subset(praveen,wgs_id%in%wgs)
+  d <- within(read.delim(f),
+       {
+            Olink_CVD2_id.merge <- as.character(Olink_CVD2_id.merge)
+            Olink_CVD3_id.merge <- as.character(Olink_CVD3_id.merge)
+            Olink_INF_id.merge <- as.character(Olink_INF_id.merge)
+            Olink_NEU_id.merge <- as.character(Olink_NEU_id.merge)
+       })
+  id_wes <- subset(d,wes_id%in%wes)
+  id_wgs <- subset(d,wgs_id%in%wgs)
   overlap <- subset(id_wgs,wes_id==wgs_id)
   subset(id_wes,wes_id%in%with(overlap,wes_id))
   id_wes <- id_wes %>% select(-c(phase,wgs_id))
   id_wgs <- id_wgs %>% select(-c(phase,wes_id))
 }
-
-test <- function(d)
-{
-  proteins <- grep("cvd2|cvd3|inf1|neu",names(d))
-  covars <- d[grep("average|sex|age",names(d))]
-  normfun <- function(col,verbose=FALSE)
-  {
-    if (verbose) cat(col,names(d[col]),"\n")
-    y <- d[,col]
-    l <- lm(y~average+sex+age+age2, data=covars)
-    r <- y-predict(l,na.action=na.pass)
-    invnormal(r)
-  }
-  z <- sapply(proteins, normfun)
-  colnames(z) <- names(d[proteins])
-  rownames(z) <- rownames(d)
-  data.frame(id=rownames(d),z)
-}
-y_wes_test <- test(y_wes)
-y_wgs_test <- test(y_wgs)

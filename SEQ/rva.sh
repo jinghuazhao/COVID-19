@@ -114,7 +114,7 @@ function vcf2gds()
 # - A space-delimited file containing single variant scores
 # - A binary file containing between-variant covariance matrices
 
-# vcf2gds
+vcf2gds
 
 for weswgs in wes wgs
 do
@@ -177,24 +177,27 @@ cut -f4 | sed '1d' | grep -v -f work/wes.samples | grep -f - ${idmap}
 # --- deprecated ---
 
 function gihub()
+# Various steps based on the GitHub other than singularity version.
 {
-cd burden_testing
-for panel in cvd2 cvd3 inf neu
-do
-  export panel=${panel}
-  for weswgs in wes wgs
+  cd burden_testing
+  for panel in cvd2 cvd3 inf neu
   do
-    export weswgs=${weswgs}
-    echo chr{1..22} chrX chrY | \
-    tr ' ' '\n' | \
-    parallel --env COHORT --env panel --env weswgs -C' ' 'burden.1.6.5 step1 ${COHORT}-${panel}-${weswgs} ../work/${panel}-${weswgs}-{}.vcf.gz'
-    for chr in chr{1..22} chrX chrY; do zcat ${COHORT}-${panel}-${weswgs}.${chr}.variantlist.gz; done | \
-    sed 's/^chr//' | gzip -f > ${COHORT}-${panel}-${weswgs}.variantlist.gz
-    tabix -f ${COHORT}-${panel}-${weswgs}.variantlist.gz
-  # single_cohort_munge_variantlist ${COHORT}-${panel}-${weswgs}.variantlist.gz 1 1
+    export panel=${panel}
+    for weswgs in wes wgs
+    do
+      export weswgs=${weswgs}
+      echo chr{1..22} chrX chrY | \
+      tr ' ' '\n' | \
+      parallel --env COHORT --env panel --env weswgs -C' ' 'burden.1.6.5 step1 ${COHORT}-${panel}-${weswgs} ../work/${panel}-${weswgs}-{}.vcf.gz'
+      for chr in chr{1..22} chrX chrY; do zcat ${COHORT}-${panel}-${weswgs}.${chr}.variantlist.gz; done | \
+      sed 's/^chr//' | gzip -f > ${COHORT}-${panel}-${weswgs}.variantlist.gz
+      tabix -f ${COHORT}-${panel}-${weswgs}.variantlist.gz
+    # single_cohort_munge_variantlist ${COHORT}-${panel}-${weswgs}.variantlist.gz 1 1
+    done
   done
-done
+}
 
+# Resources to be used.
 # http://www.tucows.com/preview/231886/Axel
 # git://git.joeyh.name/moreutils
 # sudo apt install docbook2x
@@ -209,4 +212,3 @@ done
 # ftp://xmlsoft.org/libxml2/libxslt-1.1.34.tar.gz
 # ftp://xmlsoft.org/libxml2/libxml2-2.9.10.tar.gz
 # ln -sf geneset_data/ensembl-vep/INSTALL.pl
-}

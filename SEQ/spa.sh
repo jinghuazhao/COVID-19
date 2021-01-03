@@ -38,7 +38,7 @@ function fastGWAsetup()
 for weswgs in wes wgs
 do
   export weswgs=${weswgs}
-# bgen
+  bgen
   cut -f1,2 --complement ${SEQ}/work/${weswgs}.pheno | head -1 | tr '\t' '\n' > ${SEQ}/work/${weswgs}.varlist
   fastGWAsetup
   sbatch --export=ALL ${SEQ}/spa.sb

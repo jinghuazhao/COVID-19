@@ -2,21 +2,24 @@
 
 Filename | Description
 ---------|------------
-idmap.do, weswgs.R, weswgs.sh, wgs.wrap, prune.wrap | WES/WGS preprocessing
-doc/1_pool_phenotypes_nmr_olink_somalogic.R | CEU central code
-spa.sh | Single-point analysis
+weswgs.sh | WES/WGS preprocessing
 rva.sh | Rare-variant analysis
-INTERVAL.md | Remarks on variant lists
+spa.sh | Single-point analysis
 
-weswgs.sh ==> spa.sh, rva.sh; noting that sbatch implicates the --wait option
-as the following steps would require its full results.
+idmap.do, ngs.wrap, weswgs.R, prune.wrap, rva.sb, spa.sb are subprograms; and remarks on variant lists submitted centrally are described in INTERVAL.md.
+
+The natural order is therefore 
+
+weswgs.sh ==> spa.sh, rva.sh
+
+noting in particular that sbatch implicates the --wait option as the succeeding steps would require its full results.
 
 ## Contacts
 
 * Grace Png: grace.png@helmholtz-muenchen.de
 * Arthur Gilly: arthur.gilly@helmholtz-muenchen.de
 
-## slack channel
+## Slack channel
 
 * [https://scallop-seq.slack.com](https://scallop-seq.slack.com)
 
