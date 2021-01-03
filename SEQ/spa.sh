@@ -44,6 +44,29 @@ do
   sbatch --export=ALL ${SEQ}/spa.sb
 done
 
+if [ ! -d ${SEQ}/work/upload ]; then mkdir ${SEQ}/work/upload; fi
+
+export cohort=INTERVAL
+export data_of_analysis=03012021
+export analyst_initials=JHZ
+
+parallel --env cohort --env date_of_analysis --env analyst_initials -C' '
+'
+  export olink_protein={1}
+  export platform={2}
+  export out=${olink_protein}_${cohort}_${date_of_analysis}_${analyst_initials}.txt.bgz
+  (
+    echo -e "CHR\tSNP\tPOS\tEFF_ALLELE\tOTHER_ALLELE\tN\tEFF_ALLELE_FREQ\tBETA\tSE\tP"
+    gunzip -c work/spa/${platform}-${olink_protein}.fastGWA.gz | \
+    sed '1d'
+    gunzip -c work/spa/${platform}-${olink_protein}-chrX.fastGWA.gz | \
+    sed '1d'
+  ) | \
+  awk -vOFS="\t" "{print \$2,\$1,\$3,\$6,\$4,\$5,\$7,\$8,\$9,\$10}"
+  bgzip -f > ${SEQ}/work/upload/${out}
+  tabix -f ${SEQ}/work/upload/${out}
+' ::: $(cat ${SEQ}/work/${weswgs}.varlist) ::: wes wgs
+
 # <olink_protein>_<cohort>_<date_of_analysis>_<analyst_initials>.txt.bgz
 # ACE2_INTERVAL_02112020_JHZ.txt.bgz
 
