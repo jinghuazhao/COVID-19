@@ -114,6 +114,8 @@ function vcf2gds()
 # - A space-delimited file containing single variant scores
 # - A binary file containing between-variant covariance matrices
 
+# vcf2gds
+
 for weswgs in wes wgs
 do
   export weswgs=${weswgs}

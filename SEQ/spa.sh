@@ -15,7 +15,7 @@ function bgen()
   done
 }
 
-function fastGWASsetup()
+function fastGWAsetup()
 {
 # a sparse GRM from SNP data
   gcta-1.9 --bfile ${SEQ}/work/${weswgs} --make-grm --out ${SEQ}/work/spa/${weswgs}
