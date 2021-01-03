@@ -34,39 +34,19 @@ neu <- olink("neu")
 weswgs <- read.delim("work/weswgs.txt")
 wes <- scan("work/wes.idmap",what="")
 wgs <- scan("work/wgs.idmap",what="")
-
-praveen <- function()
-{
-## Praveen's version, now incompatible with PCs used below
-  f <- "WGS-WES-Olink_ID_map_INTERVAL_release_28FEB2020.txt"
-  praveen <- within(read.delim(f),
-             {
-                Olink_CVD2_id.merge <- as.character(Olink_CVD2_id.merge)
-                Olink_CVD3_id.merge <- as.character(Olink_CVD3_id.merge)
-                Olink_INF_id.merge <- as.character(Olink_INF_id.merge)
-                Olink_NEU_id.merge <- as.character(Olink_NEU_id.merge)
-             })
-  pca_wes <- read.table("work/wes.eigenvec",col.names=c("z","id",paste0("PC",1:20))) %>% select(-z)
-  pca_wgs <- read.table("work/wgs.eigenvec",col.names=c("z","id",paste0("PC",1:20))) %>% select(-z)
-  id_wes <- subset(praveen,wes_id%in%wes)
-  id_wgs <- subset(praveen,wgs_id%in%wgs)
-  overlap <- subset(id_wgs,wes_id==wgs_id)
-  subset(id_wes,wes_id%in%with(overlap,wes_id))
-  id_wes <- id_wes %>% select(-c(phase,wgs_id))
-  id_wgs <- id_wgs %>% select(-c(phase,wes_id))
-}
+pca_wes <- read.table("work/wes.eigenvec",col.names=c("FID","id",paste0("PC",1:20))) %>% select(-FID)
+pca_wgs <- read.table("work/wgs.eigenvec",col.names=c("FID","id",paste0("PC",1:20))) %>% select(-FID)
 
 ## Stata version
-y <- cvd2[c(1:92,104)] %>%
-     full_join(cvd3[c(1:92,104)],by="Aliquot_Id") %>%
-     full_join(inf1[c(1:92,104)],by="Aliquot_Id") %>%
-     full_join(neu[c(7,53:144)],by="Aliquot_Id")
-dim(y)
-
 idmap <- function(f,weswgs_id)
-# designed to link y above but the upper bound is already set for all panels
+# the upper bound is already set for all panels
 {
-  d <- read.delim(f)
+  d <- within(read.delim(f), {
+         Olink_cvd2_QC_24m <- as.character(Olink_cvd2_QC_24m)
+         Olink_cvd3_QC_24m <- as.character(Olink_cvd3_QC_24m)
+         Olink_inf_QC_24m <- as.character(Olink_inf_QC_24m)
+         Olink_neu_QC_24m <- as.character(Olink_neu_QC_24m)
+       })
   names(d)[2] <- "id"
   subset(d,id%in%weswgs_id)
 }
@@ -77,10 +57,10 @@ id_wgs <- idmap("work/wgs.txt",wgs) %>% select(-c(Olink_cvd2_gwasQC_24m, Olink_c
 panels <- function(d,weswgs_id,pca)
 {
   d <- d %>%
-  rename(Aliquot_Id=Olink_CVD2_id.merge) %>% left_join(cvd2[c(1:92,104)],by="Aliquot_Id") %>% select(-Aliquot_Id) %>%
-  rename(Aliquot_Id=Olink_CVD3_id.merge) %>% left_join(cvd3[c(1:92,104)],by="Aliquot_Id") %>% select(-Aliquot_Id) %>%
-  rename(Aliquot_Id=Olink_INF_id.merge) %>% left_join(inf1[c(1:92,104)],by="Aliquot_Id") %>% select(-Aliquot_Id) %>%
-  rename(Aliquot_Id=Olink_NEU_id.merge) %>% left_join(neu[c(7,53:144)],by="Aliquot_Id") %>% select(-Aliquot_Id) %>%
+  rename(Aliquot_Id=Olink_cvd2_QC_24m) %>% left_join(cvd2[c(1:92,104)],by="Aliquot_Id") %>% select(-Aliquot_Id) %>%
+  rename(Aliquot_Id=Olink_cvd3_QC_24m) %>% left_join(cvd3[c(1:92,104)],by="Aliquot_Id") %>% select(-Aliquot_Id) %>%
+  rename(Aliquot_Id=Olink_inf_QC_24m) %>% left_join(inf1[c(1:92,104)],by="Aliquot_Id") %>% select(-Aliquot_Id) %>%
+  rename(Aliquot_Id=Olink_neu_QC_24m) %>% left_join(neu[c(7,53:144)],by="Aliquot_Id") %>% select(-Aliquot_Id) %>%
   rename(id=weswgs_id) %>% mutate(average = rowMeans(select(., starts_with("cvd2_BMP.6__P22004")), na.rm = TRUE)) %>%
   left_join(weswgs[c("identifier","sex","age","age2")]) %>% 
   left_join(pca)
@@ -88,8 +68,8 @@ panels <- function(d,weswgs_id,pca)
   d
 }
 
-y_wes <- panels(id_wes,"wes_id",pca_wes)
-y_wgs <- panels(id_wgs,"wgs_id",pca_wgs)
+y_wes <- panels(id_wes,"id",pca_wes)
+y_wgs <- panels(id_wgs,"id",pca_wgs)
 
 library(gap)
 normalize_sapply <- function(d)
@@ -98,12 +78,12 @@ normalize_sapply <- function(d)
   {
     if (verbose) cat(names(d[col]),col,"\n")
     y <- invnormal(d[[col]])
-    l <- lm(y~average+sex+age+age2+PC1+PC2+PC3+PC4+PC5+PC6+PC7+PC8+PC9+PC10+PC11+PC12+PC13+PC14+PC15+PC16+PC17+PC18+PC19+PC20, data=d[covars])
+    l <- lm(y~average+sex+age+age2, data=d[covars])
     r <- y-predict(l,na.action=na.pass)
     invnormal(r)
   }
   proteins <- grep("cvd2|cvd3|inf1|neu",names(d))
-  covars <- c(names(d)[grep("average|sex|age",names(d))],paste0("PC",1:20))
+  covars <- names(d)[grep("average|sex|age",names(d))]
   z <- sapply(names(d[proteins]), normfun)
   colnames(z) <- names(d[proteins])
   rownames(z) <- d[["id"]]
@@ -137,11 +117,11 @@ doMC::registerDoMC(cores = 14)
 normalize_adply <- function(d)
 {
   proteins <- names(d)[grep("cvd2|cvd3|inf1|neu",names(d))]
-  covars <- c(names(d)[grep("average|sex|age",names(d))],paste0("PC",1:20))
+  covars <- names(d)[grep("average|sex|age",names(d))]
   z <- adply(d[proteins], 2, function(x)
        {
           y <- invnormal(x)
-          l <- lm(y~average+sex+age+age2+PC1+PC2+PC3+PC4+PC5+PC6+PC7+PC8+PC9+PC10+PC11+PC12+PC13+PC14+PC15+PC16+PC17+PC18+PC19+PC20, data=d[covars])
+          l <- lm(y~average+sex+age+age2, data=d[covars])
           r <- y-predict(l,na.action=na.pass)
           invnormal(r)
        }, .progress = "none", .parallel = TRUE)
@@ -154,15 +134,58 @@ normalize_adply <- function(d)
 y_wes_adply <- normalize_adply(y_wes)
 y_wgs_adply <- normalize_adply(y_wgs)
 
+examine <- function()
+{
+  identical(y_wgs_sapply,y_wgs_adply)
+  identical(y_wgs_sapply,y_wgs_adply)
+
+  check <- y_wes[grep("cvd2_BMP.6__P22004|average|sex|age",names(y_wes))]
+  check <- within(check,
+           {
+             y <- invnormal(cvd2_BMP.6__P22004)
+             r <- y-predict(lm(y~average+sex+age+age2), na.action=na.pass)
+             b <- invnormal(r)
+           }) %>% select(-names(check)[grep("sex|age",names(check))])
+  a <- y_wes_sapply["cvd2_BMP.6__P22004"]
+  identical(a[["cvd2_BMP.6__P22004"]],check$b)
+}
+
+examine()
+
+y <- cvd2[c(1:92,104)] %>%
+     full_join(cvd3[c(1:92,104)],by="Aliquot_Id") %>%
+     full_join(inf1[c(1:92,104)],by="Aliquot_Id") %>%
+     full_join(neu[c(7,53:144)],by="Aliquot_Id")
+dim(y)
+
+praveen <- function()
+{
+## Praveen's version, not fully incompatible with PCs
+  f <- "WGS-WES-Olink_ID_map_INTERVAL_release_28FEB2020.txt"
+  praveen <- within(read.delim(f),
+             {
+                Olink_CVD2_id.merge <- as.character(Olink_CVD2_id.merge)
+                Olink_CVD3_id.merge <- as.character(Olink_CVD3_id.merge)
+                Olink_INF_id.merge <- as.character(Olink_INF_id.merge)
+                Olink_NEU_id.merge <- as.character(Olink_NEU_id.merge)
+             })
+  id_wes <- subset(praveen,wes_id%in%wes)
+  id_wgs <- subset(praveen,wgs_id%in%wgs)
+  overlap <- subset(id_wgs,wes_id==wgs_id)
+  subset(id_wes,wes_id%in%with(overlap,wes_id))
+  id_wes <- id_wes %>% select(-c(phase,wgs_id))
+  id_wgs <- id_wgs %>% select(-c(phase,wes_id))
+}
+
 test <- function(d)
 {
   proteins <- grep("cvd2|cvd3|inf1|neu",names(d))
-  covars <- cbind(d[grep("average|sex|age",names(d))],d[paste0("PC",1:20)])
+  covars <- d[grep("average|sex|age",names(d))]
   normfun <- function(col,verbose=FALSE)
   {
     if (verbose) cat(col,names(d[col]),"\n")
     y <- d[,col]
-    l <- lm(y~average+sex+age+age2+PC1+PC2+PC3+PC4+PC5+PC6+PC7+PC8+PC9+PC10+PC11+PC12+PC13+PC14+PC15+PC16+PC17+PC18+PC19+PC20, data=covars)
+    l <- lm(y~average+sex+age+age2, data=covars)
     r <- y-predict(l,na.action=na.pass)
     invnormal(r)
   }
@@ -173,34 +196,3 @@ test <- function(d)
 }
 y_wes_test <- test(y_wes)
 y_wgs_test <- test(y_wgs)
-
-examine <- function()
-{
-  identical(y_wgs_sapply,y_wgs_adply)
-  identical(y_wgs_sapply,y_wgs_adply)
-
-  check <- y_wes[grep("cvd2_BMP.6__P22004|average|sex|age|PC",names(y_wes))]
-  check <- within(check,
-           {
-             y <- invnormal(cvd2_BMP.6__P22004)
-             r <- y-predict(lm(y~average+sex+age+age2+PC1+PC2+PC3+PC4+PC5+PC6+PC7+PC8+PC9+PC10+PC11+PC12+PC13+PC14+PC15+PC16+PC17+PC18+PC19+PC20),
-                            na.action=na.pass)
-             b <- invnormal(r)
-           }) %>% select(-names(check)[grep("sex|age|PC",names(check))])
-  a <- y_wes_sapply["cvd2_BMP.6__P22004"]
-# plot(cbind(a,check$b),pch=19)
-  head(cbind(a,check$b))
-# overlaps
-  s <- subset(idmap[,c("wes_id","wgs_id")],wes_id==wgs_id)
-  o <- with(s,order(wes_id))
-  share <- s[o,]
-# earlier version
-  f <- "work/interval_flagship_phenotype_nmr_olink_somalogic.txt"
-  d <- read.delim(f)
-  s <- subset(d[,c("ID_WGS","ID_WES")],ID_WGS==ID_WES) %>% rename(id_wes=ID_WES,id_wgs=ID_WGS)
-  o <- with(s,order(id_wes))
-  overlap <- s[o,]
-  cbind(share,overlap)
-}
-
-examine()
