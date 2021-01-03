@@ -158,7 +158,7 @@ y <- cvd2[c(1:92,104)] %>%
      full_join(neu[c(7,53:144)],by="Aliquot_Id")
 dim(y)
 
-praveen <- function()
+ceu <- function()
 {
 ## Praveen's version, not fully incompatible with PCs
   f <- "WGS-WES-Olink_ID_map_INTERVAL_release_28FEB2020.txt"
