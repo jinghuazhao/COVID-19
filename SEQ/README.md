@@ -1,17 +1,23 @@
+<script src=”https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.3.1/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true});</script>
 ## Programs
 
-Filename | Description
----------|------------
-weswgs.sh | WES/WGS preprocessing
-rva.sh | Rare-variant analysis
-spa.sh | Single-point analysis
+| Filename  | Description           |
+| --------- | --------------------- |
+| weswgs.sh | WES/WGS preprocessing |
+| rva.sh    | Rare-variant analysis |
+| spa.sh    | Single-point analysis |
 
 idmap.do, ngs.wrap, weswgs.R, prune.wrap, rva.sb, spa.sb are subprograms; and remarks on variant lists submitted centrally are described in INTERVAL.md.
 
-The natural order is therefore 
-
-weswgs.sh ==> spa.sh, rva.sh
-
+The natural order is therefore
+```mermaid
+graph LR;
+A[set up links] -->|now ready|B(weswgs.sh);
+    B --> C{two-part};
+    C -->|spa.sh| D[aggregate/upload];
+    C -->|rva.sh| E[aggregate/upload];
+```
 noting in particular that sbatch implicates the --wait option as the succeeding steps would require its full results.
 
 ## Contacts
