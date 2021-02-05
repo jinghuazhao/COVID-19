@@ -7,11 +7,12 @@
 * [CITIID](https://covid19.medschl.cam.ac.uk/)
 * [COG-UK](https://www.cogconsortium.uk/) ([GitHub repos](https://github.com/COG-UK))
 * [COVID-19 Data Portal](https://www.covid19dataportal.org/)
-* [DockCov2](https://covirus.cc/drugs/)
 * [CUH clinical update](https://cuhstaffportal.co.uk/operational/clinical-updates/) and [testing](https://www.cam.ac.uk/coronavirus/general-staff-advice/health-and-wellbeing#testing).
+* [DockCov2](https://covirus.cc/drugs/)
 * [Genetics Of Mortality In Critical Care](https://genomicc.org/)
 * [GISAID](https://www.gisaid.org/) (login: [https://gisaid.org](https://gisaid.org)) and [nextstran.org](https://nextstrain.org/ncov/global).
 * [HDRUK/covid-19](https://github.com/HDRUK/covid-19) ([false positives](https://www.hdruk.ac.uk/projects/false-positives/), [hospital activity](http://hospitalactivity.com/), [tracking excess deaths](http://www.trackingexcessdeaths.com/))
+* [PANGO lineages](https://cov-lineages.org/)
 * [SARS-CoV-2 Research Grade Test Material](https://www.nist.gov/programs-projects/sars-cov-2-research-grade-test-material) ([GitHub](https://github.com/usnistgov/RGTM10169)).
 * [The COVID-19 Host Genetics Initiative](https://covid19hg.netlify.com/)
   * [Registration](https://www.covid19hg.org/register/)
