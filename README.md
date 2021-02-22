@@ -32,6 +32,7 @@
 * [nCov2019](https://github.com/GuangchuangYu/nCov2019).
 * [CSSEGISandData](https://github.com/CSSEGISandData).
 * [CFA](https://otr.medschl.cam.ac.uk/academics-clinicians/funding/covid-funding-calls), [UKRI](https://www.ukri.org/) ([funding](https://www.ukri.org/funding/funding-opportunities/ukri-open-call-for-research-and-innovation-ideas-to-address-covid-19/)).
+* [sciinovgroup](https://www.sciinovgroup.com/coronavirus)
 * [SHERES](https://www.cdc.gov/coronavirus/2019-ncov/cases-updates/spheres.html).
 * https://github.com/rivas-lab/covid19
 
