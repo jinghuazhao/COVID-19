@@ -19,7 +19,6 @@
   * [GitHub repositories](https://github.com/covid19-hg/)
   * [Slack channel](https://icdaworkspace.slack.com) (icda-office@icda.bio)
   * [Results](https://www.covid19hg.org/results/), [gs://covid19-hg-analysis/](gs://covid19-hg-analysis/) and [gs://covid19-hg-public](gs://covid19-hg-public)
-  * [paper](https://tinyurl.com/y432xuhw) ([methods](https://tinyurl.com/y6mbdyle))
   * [Web browser](https://app.covid19hg.org/)
 * [The RSS task force](https://rss.org.uk/policy-campaigns/policy/covid-19-task-force/)
 * [zenodo](https://zenodo.org/)
