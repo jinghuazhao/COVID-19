@@ -17,6 +17,7 @@
 * [The COVID-19 Host Genetics Initiative](https://covid19hg.netlify.com/)
   * [Registration](https://www.covid19hg.org/register/)
   * [GitHub repositories](https://github.com/covid19-hg/)
+  * [PCA projection](https://github.com/covid19-hg/pca_projection)
   * [Slack channel](https://icdaworkspace.slack.com) (icda-office@icda.bio)
   * [Results](https://www.covid19hg.org/results/), [gs://covid19-hg-analysis/](gs://covid19-hg-analysis/) and [gs://covid19-hg-public](gs://covid19-hg-public)
   * [Web browser](https://app.covid19hg.org/)
