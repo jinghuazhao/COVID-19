@@ -121,6 +121,8 @@ awk '
 tr ' ' '\t' > ${prefix}/work/snpid.txt
 cut -f1-3 ${prefix}/work/snpid.txt > ${prefix}/work/snpid.pheno
 cut -f3 --complement ${prefix}/work/snpid.txt > ${prefix}/work/snpid.covars
+
+parallel -j1 -C' ' '
 Rscript ${PCA_projection}/plot_projected_pc.R \
   --sscore ${prefix}/work/snpid.sscore \
   --phenotype-file ${prefix}/work/snpid.pheno \
@@ -128,6 +130,19 @@ Rscript ${PCA_projection}/plot_projected_pc.R \
   --covariate-file ${prefix}/work/snpid.covars \
   --pc-prefix PC \
   --pc-num 20 \
-  --ancestry EUR \
+  --ancestry {} \
   --study INTERVAL \
-  --out ${prefix}/work/INTERVAL
+  --out ${prefix}/work/{}-INTERVAL
+' ::: AFR AMR EAS EUR MID SAS
+
+Rscript ${PCA_projection}/plot_projected_pc.R \
+  --sscore ${prefix}/work/snpid.sscore \
+  --phenotype-file ${prefix}/work/snpid.pheno \
+  --phenotype-col SARS_CoV \
+  --covariate-file ${prefix}/work/snpid.covars \
+  --pc-prefix PC \
+  --pc-num 20 \
+  --ancestry "AFR AMR EAS EUR MID SAS" \
+  --study INTERVAL \
+  --out ${prefix}/work/All-INTERVAL
+
