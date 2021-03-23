@@ -11,7 +11,7 @@ export dir=20201201-male-ANA_C2_V2
 
 export PCA_projection=pca_projection
 export PCA_loadings=hgdp_tgp_pca_covid19hgi_snps_loadings.GRCh37.plink.tsv
-export PCA_af=hgdp_tgp_pca_covid19hgi_snps_loadings.GRCh38.plink.afreq
+export PCA_af=hgdp_tgp_pca_covid19hgi_snps_loadings.GRCh37.plink.afreq
 export sscore=hgdp_tgp_pca_covid19hgi_snps_scores.txt.gz
 
 function snpid_rsid()
