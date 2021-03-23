@@ -129,5 +129,5 @@ Rscript ${PCA_projection}/plot_projected_pc.R \
   --pc-prefix PC \
   --pc-num 20 \
   --ancestry EUR \
-  --study snpid \
-  --out ${prefix}/work/snpid
+  --study INTERVAL \
+  --out ${prefix}/work/INTERVAL
