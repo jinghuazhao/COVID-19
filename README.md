@@ -14,7 +14,7 @@
 * [HDRUK/covid-19](https://github.com/HDRUK/covid-19) ([false positives](https://www.hdruk.ac.uk/projects/false-positives/), [hospital activity](http://hospitalactivity.com/), [tracking excess deaths](http://www.trackingexcessdeaths.com/))
 * [PANGO lineages](https://cov-lineages.org/)
 * [SARS-CoV-2 Research Grade Test Material](https://www.nist.gov/programs-projects/sars-cov-2-research-grade-test-material) ([GitHub](https://github.com/usnistgov/RGTM10169)).
-* [The COVID-19 Host Genetics Initiative](https://covid19hg.netlify.com/)
+* [The COVID-19 Host Genetics Initiative](https://www.covid19hg.org/)
   * [Registration](https://www.covid19hg.org/register/)
   * [GitHub repositories](https://github.com/covid19-hg/)
   * [PCA projection](https://github.com/covid19-hg/pca_projection)
