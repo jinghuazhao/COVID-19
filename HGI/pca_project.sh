@@ -67,14 +67,15 @@ function map()
 
 function snpid()
 {
-  sbatch --wait ${prefix}/pca_project.sb
-  cat-bgen -g $(echo ${prefix}/work/snpid-{1..22}.bgen) -og ${prefix}/work/snpid.bgen -clobber
   bgenix -g ${prefix}/work/snpid.bgen -index
   (
     cat variants.extract
     awk '{split($1,a,":");print "chr"a[1]":"a[2]"_"a[4]"_"a[3]}' variants.extract
   ) > variants.extract2
-  bgenix -g ${prefix}/work/snpid.bgen -incl-rsids variants.extract2 ${prefix}/work/INTERAL.bgen
+  sbatch --wait ${prefix}/pca_project.sb
+  seq 22 | \
+  parallel -C' ' 'bgenix -g ${prefix}/work/snpid-{}.bgen -incl-rsids variants.extract2 > ${prefix}/work/INTERAL-{}.bgen'
+  cat-bgen -g $(echo ${prefix}/work/INTERVAL-{1..22}.bgen) -og ${prefix}/work/INTERVAl.bgen -clobber
   bgenix -g ${prefix}/work/INTERVAL.bgen -index -clobber
 }
 
