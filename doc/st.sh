@@ -15,6 +15,6 @@ git commit -m "GEO test"
 git add HGI/README.md HGI/INTERVAL.do HGI/INTERVAL.rec HGI/INTERVAL.sh HGI/autosomes.sb HGI/X.sb HGI/X-female.sb
 git add HGI/glist-hg19.sb HGI/glist-hg19.sh HGI/L10RB_IFNAR2_variants.sh
 git add HGI/20200731.sh HGI/20201201.sh HGI/bgen.sb HGI/bgen-X.sb
-git add HGI/pca_project.sh
+git add HGI/pca_project.* 
 git commit -m "HGI analysis"
 git push
