@@ -1,0 +1,24 @@
+#!/usr/bin/bash
+
+#SBATCH --job-name=_pca_proj
+#SBATCH --account CARDIO-SL0-CPU
+#SBATCH --partition cardio
+#SBATCH --qos=cardio
+#SBATCH --array=1-22
+#SBATCH --mem=40800
+#SBATCH --time=5-00:00:00
+#SBATCH --output=/rds/user/jhz22/hpc-work/work/_pca_proj_%A_%a.out
+#SBATCH --error=/rds/user/jhz22/hpc-work/work/_pca_proj_%A_%a.err
+#SBATCH --export ALL
+
+export TMPDIR=/rds/user/jhz22/hpc-work/work
+export chr=$SLURM_ARRAY_TASK_ID
+export prefix=~/rds/rds-asb38-ceu-restricted/projects/covid/HGI
+export dir=20201201-ANA_C2_V2
+
+qctool -g ${prefix}/${dir}/output/INTERVAL-${chr}.bgen -s ${prefix}/${dir}/output/INTERVAL-${chr}.samples \
+       -incl-rsids ${prefix}/work/INTERVAL-${chr}.nodup -map-id-data ${prefix}/work/INTERVAL-${chr}.map \
+       -bgen-bits 8 \
+       -og ${prefix}/work/snpid-${chr}.bgen -os ${prefix}/work/snpid-${chr}.samples
+bgenix -g ${prefix}/work/snpid-${chr}.bgen -index -clobber
+
