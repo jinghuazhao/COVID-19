@@ -159,4 +159,4 @@ function project_pc()
         --out ${OUTNAME}
 }
 
-twist;project_pc
+extract_data;twist;project_pc

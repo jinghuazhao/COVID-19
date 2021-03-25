@@ -262,8 +262,8 @@ function upload()
   pip install gsutil==4.50
 # upload
   gsutil ls gs://covid19-hg-upload-uk--blood-donors-cohort
-  gsutil cp $1 gs://covid19-hg-upload-uk--blood-donors-cohort 
-  gsutil cp 20201201*/output/INTERVAL.Zhao* gs://covid19-hg-upload-uk--blood-donors-cohort
+  gsutil -m cp $1 gs://covid19-hg-upload-uk--blood-donors-cohort 
+  gsutil -m cp 20201201*/output/INTERVAL.Zhao* gs://covid19-hg-upload-uk--blood-donors-cohort
 # web: https://console.cloud.google.com/storage/browser/covid19-hg-upload-uk--blood-donors-cohort?project=covid-19-hg
 # HGI spreadsheet
   ls 20201201*/output/INTERVAL.Zhao* | xargs -l basename | xsel -i
