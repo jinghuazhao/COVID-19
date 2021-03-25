@@ -16,7 +16,7 @@ save work/INTERVAL-pca, replace
 // insheet using "20200520/INTERVALdata_20MAY2020.csv", case clear
 // insheet using "20200603/INTERVALdata_03JUN2020.csv", case clear
 // insheet using "20200731/INTERVALdata_31JUL2020.csv", case clear
-insheet using "Data_INTERVAL_latest/INTERVALdata_01DEC2020.csv", case clear
+insheet using "20201201/INTERVALdata_01DEC2020.csv", case clear
 sort identifier
 keep identifier sexPulse agePulse attendanceDate
 rename sexPulse sex
@@ -29,7 +29,7 @@ save work/INTERVAL-data, replace
 // insheet using "20200520/INTERVAL_OmicsMap_20200520.csv", case clear
 // insheet using "20200603/INTERVAL_OmicsMap_20200603.csv", case clear
 // insheet using "20200731/INTERVAL_OmicsMap_20200731.csv", case clear
-insheet using "Data_INTERVAL_latest/INTERVAL_OmicsMap_20201201.csv", case clear
+insheet using "20201201/INTERVAL_OmicsMap_20201201.csv", case clear
 keep identifier Affymetrix_QC_bl Affymetrix_gwasQC_bl
 format Affymetrix_QC_bl %15.0g
 format Affymetrix_gwasQC_bl %15.0g
@@ -55,7 +55,7 @@ save work/INTERVAL-omics-X, replace
 // insheet using "20200520/INTERVAL_Covid_20MAY2020.csv", case clear
 // insheet using "20200603/INTERVAL_Covid_03JUN2020.csv", case clear
 // insheet using "20200731/INTERVAL_Covid_31JUL2020.csv", case clear
-insheet using "Data_INTERVAL_latest/INTERVAL_Covid_01DEC2020.csv", case clear
+insheet using "20201201/INTERVAL_Covid_01DEC2020.csv", case clear
 sort identifier
 #delimit ;
 egen SARS_CoV2=rowtotal(
