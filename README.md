@@ -19,6 +19,7 @@
   * [GitHub repositories](https://github.com/covid19-hg/) ([PCA projection](https://github.com/covid19-hg/pca_projection))
   * [Slack channel](https://icdaworkspace.slack.com) (icda-office@icda.bio)
   * [Results](https://www.covid19hg.org/results/), [gs://covid19-hg-analysis/](gs://covid19-hg-analysis/) and [gs://covid19-hg-public](gs://covid19-hg-public)
+  * [Paper](https://www.medrxiv.org/content/10.1101/2021.03.10.21252820v1)
   * [Web browser](https://app.covid19hg.org/)
 * [The RSS task force](https://rss.org.uk/policy-campaigns/policy/covid-19-task-force/)
 * [zenodo](https://zenodo.org/)
