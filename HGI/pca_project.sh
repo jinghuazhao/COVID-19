@@ -80,6 +80,7 @@ Rscript ${PCA_projection}/plot_projected_pc.R \
   --covariate-file ${prefix}/work/snpid.covars \
   --pc-prefix PC \
   --pc-num 20 \
-  --ancestry EUR \
+  --ancestry-file ethnic.txt \
+  --ancestry-col ethnic \
   --study INTERVAL \
   --out ${prefix}/work/INTERVAL
