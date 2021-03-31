@@ -1,0 +1,4 @@
+#!/usr/bin/bash
+
+plink --bfile mydata.refdata.QCed --Z-genome --out mydata.refdata.QCed.Z
+

@@ -23,4 +23,4 @@ plink2 --bfile mydata.refdata.QCed --read-genome mydata.refdata.QCed.Z.genome.gz
 
 # STEP5: MDS-PLOT
 
-Rscript --slave mydata.refdata.QCed.MDS.mds refdata.fam MyOutput < MDSplot.R
+Rscript MDSplot.R mydata.refdata.QCed.MDS.mds refdata.fam MyOutput
