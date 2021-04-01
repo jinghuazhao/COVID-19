@@ -1,0 +1,7 @@
+#!/usr/bin/bash
+
+plink --bfile nonEUR.refdata.QCed --Z-genome --out nonEUR.refdata.QCed.Z
+
+plink --bfile nonEUR.refdata.QCed --read-genome nonEUR.refdata.QCed.Z.genome.gz \
+      --cluster --mds-plot 10 --out nonEUR.refdata.QCed.MDS
+
