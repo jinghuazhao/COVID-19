@@ -5,13 +5,12 @@
 * `refdata.*` (N=437, # of variants=79,399)
 * `MDSplot.R`
 
-and examples are in `EPIC-Omics.sh` and `HGI.sh` produces `HGI.C1-C2.png`.
+and examples are in `EPIC-Omics.sh` and `HGI.sh` produces [`HGI.C1-C2.png`](HGI.C1-C2.png).
 
 ## 1000Genomes phase 3
 
 * `keep.dat` contains a list of RSid's derived from HGI variants (# of variants=117,220).
 * `keep.bed/bim/fam` contains genotypes for N=2,504 samples (too big to upload here).
-
 The reference data were downloaded from files distributed with VEGAS2 
 
 [https://vegas2.qimrberghofer.edu.au/](https://vegas2.qimrberghofer.edu.au/)
@@ -31,5 +30,5 @@ done
 echo AFR AMR EAS EUR SAS | tr ' ' '\n' | awk '{print $1".bed", $1".bim", $1"-id.fam"}' > keep.list
 plink --merge-list keep.list --out keep
 ```
-* `keep.sh/sb/R` is the pipeline to produce `INTERVAL.C1-C2.png`.
-* `nonEUR.sh/sb/R` is the pipeline to produce `nonEUR.C1-C2.png`.
+* `keep.sh/sb/R` is the pipeline to produce [`INTERVAL.C1-C2.png`](INTERVAL.C1-C2.png) (still running).
+* `nonEUR.sh/sb/R` is the pipeline to produce [`nonEUR.C1-C2.png`](nonEUR.C1-C2.png).
