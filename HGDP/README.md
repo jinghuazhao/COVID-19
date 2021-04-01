@@ -14,6 +14,7 @@ and examples are in `EPIC-Omics.sh` and `HGI.sh` produces [`HGI.C1-C2.png`](HGI.
 The reference data were downloaded from files distributed with VEGAS2, 
 [https://vegas2.qimrberghofer.edu.au/](https://vegas2.qimrberghofer.edu.au/), 
 and extracted from via the following script,
+
 ```bash
 #!/usr/bin/bash
 
@@ -27,5 +28,6 @@ done
 echo AFR AMR EAS EUR SAS | tr ' ' '\n' | awk '{print $1".bed", $1".bim", $1"-id.fam"}' > keep.list
 plink --merge-list keep.list --out keep
 ```
+
 * `keep.sh/sb/R` is the pipeline to produce [`INTERVAL.C1-C2.png`](INTERVAL.C1-C2.png) (still running).
 * `nonEUR.sh/sb/R` is the pipeline to produce [`nonEUR.C1-C2.png`](nonEUR.C1-C2.png).
