@@ -13,7 +13,7 @@ and examples are in `EPIC-Omics.sh` and `HGI.sh` produces [`HGI.C1-C2.png`](HGI.
 * `keep.bed/bim/fam` contains genotypes for N=2,504 samples (too big to upload here).
 The reference data were downloaded from files distributed with VEGAS2, 
 [https://vegas2.qimrberghofer.edu.au/](https://vegas2.qimrberghofer.edu.au/), 
-and extracted from via the following script,
+and extracted via the following script,
 
 ```bash
 #!/usr/bin/bash
