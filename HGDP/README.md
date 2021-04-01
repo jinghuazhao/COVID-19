@@ -1,13 +1,13 @@
 # Mapping data to reference population
 
-## GIANT reference (N=437, 8/8/2014)
+## GIANT reference (N=437, 79,399 variants, dated 8/8/2014)
 
 * refdata.*
 * EPIC-Omics.sh
 * HGI.sh
 * MDSplot.R
 
-## 1000Genomes (N=2,504)
+## 1000Genomes (N=2,504, 117,220 variants)
 
 Data were downloaded from files distributed with VEGAS2 and extracted from via the following command
 
@@ -25,6 +25,6 @@ echo AFR AMR EAS EUR SAS | tr ' ' '\n' | awk '{print $1".bed", $1".bim", $1"-id.
 plink --merge-list keep.list --out keep
 ```
 
-where `keep.dat` contains variants derived from HGI variants (117,220).
+where `keep.dat` contains variants derived from HGI variants.
 
 A call is made with `keep.sh`.
