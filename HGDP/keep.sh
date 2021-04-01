@@ -19,17 +19,15 @@ plink --bfile mydata --bmerge ${refdata}.bed ${refdata}.bim ${refdata}.fam --mak
 plink --bfile mydata.refdata --maf 0.05 --geno 0.01 --make-bed --out mydata.refdata.QCed
 
 # STEP3: Make genome file
-
-sbatch --job-name=_Z-genome --account CARDIO-SL0-CPU --partition cardio --qos=cardio --mem=40800 --time=5-00:00:00 --export ALL \
-       --output=${TMPDIR}/_Z-genome_%A_%a.out --error=${TMPDIR}/_Z-genome_%A_%a.err --wait --wrap ". keep.sb"
-
 # plink --bfile mydata.refdata.QCed --Z-genome --out mydata.refdata.QCed.Z
 # ** this step may take very LONG! **
 
 # STEP4: MDS
 
-plink --bfile mydata.refdata.QCed --read-genome mydata.refdata.QCed.Z.genome.gz \
---cluster --mds-plot 10 --out mydata.refdata.QCed.MDS
+# plink --bfile mydata.refdata.QCed --read-genome mydata.refdata.QCed.Z.genome.gz --cluster --mds-plot 10 --out mydata.refdata.QCed.MDS
+
+sbatch --job-name=_Z-genome --account CARDIO-SL0-CPU --partition cardio --qos=cardio --mem=40800 --time=5-00:00:00 --export ALL \
+       --output=${TMPDIR}/_Z-genome_%A_%a.out --error=${TMPDIR}/_Z-genome_%A_%a.err --wait --wrap ". keep.sb"
 
 # STEP5: MDS-PLOT
 
