@@ -31,4 +31,4 @@ sbatch --job-name=_Z-genome --account CARDIO-SL0-CPU --partition cardio --qos=ca
 
 # STEP5: MDS-PLOT
 
-Rscript MDSplot.R mydata.refdata.QCed.MDS.mds ${refdata}.fam MyOutput
+Rscript keep.R mydata.refdata.QCed.MDS.mds ${refdata}.fam MyOutput
