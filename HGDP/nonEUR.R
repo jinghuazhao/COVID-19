@@ -3,8 +3,8 @@ reffile <- commandArgs()[4]; # 2nd argument ...
 cohort  <- commandArgs()[5]; # 3rd argument ...
 
 # DEBUG
-mdsfile <- "mydata.refdata.QCed.MDS.mds"
-reffile <- "refdata.fam"
+mdsfile <- "nonEUR.refdata.QCed.MDS.mds"
+reffile <- "/rds/user/jhz22/hpc-work/VEGAS2/keep.fam"
 cohort <- "nonEUR"
 
 # read mds file
