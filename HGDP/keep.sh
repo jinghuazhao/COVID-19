@@ -38,4 +38,4 @@ Rscript keep.R mydata.refdata.QCed.MDS.mds ${refdata}.fam MyOutput
 cp mydata.refdata.QCed.MDS.mds mydata.refdata.QCed.MDS.backup
 awk -vOFS="\t" '{if($1==0) $1="mydata"};1' mydata.refdata.QCed.MDS.mds > mydata.refdata.QCed.MDS.mds2
 sed 's/mydata.refdata.QCed.MDS.mds/mydata.refdata.QCed.MDS.mds2/' keep.R > keep2.R
-Rscript keep2.R mydata.refdata.QCed.MDS.mds ${refdata}.fam MyOutput
+Rscript keep2.R mydata.refdata.QCed.MDS.mds2 ${refdata}.fam MyOutput
