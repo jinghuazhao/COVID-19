@@ -7,6 +7,9 @@ mdsfile <- "mydata.refdata.QCed.MDS.mds"
 reffile <- "/rds/user/jhz22/hpc-work/VEGAS2/keep.fam"
 cohort <- "INTERVAL"
 
+mds <- read.table(mdsfile,header=TRUE)
+rgl::plot3d(with(mds,cbind(C1,C2,C3))
+
 # read mds file
 dat <- read.table(mdsfile, header=TRUE, sep="", as.is=T)
 dat$name <- "mydata"
