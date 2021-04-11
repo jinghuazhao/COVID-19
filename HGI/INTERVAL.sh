@@ -20,7 +20,7 @@ function phenotype()
 # for dir in ${d}-ANA_C1_V2 ${d}-ANA_C2_V2 \
 #            ${d}-male-ANA_C1_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C1_V2 ${d}-female-ANA_C2_V2 \
 #            ${d}-male-60-ANA_C1_V2 ${d}-male-60-ANA_C2_V2 ${d}-female-60-ANA_C1_V2 ${d}-female-60-ANA_C2_V2
-  export d=20201201
+  export d=20210317
   for dir in ${d}-ANA_C2_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C2_V2 ${d}-le_60-ANA_C2_V2 ${d}-gt_60-ANA_C2_V2
   do
     cd ${dir}
@@ -51,7 +51,7 @@ function make_bed()
 # for dir in ${d}-ANA_C1_V2 ${d}-ANA_C2_V2 \
 #            ${d}-male-ANA_C1_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C1_V2 ${d}-female-ANA_C2_V2 \
 #            ${d}-male-60-ANA_C1_V2 ${d}-male-60-ANA_C2_V2 ${d}-female-60-ANA_C1_V2 ${d}-female-60-ANA_C2_V2
-  export d=20201201
+  export d=20210317
   for dir in ${d}-ANA_C2_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C2_V2 ${d}-le_60-ANA_C2_V2 ${d}-gt_60-ANA_C2_V2
   do
     cd ${dir}
@@ -67,7 +67,7 @@ function make_bed()
 # step 3. sample-specific bgen files
 function autosomes_sbatch()
 {
-  export d=20201201
+  export d=20210317
   for dir in ${d}-ANA_C2_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C2_V2 ${d}-le_60-ANA_C2_V2 ${d}-gt_60-ANA_C2_V2
   do
     cd ${dir}
@@ -92,7 +92,7 @@ function X()
 # for dir in ${d}-ANA_C1_V2 ${d}-ANA_C2_V2 \
 #            ${d}-male-ANA_C1_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C1_V2 ${d}-female-ANA_C2_V2 \
 #            ${d}-male-60-ANA_C1_V2 ${d}-male-60-ANA_C2_V2 ${d}-female-60-ANA_C1_V2 ${d}-female-60-ANA_C2_V2
-  export d=20201201
+  export d=20210317
   for dir in ${d}-ANA_C2_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C2_V2 ${d}-le_60-ANA_C2_V2 ${d}-gt_60-ANA_C2_V2
   do
     cd ${dir}
@@ -135,7 +135,7 @@ function Cx_V2_step1_X()
      --IsOverwriteVarianceRatioFile=TRUE
 }
 
-export d=20201201
+export d=20210317
 export covlist=sex,age,age2,sexage,PC_1,PC_2,PC_3,PC_4,PC_5,PC_6,PC_7,PC_8,PC_9,PC_10,PC_11,PC_12,PC_13,PC_14,PC_15,PC_16,PC_17,PC_18,PC_19,PC_20
 # for dir in ${d}-ANA_C1_V2 ${d}-ANA_C2_V2
 for dir in ${d}-ANA_C2_V2
@@ -189,7 +189,7 @@ function aggregate()
 # for dir in ${d}-ANA_C1_V2 ${d}-ANA_C2_V2 \
 #            ${d}-male-ANA_C1_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C1_V2 ${d}-female-ANA_C2_V2 \
 #            ${d}-male-60-ANA_C1_V2 ${d}-male-60-ANA_C2_V2 ${d}-female-60-ANA_C1_V2 ${d}-female-60-ANA_C2_V2
-  export d=20201201
+  export d=20210317
   for dir in ${d}-ANA_C2_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C2_V2 ${d}-le_60-ANA_C2_V2 ${d}-gt_60-ANA_C2_V2
   do
   echo ${dir}
@@ -263,10 +263,10 @@ function upload()
 # upload
   gsutil ls gs://covid19-hg-upload-uk--blood-donors-cohort
   gsutil -m cp $1 gs://covid19-hg-upload-uk--blood-donors-cohort 
-  gsutil -m cp 20201201*/output/INTERVAL.Zhao* gs://covid19-hg-upload-uk--blood-donors-cohort
+  gsutil -m cp 20210317*/output/INTERVAL.Zhao* gs://covid19-hg-upload-uk--blood-donors-cohort
 # web: https://console.cloud.google.com/storage/browser/covid19-hg-upload-uk--blood-donors-cohort?project=covid-19-hg
 # HGI spreadsheet
-  ls 20201201*/output/INTERVAL.Zhao* | xargs -l basename | xsel -i
+  ls 20210317*/output/INTERVAL.Zhao* | xargs -l basename | xsel -i
 # Fill the form (now uses tab in the spreadsheet),
 # https://airtable.com/shrdJDwSHRZKXv45H
 # HGI results
