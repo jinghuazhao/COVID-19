@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
-plink --bfile mydata.refdata.QCed --Z-genome --out mydata.refdata.QCed.Z
+# plink --bfile mydata.refdata.QCed --Z-genome --out mydata.refdata.QCed.Z
 
-plink --bfile mydata.refdata.QCed --read-genome mydata.refdata.QCed.Z.genome.gz \
-      --cluster --mds-plot 10 --out mydata.refdata.QCed.MDS
+plink-1.9 --bfile mydata.refdata.QCed --read-genome mydata.refdata.QCed.Z.genome.gz --threads 15 \
+          --cluster --mds-plot 10 --out mydata.refdata.QCed.MDS
 

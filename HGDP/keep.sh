@@ -26,7 +26,7 @@ plink --bfile mydata.refdata --maf 0.05 --geno 0.01 --make-bed --out mydata.refd
 
 # plink --bfile mydata.refdata.QCed --read-genome mydata.refdata.QCed.Z.genome.gz --cluster --mds-plot 10 --out mydata.refdata.QCed.MDS
 
-sbatch --job-name=_Z-genome --account CARDIO-SL0-CPU --mem=120G --partition cardio --qos=cardio --time=5-00:00:00 --export ALL \
+sbatch --job-name=_Z-genome --account CARDIO-SL0-CPU --mem=230G --partition cardio --qos=cardio --time=5-00:00:00 --export ALL \
        --output=${TMPDIR}/_Z-genome_%A_%a.out --error=${TMPDIR}/_Z-genome_%A_%a.err --wait --wrap ". keep.sb"
 
 # STEP5: MDS-PLOT

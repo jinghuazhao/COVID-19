@@ -1,14 +1,12 @@
-mdsfile <- commandArgs()[3]; # first argument after --slave or --no-save   
-reffile <- commandArgs()[4]; # 2nd argument ...
-cohort  <- commandArgs()[5]; # 3rd argument ...
-
 # DEBUG
 mdsfile <- "mydata.refdata.QCed.MDS.mds"
 reffile <- "/rds/user/jhz22/hpc-work/VEGAS2/keep.fam"
 cohort <- "INTERVAL"
 
-mds <- read.table(mdsfile,header=TRUE)
-rgl::plot3d(with(mds,cbind(C1,C2,C3))
+cat(mdsfile,reffile,cohort,"\n")
+
+mds <- read.table(mdsfile, header=TRUE)
+rgl::plot3d(with(mds,cbind(C1,C2,C3)))
 
 # read mds file
 dat <- read.table(mdsfile, header=TRUE, sep="", as.is=T)
