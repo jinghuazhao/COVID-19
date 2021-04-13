@@ -1,3 +1,5 @@
+![COVID-19](doc/COVID-19.jpg)
+
 ## Cell information
 * [Human Cell Landscape](https://db.cngb.org/HCL/)
 * [COVID-19 Cell Atlas](https://www.covid19cellatlas.org/)
