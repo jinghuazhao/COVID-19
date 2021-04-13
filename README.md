@@ -1,9 +1,9 @@
+<a href="https://www.cdc.gov/media/subtopic/images.htm"><img src="https://phil.cdc.gov//PHIL_Images/23312/23312_lores.jpg" width="420" height="230" align="right"></a>
+
 ## Cell information
 * [Human Cell Landscape](https://db.cngb.org/HCL/)
 * [COVID-19 Cell Atlas](https://www.covid19cellatlas.org/)
 * [Single Cell Portal](https://singlecell.broadinstitute.org/single_cell)
-
-<a href="https://www.cdc.gov/media/subtopic/images.htm"><img src="https://phil.cdc.gov//PHIL_Images/23312/23312_lores.jpg" width="420" height="230" align="right"></a>
 
 ## COVID-19 projects
 * [CITIID](https://covid19.medschl.cam.ac.uk/)
