@@ -1,4 +1,4 @@
-<a href="https://www.cdc.gov/media/subtopic/images.htm"><img src="https://phil.cdc.gov//PHIL_Images/23313/23313_lores.jpg" width="420" height="230" align="right"></a>
+<a href="https://www.cdc.gov/media/subtopic/images.htm"><img src="https://phil.cdc.gov//PHIL_Images/23313/23313_lores.jpg" width="420" height="250" align="right"></a>
 
 ## Cell information
 * [Human Cell Landscape](https://db.cngb.org/HCL/)
