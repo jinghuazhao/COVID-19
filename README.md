@@ -18,6 +18,7 @@
 * [SARS-CoV-2 Research Grade Test Material](https://www.nist.gov/programs-projects/sars-cov-2-research-grade-test-material) ([GitHub](https://github.com/usnistgov/RGTM10169)).
 * [The COVID-19 Host Genetics Initiative](https://www.covid19hg.org/)
   * [Registration](https://www.covid19hg.org/register/)
+  * [Analysis plan](https://docs.google.com/document/d/16ethjgi4MzlQeO0KAW_yDYyUHdB9kKbtfuGW4XYVKQg/edit)
   * [GitHub repositories](https://github.com/covid19-hg/) ([PCA projection](https://github.com/covid19-hg/pca_projection))
   * [Slack channel](https://icdaworkspace.slack.com) (icda-office@icda.bio)
   * [Results](https://www.covid19hg.org/results/), [gs://covid19-hg-analysis/](gs://covid19-hg-analysis/) and [gs://covid19-hg-public](gs://covid19-hg-public)
