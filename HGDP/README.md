@@ -9,6 +9,14 @@ and examples are in `EPIC-Omics.sh` and `HGI.sh` produces [`HGI.C1-C2.png`](HGI.
 
 ## 1000Genomes phase 3
 
+The list of vairnats was based on the following criteria: 
+
+1. well-imputed across cohorts
+2. MAF > 0.1% in the reference
+3. LD-pruned 
+
+and led to
+
 * `keep.dat` contains a list of RSid's derived from HGI variants (# of variants=117,220).
 * `keep.bed/bim/fam` contains genotypes for N=2,504 samples (too big to upload here).
 The reference data were downloaded from files distributed with VEGAS2, 
