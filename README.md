@@ -19,7 +19,7 @@
 * [The COVID-19 Host Genetics Initiative](https://www.covid19hg.org/)
   * [Registration](https://www.covid19hg.org/register/)
   * [Analysis plan](https://docs.google.com/document/d/16ethjgi4MzlQeO0KAW_yDYyUHdB9kKbtfuGW4XYVKQg/edit)
-  * [GitHub repositories](https://github.com/covid19-hg/) ([PCA projection](https://github.com/covid19-hg/pca_projection))
+  * [GitHub repositories](https://github.com/covid19-hg/) ([PCA projection](https://github.com/covid19-hg/pca_projection)), [MR](https://github.com/marcoralab/MRcovid)
   * [Slack channel](https://icdaworkspace.slack.com) (icda-office@icda.bio)
   * [Results](https://www.covid19hg.org/results/), [gs://covid19-hg-analysis/](gs://covid19-hg-analysis/) and [gs://covid19-hg-public](gs://covid19-hg-public)
   * [Paper](https://www.medrxiv.org/content/10.1101/2021.03.10.21252820v1)
