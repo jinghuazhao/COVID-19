@@ -1,6 +1,6 @@
 # Mapping data to reference population
 
-## GIANT implementation
+## I. GIANT implementation
 
 ### GIANT reference (dated 8/8/2014)
 
@@ -35,7 +35,7 @@ plink --merge-list keep.list --out keep
 * `nonEUR.sh/sb/R` is the pipeline to produce [`nonEUR.C1-C2.png`](nonEUR.C1-C2.png).
 * `keep.sh/sb/R` is the pipeline to produce [`INTERVAL.C1-C2.png`](INTERVAL.C1-C2.png) (omitted for being not sensible).
 
-## HGI implementation (dated 21/3/2021)
+## II. HGI implementation (dated 21/3/2021)
 
 To project every GWAS participant into the same PC space, we used pre-computed PC loadings and
 reference allele frequencies. For reference, we used unrelated samples from the 1000 Genomes Project and
