@@ -155,7 +155,7 @@ do
 done
 
 export covlist=sex,PC_1,PC_2,PC_3,PC_4,PC_5,PC_6,PC_7,PC_8,PC_9,PC_10,PC_11,PC_12,PC_13,PC_14,PC_15,PC_16,PC_17,PC_18,PC_19,PC_20
-# for dir in ${d}-male-60-ANA_C1_V2 ${d}-male-60-ANA_C2_V2 ${d}-female-60-ANA_C1_V2 ${d}-female-60-ANA_C2_V2
+# for dir in ${d}-le_60-ANA_C1_V2 ${d}-le_60-ANA_C2_V2 ${d}-gt_60-ANA_C1_V2 ${d}-gt_60-ANA_C2_V2
 for dir in ${d}-le_60-ANA_C2_V2 ${d}-gt_60-ANA_C2_V2
 do
   export dir=${dir}
@@ -169,7 +169,7 @@ done
 for dir in ${d}-ANA_C2_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C2_V2 ${d}-le_60-ANA_C2_V2 ${d}-gt_60-ANA_C2_V2
 do
   export dir=${dir}
-  sbatch --wait ${SCALLOP}/HGI/autosomes.sb
+  sbatch ${SCALLOP}/HGI/autosomes.sb
   export check=$(echo ${dir} | grep female)
   if [ "${check}" == "" ]; then
      sbatch ${SCALLOP}/HGI/X.sb
