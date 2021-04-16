@@ -1,21 +1,13 @@
 # Mapping data to reference population
 
-## GIANT reference (dated 8/8/2014)
+## GIANT reference + code (dated 8/8/2014)
 
 * `refdata.*` (N=437, # of variants=79,399)
 * `MDSplot.R`
 
 and examples are in `EPIC-Omics.sh` and `HGI.sh` produces [`HGI.C1-C2.png`](HGI.C1-C2.png).
 
-## 1000Genomes phase 3
-
-The list of vairnats was based on the following criteria: 
-
-1. well-imputed across cohorts
-2. MAF > 0.1% in the reference
-3. LD-pruned 
-
-and led to
+## 1000Genomes phase 3 + code
 
 * `keep.dat` contains a list of RSid's derived from HGI variants (# of variants=117,220).
 * `keep.bed/bim/fam` contains genotypes for N=2,504 samples (too big to upload here).
@@ -37,5 +29,23 @@ echo AFR AMR EAS EUR SAS | tr ' ' '\n' | awk '{print $1".bed", $1".bim", $1"-id.
 plink --merge-list keep.list --out keep
 ```
 
-* `keep.sh/sb/R` is the pipeline to produce [`INTERVAL.C1-C2.png`](INTERVAL.C1-C2.png) (still running).
 * `nonEUR.sh/sb/R` is the pipeline to produce [`nonEUR.C1-C2.png`](nonEUR.C1-C2.png).
+* `keep.sh/sb/R` is the pipeline to produce [`INTERVAL.C1-C2.png`](INTERVAL.C1-C2.png) (omitted since it was not sensible).
+
+## HGI reference + code (dated 21/3/2021)
+
+The list of vairnats was based on the following criteria: 
+
+To project every GWAS participant into the same PC space, we used pre-computed PC loadings and
+reference allele frequencies. For reference, we used unrelated samples from the 1000 Genomes Project and
+the Human Genome Diversity Project (HGDP) and computed PC loadings and allele frequencies for the
+117,221 SNPs that are i) available in every cohort, ii) MAF > 0.1% in the reference, and iii) LD pruned (r2
+< 0.8; 500kb window). We then asked each cohort to project their samples using our automated script
+provided here (https://github.com/covid19-hg/pca_projection). It internally uses PLINK2 62 --score
+function with variance-standardize option and reference allele frequencies (--read-freq); so that each
+cohort specific genotype/dosage matrix is mean-centered and variance-standardized with regards to reference
+allele frequencies, not cohort-specific allele frequencies. We further normalized the projected PC scores by
+dividing by a square root of the number of variants used for projection to account for a subtle difference
+due to missing variants.
+
+Results: [hgdp_tgp_interval.PC1-2.pdf](hgdp_tgp_interval.PC1-2.pdf).
