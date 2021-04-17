@@ -165,7 +165,7 @@ done
 
 # for dir in ${d}-ANA_C1_V2 ${d}-ANA_C2_V2 \
 #            ${d}-male-ANA_C1_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C1_V2 ${d}-female-ANA_C2_V2 \
-#            ${d}-male-60-ANA_C1_V2 ${d}-male-60-ANA_C2_V2 ${d}-female-60-ANA_C1_V2 ${d}-female-60-ANA_C2_V2
+#            ${d}-le_60-ANA_C1_V2 ${d}-le_60-ANA_C2_V2 ${d}-gt_60-ANA_C1_V2 ${d}-gt_60-ANA_C2_V2
 for dir in ${d}-ANA_C2_V2 ${d}-male-ANA_C2_V2 ${d}-female-ANA_C2_V2 ${d}-le_60-ANA_C2_V2 ${d}-gt_60-ANA_C2_V2
 do
   export dir=${dir}
