@@ -33,7 +33,7 @@ plink --merge-list keep.list --out keep
 ```
 
 * `nonEUR.sh/sb/R` is the pipeline to produce [`nonEUR.C1-C2.png`](nonEUR.C1-C2.png).
-* `keep.sh/sb/R` is the pipeline to produce [`INTERVAL.C1-C2.png`](INTERVAL.C1-C2.png) (omitted for being not sensible).
+* `keep.sh/sb/R` is the pipeline to produce [`INTERVAL.C1-C2.png`](INTERVAL.C1-C2.png) (not working properly).
 
 ## II. HGI implementation (dated 21/3/2021)
 
