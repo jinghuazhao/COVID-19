@@ -39,10 +39,10 @@ function rename()
 }
 
 rename 20210317-ANA_C2_V2           C2_V2 ALL   ALL  2098 39733
-rename 20210317-female-ANA_C2_V2    C2_V2 ALL   F    1168 21157
-rename 20210317-male-ANA_C2_V2      C2_V2 ALL   M     930 20674
-rename 20210317-le_60-ANA_C2_V2     C2_V2 LE_60 ALL  1713 28819
-rename 20210317-gt_60-ANA_C2_V2     C2_V2 GT_60 ALL   385 13012
+rename 20210317-female-ANA_C2_V2    C2_V2 ALL   F    1168 19989
+rename 20210317-male-ANA_C2_V2      C2_V2 ALL   M     930 19744
+rename 20210317-le_60-ANA_C2_V2     C2_V2 LE_60 ALL  1713 27106
+rename 20210317-gt_60-ANA_C2_V2     C2_V2 GT_60 ALL   385 12627
 
 #   SARS_CoV |      Freq.     Percent        Cum.
 #------------+-----------------------------------
