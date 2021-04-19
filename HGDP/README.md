@@ -42,7 +42,7 @@ reference allele frequencies. For reference, we used unrelated samples from the 
 the Human Genome Diversity Project (HGDP) and computed PC loadings and allele frequencies for the
 117,221 SNPs that are i) available in every cohort, ii) MAF > 0.1% in the reference, and iii) LD pruned (r2
 < 0.8; 500kb window). We then asked each cohort to project their samples using our automated script
-provided here (https://github.com/covid19-hg/pca_projection). It internally uses PLINK2 --score
+provided here ([https://github.com/covid19-hg/pca_projection](https://github.com/covid19-hg/pca_projection)). It internally uses PLINK2 --score
 function with variance-standardize option and reference allele frequencies (--read-freq); so that each
 cohort specific genotype/dosage matrix is mean-centered and variance-standardized with regards to reference
 allele frequencies, not cohort-specific allele frequencies. We further normalized the projected PC scores by
