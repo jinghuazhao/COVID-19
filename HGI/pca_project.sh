@@ -8,6 +8,7 @@ export ref=~/rds/post_qc_data/interval/reference_files/genetic/reference_files_g
 # HGI working directory
 export prefix=~/rds/rds-asb38-ceu-restricted/projects/covid/HGI
 export dir=20201201-ANA_C2_V2
+export dir=20210317-ANA_C2_V2
 
 export PCA_projection=pca_projection
 export PCA_loadings=hgdp_tgp_pca_covid19hgi_snps_loadings.GRCh37.plink.tsv
@@ -35,20 +36,18 @@ function extract_data()
 
 function twist()
 {
-  cat-bgen -g $(echo ${prefix}/work/INTERVAL-{1..22}.bgen) -og ${prefix}/work/INTERVAL.bgen -clobber
-  bgenix -g ${prefix}/work/INTERVAL.bgen -index -clobber
-
-  plink2 --bgen ${prefix}/work/INTERVAL.bgen ref-first --make-pfile --out INTERVAL
-
+  cat-bgen -g $(echo ${prefix}/work/INTERVAL-{1..22}.bgen) -og INTERVAL.bgen -clobber
+  bgenix -g INTERVAL.bgen -index -clobber
   export csvfile=INTERVAL.csv
   python update_bgi.py --bgi INTERVAL.bgen.bgi
+  plink2 --bgen INTERVAL.bgen ref-first --make-pfile --out INTERVAL
+  cp INTERVAL.p??? ${prefix}/work
   (
     head -1 INTERVAL.pvar
     paste <(sed '1d' INTERVAL.pvar | cut -f1,2) \
           <(sed '1d' INTERVAL.csv | cut -d, -f3) | \
     paste - <(sed '1d' INTERVAL.pvar | cut -f4,5)
   ) > ${prefix}/work/INTERVAL.pvar
-  cp INTEVAL.p?? ${prefix}/work
 }
 
 function project_pc()
