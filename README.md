@@ -21,6 +21,7 @@
   * [Analysis plan](https://docs.google.com/document/d/16ethjgi4MzlQeO0KAW_yDYyUHdB9kKbtfuGW4XYVKQg/edit)
   * [GitHub repositories](https://github.com/covid19-hg/) ([PCA projection](https://github.com/covid19-hg/pca_projection))
   * [LDSC and MR analysis](https://github.com/marcoralab/MRcovid)
+  * [Long COVID study](https://docs.google.com/spreadsheets/d/1XfarBojPob6J9fwJpmGODn3cnX8evDrUeZmT-RI5suk/edit#gid=161532708)
   * [Slack channel](https://icdaworkspace.slack.com) (icda-office@icda.bio)
   * [Results](https://www.covid19hg.org/results/), [gs://covid19-hg-analysis/](gs://covid19-hg-analysis/) and [gs://covid19-hg-public](gs://covid19-hg-public)
   * [Paper](https://www.medrxiv.org/content/10.1101/2021.03.10.21252820v1)
