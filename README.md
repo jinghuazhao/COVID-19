@@ -21,7 +21,7 @@
   * [tracking excess deaths](http://www.trackingexcessdeaths.com/)
 * [PANGO lineages](https://cov-lineages.org/)
 * [SARS-CoV-2 Research Grade Test Material](https://www.nist.gov/programs-projects/sars-cov-2-research-grade-test-material) ([GitHub](https://github.com/usnistgov/RGTM10169)).
-* [ICODA](https://portal.covid-19.aridhia.io/)
+* The International COVID-19 Data Alliance ([ICODA](https://portal.covid-19.aridhia.io/))
 * [The COVID-19 Host Genetics Initiative](https://www.covid19hg.org/)
   * [Registration](https://www.covid19hg.org/register/)
   * [Analysis plan](https://docs.google.com/document/d/16ethjgi4MzlQeO0KAW_yDYyUHdB9kKbtfuGW4XYVKQg/edit)
