@@ -7,6 +7,7 @@
 
 ## COVID-19 projects
 * [CITIID](https://covid19.medschl.cam.ac.uk/)
+* CDC [COVID Data trackter](https://covid.cdc.gov/covid-data-tracker/)
 * [COG-UK](https://www.cogconsortium.uk/) ([GitHub repos](https://github.com/COG-UK))
 * [COVID-19 Data Portal](https://www.covid19dataportal.org/)
 * [covid19db](http://hpcc.siat.ac.cn/covid19db/home) ([biomedical-web](www.biomedical-web.com/covid19db))
