@@ -39,6 +39,7 @@
 ## Miscellaneous resources
 * [COVID-19 tracker](https://shiny.rstudio.com/gallery/covid19-tracker.html).
 * [COVID-19 Projections Using Machine Learning](https://covid19-projections.com/) ([featured article](https://www.bloomberg.com/news/articles/2021-02-19/covid-pandemic-how-youyang-gu-used-ai-and-data-to-make-most-accurate-prediction))
+* [COVID-19 UniProtKB](https://covid-19.uniprot.org)
 * [CFA](https://otr.medschl.cam.ac.uk/academics-clinicians/funding/covid-funding-calls), [UKRI](https://www.ukri.org/) ([funding](https://www.ukri.org/funding/funding-opportunities/ukri-open-call-for-research-and-innovation-ideas-to-address-covid-19/)).
 * [CSSEGISandData](https://github.com/CSSEGISandData).
 * [nCov2019](https://github.com/GuangchuangYu/nCov2019).
