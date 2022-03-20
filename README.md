@@ -14,7 +14,7 @@
 * [CUH clinical update](https://cuhstaffportal.co.uk/operational/clinical-updates/) and [testing](https://www.cam.ac.uk/coronavirus/general-staff-advice/health-and-wellbeing#testing).
 * [DockCov2](https://covirus.cc/drugs/)
 * [Genetics Of Mortality In Critical Care](https://genomicc.org/)
-* [GISAID](https://www.gisaid.org/) (login: [https://gisaid.org](https://gisaid.org)) and [nextstran.org](https://nextstrain.org/ncov/global).
+* [GISAID](https://www.gisaid.org/), Global Initiative for Sharing Avian Influenza Data (login: [https://gisaid.org](https://gisaid.org)) and [nextstran.org](https://nextstrain.org/ncov/global).
 * [HDRUK/covid-19](https://github.com/HDRUK/covid-19)
   * [CVD-COVID-UK](https://www.hdruk.ac.uk/projects/cvd-covid-uk-project/)
   * [false positives](https://www.hdruk.ac.uk/projects/false-positives/)
