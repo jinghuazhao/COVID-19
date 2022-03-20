@@ -46,6 +46,7 @@
 * [CSSEGISandData](https://github.com/CSSEGISandData).
 * [nCov2019](https://github.com/GuangchuangYu/nCov2019).
 * NHS [COVID-19 vaccination](https://www.nhs.uk/conditions/coronavirus-covid-19/coronavirus-vaccination/).
+* [READDI](https://www.readdi.org/), Rapidly Emerging Antiviral Drug Development Initiative.
 * [sciinovgroup](https://www.sciinovgroup.com/coronavirus).
 * [SHERES](https://www.cdc.gov/coronavirus/2019-ncov/cases-updates/spheres.html).
 * https://github.com/rivas-lab/covid19
