@@ -13,7 +13,8 @@
 * [covid19db](http://hpcc.siat.ac.cn/covid19db/home) ([biomedical-web](www.biomedical-web.com/covid19db))
 * [CUH clinical update](https://cuhstaffportal.co.uk/operational/clinical-updates/) and [testing](https://www.cam.ac.uk/coronavirus/general-staff-advice/health-and-wellbeing#testing).
 * [DockCov2](https://covirus.cc/drugs/)
-* [Genetics Of Mortality In Critical Care](https://genomicc.org/)
+* [GenOMICC](https://genomicc.org/), Genetics Of Mortality In Critical Care
+  * [paper](https://www.nature.com/articles/s41586-022-04576-6)
 * [GISAID](https://www.gisaid.org/), Global Initiative for Sharing Avian Influenza Data (login: [https://gisaid.org](https://gisaid.org)) and [nextstran.org](https://nextstrain.org/ncov/global).
 * [HDRUK/covid-19](https://github.com/HDRUK/covid-19)
   * [CVD-COVID-UK](https://www.hdruk.ac.uk/projects/cvd-covid-uk-project/)
