@@ -5,6 +5,7 @@
 * [COVID-19 Cell Atlas](https://www.covid19cellatlas.org/)
 * [Single Cell Portal](https://singlecell.broadinstitute.org/single_cell)
 * [Non-Human Primate Cell Atlas](https://db.cngb.org/nhpca/)
+  * [Paper](https://www.nature.com/articles/s41586-021-03767-x)
 
 ## COVID-19 projects
 * [CITIID](https://covid19.medschl.cam.ac.uk/)
@@ -33,7 +34,7 @@
   * [Long COVID study](https://docs.google.com/spreadsheets/d/1XfarBojPob6J9fwJpmGODn3cnX8evDrUeZmT-RI5suk/edit#gid=161532708)
   * [Slack channel](https://icdaworkspace.slack.com) (icda-office@icda.bio)
   * [Results](https://www.covid19hg.org/results/), [gs://covid19-hg-analysis/](gs://covid19-hg-analysis/) and [gs://covid19-hg-public](gs://covid19-hg-public)
-  * [Paper](https://www.medrxiv.org/content/10.1101/2021.03.10.21252820v1)
+  * [Paper](https://www.nature.com/articles/s41586-021-03767-x), ([medRxiv Paper](https://www.medrxiv.org/content/10.1101/2021.03.10.21252820v1))
   * [Web browser](https://app.covid19hg.org/)
 * [The RSS task force](https://rss.org.uk/policy-campaigns/policy/covid-19-task-force/)
 * [zenodo](https://zenodo.org/)
