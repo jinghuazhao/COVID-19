@@ -5,7 +5,7 @@
 * [COVID-19 Cell Atlas](https://www.covid19cellatlas.org/)
 * [Single Cell Portal](https://singlecell.broadinstitute.org/single_cell)
 * [Non-Human Primate Cell Atlas](https://db.cngb.org/nhpca/)
-  * [Paper](https://www.nature.com/articles/s41586-021-03767-x)
+  * [Paper](https://www.nature.com/articles/s41586-022-04587-3)
 
 ## COVID-19 projects
 * [CITIID](https://covid19.medschl.cam.ac.uk/)
