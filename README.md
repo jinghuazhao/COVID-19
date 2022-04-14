@@ -4,6 +4,7 @@
 * [Human Cell Landscape](https://db.cngb.org/HCL/)
 * [COVID-19 Cell Atlas](https://www.covid19cellatlas.org/)
 * [Single Cell Portal](https://singlecell.broadinstitute.org/single_cell)
+* [Non-Human Primate Cell Atlas](https://db.cngb.org/nhpca/)
 
 ## COVID-19 projects
 * [CITIID](https://covid19.medschl.cam.ac.uk/)
