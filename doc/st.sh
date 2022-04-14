@@ -12,7 +12,7 @@ git add ACE2/2805-6_2.metal ACE2/select.sh ACE2/ukb-ACE2-annotate.sh ACE2/ace2_i
 git commit -m "SomaLogic"
 git add GEO/GEO.R GEO/GEO2R.R GEO/test.ini GEO/test.R GEO/test.sh GEO/README.md
 git commit -m "GEO test"
-git add HGDP/README.md
+git add HGDP/README.md HGDP/4MDS*analysis*v1.3.pdf
 git add HGDP/EPIC-Omics.sh HGDP/HGI.* HGDP/refdata.* HGDP/MDSplot.R HGDP/keep.* 
 git add  HGDP/nonEUR.sh HGDP/nonEUR.R HGDP/nonEUR.sb HGDP/nonEUR.C1-C2.png HGDP/INTERVAL.C1-C2.png HGDP/hgdp_tgp_interval.PC1-2.pdf
 git commit -m "1000G mappings"
