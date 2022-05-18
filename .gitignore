@@ -131,3 +131,10 @@ docs/
 miniconda37/
 people/
 scallop
+22.04.vdi
+ghostscript-9.56.1/
+node_modules/
+package-lock.json
+package.json
+ruby-2.7.5/
+
