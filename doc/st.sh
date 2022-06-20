@@ -10,7 +10,7 @@ git add cvd2/README.txt cvd2/*sh cvd2/ps.R
 git commit -m "CVD2"
 git add ACE2/2805-6_2.metal ACE2/select.sh ACE2/ukb-ACE2-annotate.sh ACE2/ace2_interval_imputed_ukb_imputed.sh
 git commit -m "SomaLogic"
-git add GEO/GEO.R GEO/GEO2R.R GEO/test.ini GEO/test.R GEO/test.sh GEO/README.md
+git add -f GEO/GEO.R GEO/GEO2R.R GEO/test.ini GEO/test.R GEO/test.sh GEO/README.md
 git commit -m "GEO test"
 git add HGDP/README.md HGDP/4MDS*analysis*v1.3.pdf
 git add HGDP/EPIC-Omics.sh HGDP/HGI.* HGDP/refdata.* HGDP/MDSplot.R HGDP/keep.* 
