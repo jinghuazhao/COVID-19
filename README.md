@@ -7,6 +7,8 @@
 * [Non-Human Primate Cell Atlas](https://db.cngb.org/nhpca/)
   * [Paper](https://www.nature.com/articles/s41586-022-04587-3)
 
+![PANGO-WHO classifications, https://doi.org/10.1126/science.abm1208](doc/2022-06-19A.png)
+
 ## COVID-19 projects
 * [CITIID](https://covid19.medschl.cam.ac.uk/)
 * CDC [COVID Data tracker](https://covid.cdc.gov/covid-data-tracker/)
