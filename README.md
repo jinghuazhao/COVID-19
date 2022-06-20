@@ -59,4 +59,7 @@
 * [Machine-readable version of electronic health record phenotypes](https://github.com/spiros/chronological-map-phenotypes) ([Methods](https://github.com/spiros/chronological-map-phenotypes/blob/master/METHODS.md))
 * UK biobank COVID-19 [data](http://biobank.ndph.ox.ac.uk/ukb/exinfo.cgi?src=COVID19), [format](http://biobank.ndph.ox.ac.uk/ukb/exinfo.cgi?src=COVID19_tests) and [field](http://biobank.ctsu.ox.ac.uk/ukb/field.cgi?id=40100).
 
-![PANGO-WHO classifications, https://doi.org/10.1126/science.abm1208](doc/2022-06-19A.png)
+![PANGO-WHO classifications](doc/2022-06-19A.png)
+
+***Source***: Obermeyer F., et al., Analysis of 6.4 million SARS-CoV-2 genomes identifies mutations associated with fitness. Science, 2022. 376(6599): p. 1327-1332. https://doi.org/10.1126/science.abm1208
+
