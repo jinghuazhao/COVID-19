@@ -61,5 +61,4 @@
 
 ![PANGO-WHO classifications](doc/2022-06-19A.png)
 
-***Source***: Obermeyer F., et al., Analysis of 6.4 million SARS-CoV-2 genomes identifies mutations associated with fitness. Science, 2022. 376(6599): p. 1327-1332. https://doi.org/10.1126/science.abm1208
-
+***Source***: Obermeyer F., et al., Analysis of 6.4 million SARS-CoV-2 genomes identifies mutations associated with fitness. *Science*, 2022. 376(6599): p. 1327-1332. https://doi.org/10.1126/science.abm1208
