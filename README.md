@@ -7,8 +7,6 @@
 * [Non-Human Primate Cell Atlas](https://db.cngb.org/nhpca/)
   * [Paper](https://www.nature.com/articles/s41586-022-04587-3)
 
-![PANGO-WHO classifications, https://doi.org/10.1126/science.abm1208](doc/2022-06-19A.png)
-
 ## COVID-19 projects
 * [CITIID](https://covid19.medschl.cam.ac.uk/)
 * CDC [COVID Data tracker](https://covid.cdc.gov/covid-data-tracker/)
@@ -60,3 +58,5 @@
 ## Phenotypes
 * [Machine-readable version of electronic health record phenotypes](https://github.com/spiros/chronological-map-phenotypes) ([Methods](https://github.com/spiros/chronological-map-phenotypes/blob/master/METHODS.md))
 * UK biobank COVID-19 [data](http://biobank.ndph.ox.ac.uk/ukb/exinfo.cgi?src=COVID19), [format](http://biobank.ndph.ox.ac.uk/ukb/exinfo.cgi?src=COVID19_tests) and [field](http://biobank.ctsu.ox.ac.uk/ukb/field.cgi?id=40100).
+
+![PANGO-WHO classifications, https://doi.org/10.1126/science.abm1208](doc/2022-06-19A.png)
